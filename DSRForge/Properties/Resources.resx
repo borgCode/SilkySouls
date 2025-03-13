@@ -1,0 +1,1233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="RepeatAction" xml:space="preserve">
+    <value>53                      push   rbx
+51                      push   rcx
+52                      push   rdx
+48 bb 00 00 00 00 00    movabs rbx,0x0
+00 00 00
+48 8b 1b                mov    rbx,QWORD PTR [rbx]
+8b 9b c8 00 00 00       mov    ebx,DWORD PTR [rbx+0xc8]
+8b 88 a8 00 00 00       mov    ecx,DWORD PTR [rax+0xa8]
+48 39 cb                cmp    rbx,rcx
+0f 85 00 00 00 00       jne    25 &lt;_main+0x25&gt;
+48 bb 00 00 00 00 00    movabs rbx,0x0
+00 00 00
+80 3b 01                cmp    BYTE PTR [rbx],0x1
+0f 85 00 00 00 00       jne    38 &lt;_main+0x38&gt;
+8a 90 61 03 00 00       mov    dl,BYTE PTR [rax+0x361]
+88 90 60 03 00 00       mov    BYTE PTR [rax+0x360],dl
+e9 00 00 00 00          jmp    49 &lt;_main+0x49&gt;
+c6 80 60 03 00 00 00    mov    BYTE PTR [rax+0x360],0x0
+5a                      pop    rdx
+59                      pop    rcx
+5b                      pop    rbx
+0f be 80 60 03 00 00    movsx  eax,BYTE PTR [rax+0x360]
+e9 00 00 00 00          jmp    5f &lt;_main+0x5f&gt;</value>
+  </data>
+  <data name="EnableDraw" xml:space="preserve">
+    <value>48 b8 60 cf 15 40 01    movabs rax,0x14015cf60
+00 00 00
+ff d0                   call   rax
+8b 58 08                mov    ebx,DWORD PTR [rax+0x8]
+41 89 f0                mov    r8d,esi
+ba 16 00 00 00          mov    edx,0x16
+48 89 f9                mov    rcx,rdi
+48 b8 40 02 1b 41 01    movabs rax,0x1411b0240
+00 00 00
+ff d0                   call   rax
+48 8b 0f                mov    rcx,QWORD PTR [rdi]
+48 83 c1 03             add    rcx,0x3
+48 83 e1 fc             and    rcx,0xfffffffffffffffc
+48 8d 41 04             lea    rax,[rcx+0x4]
+48 89 07                mov    QWORD PTR [rdi],rax
+c7 01 05 00 01 00       mov    DWORD PTR [rcx],0x10005
+48 8b 0f                mov    rcx,QWORD PTR [rdi]
+48 83 c1 03             add    rcx,0x3
+48 83 e1 fc             and    rcx,0xfffffffffffffffc
+48 8d 41 04             lea    rax,[rcx+0x4]
+48 89 07                mov    QWORD PTR [rdi],rax
+89 19                   mov    DWORD PTR [rcx],ebx
+48 89 f9                mov    rcx,rdi
+48 b8 e0 01 1b 41 01    movabs rax,0x1411b01e0
+00 00 00
+ff d0                   call   rax
+41 89 f0                mov    r8d,esi
+ba 16 00 00 00          mov    edx,0x16
+48 89 f9                mov    rcx,rdi
+48 b8 40 02 1b 41 01    movabs rax,0x1411b0240
+00 00 00
+ff d0                   call   rax
+48 8b 0f                mov    rcx,QWORD PTR [rdi]
+48 83 c1 03             add    rcx,0x3
+48 83 e1 fc             and    rcx,0xfffffffffffffffc
+48 8d 41 04             lea    rax,[rcx+0x4]
+48 89 07                mov    QWORD PTR [rdi],rax
+c7 01 05 00 02 00       mov    DWORD PTR [rcx],0x20005
+48 89 f9                mov    rcx,rdi
+48 b8 e0 01 1b 41 01    movabs rax,0x1411b01e0
+00 00 00
+ff d0                   call   rax
+41 89 f0                mov    r8d,esi
+ba 16 00 00 00          mov    edx,0x16
+e9 00 00 00 00          jmp    0xac</value>
+  </data>
+  <data name="Armor" xml:space="preserve">
+    <value>553000,1,0,Anklet of the Great Lord
+331000,1,1,Antiquated Dress
+332000,1,1,Antiquated Gloves
+333000,1,1,Antiquated Skirt
+661000,1,1,Armor of Artorias
+111000,1,0,Armor of the Glorious
+161000,1,2,Armor of the Sun
+201000,1,1,Armor of Thorns
+511000,1,2,Balder Armor
+512000,1,2,Balder Gauntlets
+510000,1,2,Balder Helm
+513000,1,2,Balder Leggings
+380000,1,1,Big Hat
+151000,1,1,Black Cleric Robe
+71000,1,1,Black Iron Armor
+72000,1,1,Black Iron Gauntlets
+70000,1,1,Black Iron Helm
+73000,1,1,Black Iron Leggings
+321000,1,1,Black Knight Armor
+322000,1,1,Black Knight Gauntlets
+320000,1,1,Black Knight Helm
+323000,1,1,Black Knight Leggings
+301000,1,2,Black Leather Armor
+303000,1,2,Black Leather Boots
+302000,1,2,Black Leather Gloves
+152000,1,1,Black Manchette
+643000,1,2,Black Sorcerer Boots
+641000,1,2,Black Sorcerer Cloak
+642000,1,2,Black Sorcerer Gauntlets
+640000,1,2,Black Sorcerer Hat
+153000,1,1,Black Tights
+710000,1,0,Bloated Head
+720000,1,0,Bloated Sorcerer Head
+403000,1,2,Blood-Stained Skirt
+113000,1,0,Boots of the Explorer
+552000,1,0,Bracelet of the Great Lord
+451000,1,1,Brass Armor
+452000,1,1,Brass Gauntlets
+450000,1,1,Brass Helm
+453000,1,1,Brass Leggings
+51000,1,2,Brigand Armor
+52000,1,2,Brigand Gauntlets
+50000,1,2,Brigand Hood
+53000,1,2,Brigand Trousers
+11000,1,1,Catarina Armor
+12000,1,1,Catarina Gauntlets
+10000,1,1,Catarina Helm
+13000,1,1,Catarina Leggings
+171000,1,2,Chain Armor
+170000,1,2,Chain Helm
+173000,1,2,Chain Leggings
+702000,1,1,Chester's Gloves
+701000,1,1,Chester's Long Coat
+703000,1,1,Chester's Trousers
+181000,1,2,Cleric Armor
+182000,1,2,Cleric Gauntlets
+180000,1,2,Cleric Helm
+183000,1,2,Cleric Leggings
+142000,1,1,Crimson Gloves
+141000,1,1,Crimson Robe
+143000,1,1,Crimson Waistcloth
+330000,1,0,Crown of Dusk
+540000,1,0,Crown of the Dark Sun
+550000,1,0,Crown of the Great Lord
+131000,1,0,Crystalline Armor
+132000,1,0,Crystalline Gauntlets
+130000,1,0,Crystalline Helm
+133000,1,0,Crystalline Leggings
+41000,1,1,Dark Armor
+42000,1,1,Dark Gauntlets
+43000,1,1,Dark Leggings
+40000,1,1,Dark Mask
+402000,1,2,Dingy Gloves
+400000,1,2,Dingy Hood
+401000,1,2,Dingy Robe
+281000,1,1,Eastern Armor
+282000,1,1,Eastern Gauntlets
+280000,1,1,Eastern Helm
+283000,1,1,Eastern Leggings
+351000,1,2,Elite Knight Armor
+352000,1,2,Elite Knight Gauntlets
+350000,1,2,Elite Knight Helm
+353000,1,2,Elite Knight Leggings
+101000,1,1,Embraced Armor of Favor
+620000,1,1,Fang Boar Helm
+630000,1,1,Gargoyle Helm
+662000,1,1,Gauntlets of Artorias
+102000,1,1,Gauntlets of Favor
+92000,1,0,Gauntlets of the Channelers
+112000,1,0,Gauntlets of the Vanquisher
+202000,1,1,Gauntlets of Thorns
+531000,1,1,Giant Armor
+532000,1,1,Giant Gauntlets
+530000,1,1,Giant Helm
+533000,1,1,Giant Leggings
+461000,1,0,Gold-Hemmed Black Cloak
+462000,1,0,Gold-Hemmed Black Gloves
+460000,1,0,Gold-Hemmed Black Hood
+463000,1,0,Gold-Hemmed Black Skirt
+471000,1,0,Golem Armor
+472000,1,0,Golem Gauntlets
+470000,1,0,Golem Helm
+473000,1,0,Golem Leggings
+681000,1,1,Gough's Armor
+682000,1,1,Gough's Gauntlets
+680000,1,1,Gough's Helm
+683000,1,1,Gough's Leggings
+691000,1,0,Guardian Armor
+692000,1,0,Guardian Gauntlets
+690000,1,0,Guardian Helm
+693000,1,0,Guardian Leggings
+211000,1,2,Hard Leather Armor
+213000,1,2,Hard Leather Boots
+212000,1,2,Hard Leather Gauntlets
+441000,1,0,Havel's Armor
+442000,1,0,Havel's Gauntlets
+440000,1,0,Havel's Helm
+443000,1,0,Havel's Leggings
+233000,1,2,Heavy Boots
+660000,1,1,Helm of Artorias
+100000,1,1,Helm of Favor
+110000,1,0,Helm of the Wise
+200000,1,1,Helm of Thorns
+481000,1,2,Hollow Soldier Armor
+480000,1,2,Hollow Soldier Helm
+483000,1,2,Hollow Soldier Waistcloth
+500000,1,2,Hollow Thief's Hood
+501000,1,2,Hollow Thief's Leather Armor
+503000,1,2,Hollow Thief's Tights
+521000,1,2,Hollow Warrior Armor
+520000,1,2,Hollow Warrior Helm
+523000,1,2,Hollow Warrior Waistcloth
+311000,1,2,Holy Robe
+313000,1,2,Holy Trousers
+162000,1,2,Iron Bracelet
+160000,1,2,Iron Helm
+163000,1,2,Iron Leggings
+391000,1,2,Knight Armor
+392000,1,2,Knight Gauntlets
+390000,1,2,Knight Helm
+393000,1,2,Knight Leggings
+241000,1,2,Leather Armor
+243000,1,2,Leather Boots
+172000,1,2,Leather Gauntlets
+242000,1,2,Leather Gloves
+663000,1,1,Leggings of Artorias
+103000,1,1,Leggings of Favor
+203000,1,1,Leggings of Thorns
+672000,1,1,Lord's Blade Gloves
+671000,1,1,Lord's Blade Robe
+673000,1,1,Lord's Blade Waistcloth
+412000,1,2,Maiden Gloves
+410000,1,2,Maiden Hood
+411000,1,2,Maiden Robe
+413000,1,2,Maiden Skirt
+610000,1,0,Mask of the Child
+590000,1,0,Mask of the Father
+600000,1,0,Mask of the Mother
+140000,1,1,Mask of the Sealer
+150000,1,1,Mask of Velka
+542000,1,0,Moonlight Gloves
+541000,1,0,Moonlight Robe
+543000,1,0,Moonlight Waistcloth
+271000,1,0,Ornstein's Armor
+272000,1,0,Ornstein's Gauntlets
+270000,1,0,Ornstein's Helm
+273000,1,0,Ornstein's Leggings
+252000,1,1,Painting Guardian Gloves
+250000,1,1,Painting Guardian Hood
+251000,1,1,Painting Guardian Robe
+253000,1,1,Painting Guardian Waistcloth
+21000,1,1,Paladin Armor
+22000,1,1,Paladin Gauntlets
+20000,1,1,Paladin Helm
+23000,1,1,Paladin Leggings
+240000,1,2,Pharis's Hat
+670000,1,1,Porcelain Mask
+310000,1,2,Priest's Hat
+91000,1,0,Robe of the Channelers
+551000,1,0,Robe of the Great Lord
+580000,1,2,Royal Helm
+560000,1,2,Sack
+381000,1,1,Sage Robe
+61000,1,1,Shadow Garb
+62000,1,1,Shadow Gauntlets
+63000,1,1,Shadow Leggings
+60000,1,1,Shadow Mask
+421000,1,1,Silver Knight Armor
+422000,1,1,Silver Knight Gauntlets
+420000,1,1,Silver Knight Helm
+423000,1,1,Silver Knight Leggings
+90000,1,0,Six-Eyed Helm of the Channelers
+81000,1,0,Smough's Armor
+82000,1,0,Smough's Gauntlets
+80000,1,0,Smough's Helm
+83000,1,0,Smough's Leggings
+700000,1,1,Snickering Top Hat
+223000,1,2,Sorcerer Boots
+221000,1,2,Sorcerer Cloak
+222000,1,2,Sorcerer Gauntlets
+220000,1,2,Sorcerer Hat
+210000,1,2,Standard Helm
+491000,1,2,Steel Armor
+492000,1,2,Steel Gauntlets
+490000,1,2,Steel Helm
+493000,1,2,Steel Leggings
+121000,1,0,Stone Armor
+122000,1,0,Stone Gauntlets
+120000,1,0,Stone Helm
+123000,1,0,Stone Leggings
+190000,1,0,Sunlight Maggot
+570000,1,0,Symbol of Avarice
+230000,1,2,Tattered Cloth Hood
+232000,1,2,Tattered Cloth Manchette
+231000,1,2,Tattered Cloth Robe
+300000,1,2,Thief Mask
+383000,1,2,Traveling Boots
+312000,1,2,Traveling Gloves (Holy)
+382000,1,2,Traveling Gloves (Sage)
+93000,1,0,Waistcloth of the Channelers
+363000,1,2,Wanderer Boots
+361000,1,2,Wanderer Coat
+360000,1,2,Wanderer Hood
+362000,1,2,Wanderer Manchette
+341000,1,1,Witch Cloak
+342000,1,1,Witch Gloves
+340000,1,1,Witch Hat
+343000,1,1,Witch Skirt
+290000,1,1,Xanthous Crown
+292000,1,1,Xanthous Gloves
+291000,1,1,Xanthous Overcoat
+293000,1,1,Xanthous Waistcloth</value>
+  </data>
+  <data name="Weapons" xml:space="preserve">
+    <value>9012000,1,1,Abyss Greatsword
+209000,1,1,Astora's Straight Sword
+1252000,1,4,Avelyn
+1455000,1,4,Balder Shield
+204000,1,3,Balder Side Sword
+103000,1,3,Bandit's Knife
+207000,1,3,Barbed Straight Sword
+300000,1,3,Bastard Sword
+701000,1,3,Battle Axe
+1301000,1,0,Beatrice's Catalyst
+1202000,1,3,Black Bow of Pharis
+9003000,1,4,Black Iron Greatshield
+753000,1,1,Black Knight Greataxe
+355000,1,1,Black Knight Greatsword
+1105000,1,1,Black Knight Halberd
+1474000,1,1,Black Knight Shield
+310000,1,1,Black Knight Sword
+811000,1,1,Blacksmith Giant Hammer
+810000,1,3,Blacksmith Hammer
+9002000,1,4,Bloodshield
+1506000,1,3,Bonewheel Shield
+202000,1,3,Broadsword
+203000,1,3,Broken Straight Sword
+1405000,1,4,Buckler
+703000,1,3,Butcher Knife
+1477000,1,4,Caduceus Kite Shield
+1410000,1,4,Caduceus Round Shield
+901000,1,3,Caestus
+1361000,1,0,Canvas Talisman
+1004000,1,1,Channeler's Trident
+503000,1,1,Chaos Blade
+902000,1,3,Claw
+301000,1,3,Claymore
+9014000,1,1,Cleansing Greatshield
+800000,1,3,Club
+1204000,1,3,Composite Bow
+1406000,1,4,Cracked Round Shield
+702000,1,1,Crescent Axe
+1456000,1,1,Crest Shield
+304000,1,0,Crystal Greatsword
+1411000,1,1,Crystal Ring Shield
+1471000,1,0,Crystal Shield
+205000,1,0,Crystal Straight Sword
+100000,1,3,Dagger
+904000,1,0,Dark Hand
+9011000,1,1,Dark Silver Tracer
+1205000,1,1,Darkmoon Bow
+1366000,1,0,Darkmoon Talisman
+210000,1,3,Darksword
+352000,1,3,Demon Great Machete
+1307000,1,0,Demon's Catalyst
+852000,1,3,Demon's Great Hammer
+751000,1,3,Demon's Greataxe
+1003000,1,1,Demon's Spear
+903000,1,1,Dragon Bone Fist
+1457000,1,1,Dragon Crest Shield
+354000,1,1,Dragon Greatsword
+752000,1,1,Dragon King Greataxe
+854000,1,1,Dragon Tooth
+1203000,1,1,Dragonslayer Greatbow
+1051000,1,1,Dragonslayer Spear
+211000,1,1,Drake Sword
+1500000,1,4,Eagle Shield
+1400000,1,4,East-West Shield
+9000000,1,4,Effigy Shield
+602000,1,3,Estoc
+401000,1,3,Falchion
+303000,1,3,Flamberge
+9016000,1,3,Four-pronged Plow
+705000,1,3,Gargoyle Tail Axe
+1103000,1,3,Gargoyle's Halberd
+1478000,1,4,Gargoyle's Shield
+102000,1,1,Ghost Blade
+1502000,1,4,Giant Shield
+1101000,1,1,Giant's Halberd
+9010000,1,1,Gold Tracer
+704000,1,1,Golem Axe
+9021000,1,1,Gough's Greatbow
+851000,1,1,Grant
+1453000,1,4,Grass Crest Shield
+453000,1,1,Gravelord Sword
+850000,1,3,Great Club
+314000,1,1,Great Lord Greatsword
+1150000,1,3,Great Scythe
+750000,1,3,Greataxe
+1507000,1,1,Greatshield of Artorias
+351000,1,3,Greatsword
+307000,1,1,Greatsword of Artorias
+311000,1,1,Greatsword of Artorias (Cursed)
+9019000,1,3,Guardian Tail
+1100000,1,3,Halberd
+812000,1,1,Hammer of Vamos
+700000,1,3,Hand Axe
+1505000,1,1,Havel's Greatshield
+1450000,1,4,Heater Shield
+1251000,1,4,Heavy Crossbow
+1454000,1,4,Hollow Soldier Shield
+502000,1,3,Iaito
+1461000,1,4,Iron Round Shield
+1363000,1,0,Ivory Talisman
+1308000,1,0,Izalith Catalyst
+403000,1,1,Jagged Ghost Blade
+1451000,1,4,Knight Shield
+855000,1,3,Large Club
+1402000,1,4,Large Leather Shield
+1408000,1,4,Leather Shield
+1151000,1,1,Lifehunt Scythe
+1250000,1,4,Light Crossbow
+1303000,1,0,Logan's Catalyst
+1201000,1,3,Longbow
+201000,1,3,Longsword
+1106000,1,3,Lucerne 
+801000,1,3,Mace
+600000,1,3,Mail Breaker
+302000,1,3,Man-serpent Greatsword
+9017000,1,0,Manus Catalyst
+1052000,1,1,Moonlight Butterfly Horn
+309000,1,1,Moonlight Greatsword
+802000,1,3,Morning Star
+451000,1,3,Murakumo
+1601000,1,3,Notched Whip
+9020000,1,1,Obsidian Greatsword
+9018000,1,0,Oolacile Catalyst
+1305000,1,0,Oolacile Ivory Catalyst
+405000,1,3,Painting Guardian Sword
+101000,1,3,Parrying Dagger
+1002000,1,3,Partizan
+804000,1,3,Pickaxe
+1475000,1,3,Pierce Shield
+1050000,1,3,Pike
+1409000,1,4,Plank Shield
+104000,1,1,Priscilla's Dagger
+1330000,1,5,Pyromancy Flame
+1332000,1,6,Pyromancy Flame (Ascended)
+406000,1,1,Quelaag's Furysword
+601000,1,3,Rapier
+1476000,1,4,Red and White Round Shield
+809000,1,3,Reinforced Club
+604000,1,3,Ricard's Rapier
+9001000,1,4,Sanctus
+400000,1,3,Scimitar
+1107000,1,3,Scythe
+450000,1,3,Server
+1200000,1,3,Short Bow
+200000,1,3,Shortsword
+402000,1,3,Shotel
+1473000,1,1,Silver Knight Shield
+1006000,1,1,Silver Knight Spear
+208000,1,1,Silver Knight Straight Sword
+1396000,1,0,Skull Lantern
+1403000,1,4,Small Leather Shield
+856000,1,1,Smough's Hammer
+1253000,1,4,Sniper Crossbow
+1300000,1,0,Sorcerer's Catalyst
+1000000,1,3,Spear
+1462000,1,4,Spider Shield
+1470000,1,3,Spiked Shield
+9015000,1,1,Stone Greataxe
+1503000,1,1,Stone Greatshield
+306000,1,1,Stone Greatsword
+212000,1,3,Straight Sword Hilt
+1472000,1,4,Sunlight Shield
+206000,1,3,Sunlight Straight Sword
+1365000,1,0,Sunlight Talisman
+1360000,1,0,Talisman
+1404000,1,4,Target Shield
+1362000,1,0,Thorolund Talisman
+1302000,1,0,Tin Banishment Catalyst
+1306000,1,0,Tin Crystallization Catalyst
+1304000,1,0,Tin Darkmoon Catalyst
+1102000,1,1,Titanite Catch Pole
+1452000,1,4,Tower Kite Shield
+1501000,1,4,Tower Shield
+500000,1,3,Uchigatana
+603000,1,1,Velka's Rapier
+1367000,1,0,Velka's Talisman
+803000,1,3,Warpick
+1460000,1,4,Warrior's Round Shield
+501000,1,3,Washing Pole
+1600000,1,3,Whip
+1001000,1,3,Winged Spear
+1401000,1,4,Wooden Shield
+350000,1,3,Zweihander
+</value>
+  </data>
+  <data name="KeyItems" xml:space="preserve">
+    <value>2009,1,0,Annex Key
+2020,1,0,Archive Prison Extra Key
+2004,1,0,Archive Tower Cell Key
+2006,1,0,Archive Tower Giant Cell Key
+2005,1,0,Archive Tower Giant Door Key
+2601,1,0,Armor Smithbox
+2001,1,0,Basement Key
+2502,1,0,Bequeathed Lord Soul Shard (Four Kings)
+2503,1,0,Bequeathed Lord Soul Shard (Seath)
+2011,1,0,Big Pilgrim's Key
+2007,1,0,Blighttown Key
+2608,1,0,Bottomless Box
+2520,1,0,Broken Pendant
+2003,1,0,Cage Key
+2022,1,0,Crest Key
+2002,1,0,Crest of Artorias
+2010,1,0,Dungeon Cell Key
+2014,1,0,Key to Depths
+2008,1,0,Key to New Londo Ruins
+2013,1,0,Key to the Seal
+2501,1,0,Lord Soul (Bed of Chaos)
+2500,1,0,Lord Soul (Nito)
+2510,1,0,Lordvessel
+2100,1,0,Master Key
+2017,1,0,Mystery Key
+384,1,0,Peculiar Doll
+2602,1,0,Repairbox
+2021,1,0,Residence Key
+2607,1,0,Rite of Kindling
+2018,1,0,Sewer Chamber Key
+2012,1,0,Undead Asylum F2 East Key
+2016,1,0,Undead Asylum F2 West Key
+2019,1,0,Watchtower Basement Key
+2600,1,0,Weapon Smithbox
+</value>
+  </data>
+  <data name="ItemSpawn" xml:space="preserve">
+    <value>48 81 ec a0 00 00 00    sub    rsp,0xa0
+0f 29 84 24 80 00 00    movaps XMMWORD PTR [rsp+0x80],xmm0
+00
+0f 29 8c 24 90 00 00    movaps XMMWORD PTR [rsp+0x90],xmm1
+00
+0f 29 94 24 a0 00 00    movaps XMMWORD PTR [rsp+0xa0],xmm2
+00
+0f 29 9c 24 b0 00 00    movaps XMMWORD PTR [rsp+0xb0],xmm3
+00
+0f 29 a4 24 c0 00 00    movaps XMMWORD PTR [rsp+0xc0],xmm4
+00
+0f 29 ac 24 d0 00 00    movaps XMMWORD PTR [rsp+0xd0],xmm5
+00
+50                      push   rax
+51                      push   rcx
+52                      push   rdx
+41 50                   push   r8
+41 51                   push   r9
+41 52                   push   r10
+41 53                   push   r11
+48 b8 78 87 d1 41 01    movabs rax,0x141d18778
+00 00 00
+c6 00 00                mov    BYTE PTR [rax],0x0
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+80 38 00                cmp    BYTE PTR [rax],0x0
+0f 84 80 00 00 00       je     0xe2
+ba fe fe fe fe          mov    edx,0xfefefefe
+41 b9 fe fe fe fe       mov    r9d,0xfefefefe
+41 b8 fe fe fe fe       mov    r8d,0xfefefefe
+41 bc fe fe fe fe       mov    r12d,0xfefefefe
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
+40 88 7c 24 30          mov    BYTE PTR [rsp+0x30],dil
+c6 44 24 28 01          mov    BYTE PTR [rsp+0x28],0x1
+48 8d 88 90 0f 00 00    lea    rcx,[rax+0xf90]
+c6 44 24 20 01          mov    BYTE PTR [rsp+0x20],0x1
+48 83 ec 38             sub    rsp,0x38
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 38             add    rsp,0x38
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+48 89 c1                mov    rcx,rax
+ba fe fe fe fe          mov    edx,0xfefefefe
+41 b9 fe fe fe fe       mov    r9d,0xfefefefe
+41 b8 fe fe fe fe       mov    r8d,0xfefefefe
+48 83 ec 28             sub    rsp,0x28
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 28             add    rsp,0x28
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+c6 00 00                mov    BYTE PTR [rax],0x0
+41 5b                   pop    r11
+41 5a                   pop    r10
+41 59                   pop    r9
+41 58                   pop    r8
+5a                      pop    rdx
+59                      pop    rcx
+58                      pop    rax
+0f 28 ac 24 d0 00 00    movaps xmm5,XMMWORD PTR [rsp+0xd0]
+00
+0f 28 a4 24 c0 00 00    movaps xmm4,XMMWORD PTR [rsp+0xc0]
+00
+0f 28 9c 24 b0 00 00    movaps xmm3,XMMWORD PTR [rsp+0xb0]
+00
+0f 28 94 24 a0 00 00    movaps xmm2,XMMWORD PTR [rsp+0xa0]
+00
+0f 28 8c 24 90 00 00    movaps xmm1,XMMWORD PTR [rsp+0x90]
+00
+0f 28 84 24 80 00 00    movaps xmm0,XMMWORD PTR [rsp+0x80]
+00
+48 81 c4 a0 00 00 00    add    rsp,0xa0
+e9 00 00 00 00          jmp    0x138
+
+</value>
+  </data>
+  <data name="Ammo" xml:space="preserve">
+    <value>2007000,999,0,Dragonslayer Arrow
+2002000,999,0,Feather Arrow
+2003000,999,0,Fire Arrow
+2008000,999,0,Gough's Great Arrow
+2101000,999,0,Heavy Bolt
+2001000,999,0,Large Arrow
+2104000,999,0,Lightning Bolt
+2005000,999,0,Moonlight Arrow
+2004000,999,0,Poison Arrow
+2102000,999,0,Sniper Bolt
+2000000,999,0,Standard Arrow
+2100000,999,0,Standard Bolt
+2103000,999,0,Wood Bolt
+2006000,999,0,Wooden Arrow
+</value>
+  </data>
+  <data name="Consumables" xml:space="preserve">
+    <value>294,99,0,Alluring Skull
+297,99,0,Black Firebomb
+270,99,0,Bloodred Moss Clump
+272,99,0,Blooming Purple Moss Clump
+310,99,0,Charcoal Pine Resin
+381,99,0,Copper Coin
+703,99,0,Core of an Iron Golem
+111,99,0,Cracked Red Eye Orb
+240,99,0,Divine Blessing
+293,99,0,Dung Pie
+275,99,0,Egg Vermifuge
+230,99,0,Elizabeth's Mushroom
+109,99,0,Eye of Death
+390,1,0,Fire Keeper Soul (Anastacia of Astora)
+394,1,0,Fire Keeper Soul (Blighttown)
+391,1,0,Fire Keeper Soul (Darkmoon Knightess)
+392,1,0,Fire Keeper Soul (Daughter of Chaos)
+395,1,0,Fire Keeper Soul (Duke's Archives)
+393,1,0,Fire Keeper Soul (New Londo)
+396,1,0,Fire Keeper Soul (Undead Parish)
+292,99,0,Firebomb
+383,99,0,Gold Coin
+311,99,0,Gold Pine Resin
+260,99,0,Green Blossom
+709,99,0,Guardian Soul
+330,99,0,Homeward Bone
+500,99,0,Humanity
+373,99,0,Indictment
+407,99,0,Large Soul of a Brave Warrior
+401,99,0,Large Soul of a Lost Undead
+403,99,0,Large Soul of a Nameless Soldier
+405,99,0,Large Soul of a Proud Knight
+296,99,0,Lloyd's Talisman
+376,99,0,Pendant
+291,99,0,Poison Throwing Knife
+370,99,0,Prism Stone
+274,99,0,Purging Stone
+271,99,0,Purple Moss Clump
+280,99,0,Repair Powder
+313,99,0,Rotten Pine Resin
+380,99,0,Rubbish
+382,99,0,Silver Coin
+710,99,0,Soul of Artorias
+702,99,0,Soul of Gwyn
+708,99,0,Soul of Gwyndolin
+711,99,0,Soul of Manus
+704,99,0,Soul of Ornstein
+707,99,0,Soul of Priscilla
+700,99,0,Soul of Quelaag
+701,99,0,Soul of Sif
+706,99,0,Soul of Smough
+406,99,0,Soul of a Brave Warrior
+409,99,0,Soul of a Great Hero
+408,99,0,Soul of a Hero
+400,99,0,Soul of a Lost Undead
+402,99,0,Soul of a Nameless Soldier
+404,99,0,Soul of a Proud Knight
+705,99,0,Soul of the Moonlight Butterfly
+374,99,0,Souvenir of Reprisal
+375,99,0,Sunlight Medal
+290,99,0,Throwing Knife
+312,99,0,Transient Curse
+501,99,0,Twin Humanities
+</value>
+  </data>
+  <data name="Spells" xml:space="preserve">
+    <value>5050,99,0,Miracle: Bountiful Sunlight
+5910,99,0,Miracle: Darkmoon Blade
+5320,99,0,Miracle: Emit Force
+5300,99,0,Miracle: Force
+5110,99,0,Miracle: Gravelord Greatsword Dance
+5100,99,0,Miracle: Gravelord Sword Dance
+5010,99,0,Miracle: Great Heal
+5020,99,0,Miracle: Great Heal Excerpt
+5510,99,0,Miracle: Great Lightning Spear
+5610,99,0,Miracle: Great Magic Barrier
+5000,99,0,Miracle: Heal
+5210,99,0,Miracle: Homeward
+5700,99,0,Miracle: Karmic Justice
+5500,99,0,Miracle: Lightning Spear
+5600,99,0,Miracle: Magic Barrier
+5040,99,0,Miracle: Replenishment
+5400,99,0,Miracle: Seek Guidance
+5030,99,0,Miracle: Soothing Sunlight
+5900,99,0,Miracle: Sunlight Blade
+5520,99,0,Miracle: Sunlight Spear
+5800,99,0,Miracle: Tranquil Walk of Peace
+5810,99,0,Miracle: Vow of Silence
+5310,99,0,Miracle: Wrath of the Gods
+4220,99,0,Pyromancy: Acid Surge
+4530,99,0,Pyromancy: Black Flame
+4520,99,0,Pyromancy: Chaos Fire Whip
+4510,99,0,Pyromancy: Chaos Storm
+4100,99,0,Pyromancy: Combustion
+4010,99,0,Pyromancy: Fire Orb
+4050,99,0,Pyromancy: Fire Surge
+4040,99,0,Pyromancy: Fire Tempest
+4060,99,0,Pyromancy: Fire Whip
+4000,99,0,Pyromancy: Fireball
+4030,99,0,Pyromancy: Firestorm
+4310,99,0,Pyromancy: Flash Sweat
+4500,99,0,Pyromancy: Great Chaos Fireball
+4110,99,0,Pyromancy: Great Combustion
+4020,99,0,Pyromancy: Great Fireball
+4300,99,0,Pyromancy: Iron Flesh
+4200,99,0,Pyromancy: Poison Mist
+4400,99,0,Pyromancy: Power Within
+4210,99,0,Pyromancy: Toxic Mist
+4360,99,0,Pyromancy: Undead Rapport
+3520,99,0,Sorcery: Aural Decoy
+3500,99,0,Sorcery: Cast Light
+3550,99,0,Sorcery: Chameleon
+3120,99,0,Sorcery: Crystal Magic Weapon
+3070,99,0,Sorcery: Crystal Soul Spear
+3720,99,0,Sorcery: Dark Bead
+3730,99,0,Sorcery: Dark Fog
+3710,99,0,Sorcery: Dark Orb
+3540,99,0,Sorcery: Fall Control
+3030,99,0,Sorcery: Great Heavy Soul Arrow
+3110,99,0,Sorcery: Great Magic Weapon
+3010,99,0,Sorcery: Great Soul Arrow
+3020,99,0,Sorcery: Heavy Soul Arrow
+3410,99,0,Sorcery: Hidden Body
+3400,99,0,Sorcery: Hidden Weapon
+3050,99,0,Sorcery: Homing Crystal Soulmass
+3040,99,0,Sorcery: Homing Soulmass
+3510,99,0,Sorcery: Hush
+3300,99,0,Sorcery: Magic Shield
+3100,99,0,Sorcery: Magic Weapon
+3740,99,0,Sorcery: Pursuers
+3610,99,0,Sorcery: Remedy
+3530,99,0,Sorcery: Repair
+3600,99,0,Sorcery: Resist Curse
+3000,99,0,Sorcery: Soul Arrow
+3060,99,0,Sorcery: Soul Spear
+3310,99,0,Sorcery: Strong Magic Shield
+3700,99,0,Sorcery: White Dragon Breath
+</value>
+  </data>
+  <data name="Rings" xml:space="preserve">
+    <value>115,1,0,Bellowing Dragoncrest Ring
+109,1,0,Bloodbite Ring
+147,1,0,Blue Tearstone Ring
+150,1,0,Calamity Ring
+103,1,0,Cat Covenant Ring
+104,1,0,Cloranthy Ring
+138,1,0,Covenant of Artorias
+121,1,0,Covetous Gold Serpent Ring
+122,1,0,Covetous Silver Serpent Ring
+113,1,0,Cursebite Ring
+128,1,0,Dark Wood Grain Ring
+102,1,0,Darkmoon Blade Covenant Ring
+149,1,0,Darkmoon Seance Ring
+116,1,0,Dusk Crown Ring
+145,1,0,East Wood Grain Ring
+105,1,0,Flame Stoneplate Ring
+100,1,0,Havel's Ring
+119,1,0,Hawk Ring
+117,1,0,Hornet Ring
+144,1,0,Leo Ring
+141,1,0,Lingering Dragoncrest Ring
+137,1,0,Old Witch's Ring
+139,1,0,Orange Charred Ring
+110,1,0,Poisonbite Ring
+127,1,0,Rare Ring of Sacrifice
+101,1,0,Red Tearstone Ring
+143,1,0,Ring of Favor and Protection
+124,1,0,Ring of Fog
+126,1,0,Ring of Sacrifice
+120,1,0,Ring of Steel Protection
+142,1,0,Ring of the Evil Eye
+130,1,0,Ring of the Sun Princess
+148,1,0,Ring of the Sun's Firstborn
+125,1,0,Rusted Iron Ring
+123,1,0,Slumbering Dragoncrest Ring
+108,1,0,Speckled Stoneplate Ring
+107,1,0,Spell Stoneplate Ring
+106,1,0,Thunder Stoneplate Ring
+111,1,0,Tiny Being's Ring
+114,1,0,White Seance Ring
+146,1,0,Wolf Ring
+</value>
+  </data>
+  <data name="InfiniteUseItems" xml:space="preserve">
+    <value>371,1,0,Binoculars
+115,1,0,Black Eye Orb
+103,1,0,Black Separation Crystal
+113,1,0,Blue Eye Orb
+108,1,0,Book of the Guilty
+117,1,0,Darksign
+114,1,0,Dragon Eye
+377,1,0,Dragon Head Stone
+378,1,0,Dragon Torso Stone
+385,1,0,Dried Finger
+510,1,0,Hello Carving
+514,1,0,Help me! Carving
+513,1,0,I'm sorry Carving
+106,1,0,Orange Guidance Soapstone
+118,1,0,Purple Coward's Crystal
+102,1,0,Red Eye Orb
+101,1,0,Red Sign Soapstone
+112,1,0,Servant Roster
+220,1,0,Silver Pendant
+511,1,0,Thank you Carving
+512,1,0,Very good! Carving
+100,1,0,White Sign Soapstone
+</value>
+  </data>
+  <data name="UpgradeMaterials" xml:space="preserve">
+    <value>800,1,0,Large Ember
+801,1,0,Very Large Ember
+802,1,0,Crystal Ember
+806,1,0,Large Magic Ember
+807,1,0,Enchanted Ember
+808,1,0,Divine Ember
+809,1,0,Large Divine Ember
+810,1,0,Dark Ember
+812,1,0,Large Flame Ember
+813,1,0,Chaos Flame Ember
+1000,99,0,Titanite Shard
+1010,99,0,Large Titanite Shard
+1030,99,0,Titanite Chunk
+1070,99,0,Titanite Slab
+1020,99,0,Green Titanite Shard
+1040,99,0,Blue Titanite Chunk
+1080,99,0,Blue Titanite Slab
+1050,99,0,White Titanite Chunk
+1090,99,0,White Titanite Slab
+1060,99,0,Red Titanite Chunk
+1100,99,0,Red Titanite Slab
+1110,99,0,Dragon Scale
+1120,99,0,Demon Titanite
+1130,99,0,Twinkling Titanite</value>
+  </data>
+  <data name="LevelUp" xml:space="preserve">
+    <value>48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+48 89 c2                mov    rdx,rax
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+48 83 ec 28             sub    rsp,0x28
+48 89 c1                mov    rcx,rax
+48 b8 90 58 69 40 01    movabs rax,0x140695890
+00 00 00
+ff d0                   call   rax
+48 83 c4 28             add    rsp,0x28
+c3                      ret</value>
+  </data>
+  <data name="Warp" xml:space="preserve">
+    <value>48 b8 30 85 d1 41 01    movabs rax,0x141d18530
+00 00 00
+48 8b 08                mov    rcx,QWORD PTR [rax]
+ba 01 00 00 00          mov    edx,0x1
+48 83 ec 38             sub    rsp,0x38
+48 b8 e0 5c 48 40 01    movabs rax,0x140485ce0
+00 00 00
+ff d0                   call   rax
+48 83 c4 38             add    rsp,0x38
+c3                      ret</value>
+  </data>
+  <data name="WarpLocations" xml:space="preserve">
+    <value>1512960,0,Anor Londo (1st Bonfire)
+1512961,440.43|132.00|226.83,Anor Londo (Archers)
+1512962,0,Anor Londo (Gwyndolin)
+1512961,0,Anor Londo (Interior)
+1512961,532.78|142.60|255.11,Anor Londo (O&amp;S)
+1512960,263.48|129.20|301.31,Anor Londo (Rafters)
+1322960,0,Ash Lake (Covenant)
+1322961,0,Ash Lake (Entrance)
+1602951,-67.30|-138.94|19.06,Blighttown (Back Entrance)
+1402962,0,Blighttown (Bridge)
+1402963,0,Blighttown (Entrance)
+1402961,0,Blighttown (Swamp)
+1602961,0,Darkroot Basin
+1202961,183.24|5.77|26.80,Darkroot Garden (Butterfly)
+1202961,155.49|-33.02|-154.67,Darkroot Garden (Hydra)
+1202961,292.83|-18.16|-224.44,Darkroot Garden (Sif)
+1202961,0,Darkroot Garden Bonfire
+1412961,0,Demon Ruins (Ceaseless)
+1412963,0,Demon Ruins (Centipede)
+1412962,0,Demon Ruins (Firesage)
+1002960,0,Depths Bonfire
+1000999,0,Depths Entrance
+1022960,0,Firelink Shrine
+1322962,0,Great Hollow
+1802130,422.41|-115.76|166.85,Gwyn
+1412960,451.95|-362.22|335.60,Lost Izalith (BoC)
+1412960,0,Lost Izalith (Dinos)
+1412960,303.12|-360.18|212.17,Lost Izalith (Titanite Demon)
+1412964,0,Lost Izalith Bonfire 1
+1602951,0,New Londo Ruins (Entrance)
+1602960,0,New Londo Ruins (Ingward)
+1602960,87.84|-148.00|-28.27,New Londo Ruins (4 Kings)
+1812960,0,Northern Undead Asylum Bonfire 1
+1812961,0,Northern Undead Asylum Bonfire 2
+1812900,0,Northern Undead Asylum (Start)
+1812900,3.41|207.60|-75.17,Northern Undead Asylum (Stray Demon)
+1212961,0,Oolacile Sanctuary
+1212961,1016.20|-329.24|807.15,Oolacile Sanctuary (Artorias)
+1212961,872.31|-344.21|747.75,Oolacile Sanctuary (Kalameet)
+1212962,0,Oolacile Township
+1212964,0,Oolacile Township Dungeon
+1212964,868.71|-534.91|886.52,Oolacile Township Dungeon (Manus)
+1102960,-22.95|58.37|721.05,Painted World (Pricilla)
+1102960,0,Painted World Bonfire
+1402960,0,Quelaag's Domain (Covenant)
+1402960,9.15|-236.50|112.37,Quelaag's Domain (Quelagg)
+1212963,0,Sanctuary Garden
+1702960,187.66|146.40|779.41,Seath
+1502961,0,Sen's Fortress (Bonfire)
+1502961,79.85|82.25|255.26,Sen's Fortress (Iron Golem)
+1302961,0,The Catacombs (Patches)
+1302962,0,The Catacombs (Vamos)
+1302960,0,The Catacombs Bonfire 
+1702960,0,The Duke's Archives (Balcony)
+1702962,0,The Duke's Archives (Boar)
+1702961,0,The Duke's Archives (Cell)
+1702962,296.20|288.62|551.65,The Duke's Archives (Duke Skip)
+1312960,0,Tomb of the Giants Bonfire 1
+1312961,0,Tomb of the Giants Bonfire 2
+1312961,-110.78|-249.03|-33.88,Tomb of the Giants (Nito)
+1302950,0,Tomb of the Giants Entrance
+1012961,0,Undead Burg (Below Hellkite)
+1012960,0,Undead Burg (Dragon Event)
+1012962,0,Undead Burg Bonfire
+1012964,0,Undead Parish (Andre)
+1012965,0,Undead Parish (Boar)
+1012966,0,Undead Parish (Lautrec)</value>
+  </data>
+  <data name="NoClip_InAirTimer" xml:space="preserve">
+    <value>f3 0f 58 9b b0 01 00    addss  xmm3,DWORD PTR [rbx+0x1b0]
+00
+50                      push   rax
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+48 39 d8                cmp    rax,rbx
+0f 85 00 00 00 00       jne    1c &lt;_main+0x1c&gt;
+0f 57 db                xorps  xmm3,xmm3
+58                      pop    rax
+e9 00 00 00 00          jmp    25 &lt;_main+0x25&gt;</value>
+  </data>
+  <data name="NoClip_UpdateCoords" xml:space="preserve">
+    <value>50                      push   rax
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+48 39 c8                cmp    rax,rcx
+0f 85 00 00 00 00       jne    0x14 
+52                      push   rdx
+66 0f 6f b1 20 01 00    movdqa xmm6,XMMWORD PTR [rcx+0x120]
+00
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+8b 90 04 03 00 00       mov    edx,DWORD PTR [rax+0x304]
+c1 e2 02                shl    edx,0x2
+f3 44 0f 10 bc 10 64    movss  xmm15,DWORD PTR [rax+rdx*1+0x264]
+02 00 00
+45 0f c6 ff 00          shufps xmm15,xmm15,0x0
+b8 cd cc 4c 3e          mov    eax,0x3e4ccccd
+66 44 0f 6e f0          movd   xmm14,eax
+45 0f c6 f6 00          shufps xmm14,xmm14,0x0
+45 0f 59 fe             mulps  xmm15,xmm14
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+44 0f 59 b8 f0 02 00    mulps  xmm15,XMMWORD PTR [rax+0x2f0]
+00
+41 0f 58 f7             addps  xmm6,xmm15
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+8b 90 04 03 00 00       mov    edx,DWORD PTR [rax+0x304]
+c1 e2 02                shl    edx,0x2
+f3 44 0f 10 bc 10 b4    movss  xmm15,DWORD PTR [rax+rdx*1+0x2b4]
+02 00 00
+45 0f c6 ff 00          shufps xmm15,xmm15,0x0
+b8 9a 99 19 3e          mov    eax,0x3e19999a
+66 44 0f 6e f0          movd   xmm14,eax
+45 0f c6 f6 00          shufps xmm14,xmm14,0x0
+45 0f 59 fe             mulps  xmm15,xmm14
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+44 0f 59 b8 d0 02 00    mulps  xmm15,XMMWORD PTR [rax+0x2d0]
+00
+41 0f 58 f7             addps  xmm6,xmm15
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+8b 10                   mov    edx,DWORD PTR [rax]
+83 fa 01                cmp    edx,0x1
+0f 85 00 00 00 00       jne    0xc8
+ba cd cc 4c 3e          mov    edx,0x3e4ccccd
+e9 00 00 00 00          jmp    0xd2
+83 fa 02                cmp    edx,0x2
+0f 85 00 00 00 00       jne    0xdb
+ba cd cc 4c be          mov    edx,0xbe4ccccd
+66 44 0f 6e fa          movd   xmm15,edx
+45 0f c6 ff e1          shufps xmm15,xmm15,0xe1
+41 0f 58 f7             addps  xmm6,xmm15
+c7 00 00 00 00 00       mov    DWORD PTR [rax],0x0
+66 0f 7f b1 20 01 00    movdqa XMMWORD PTR [rcx+0x120],xmm6
+00
+5a                      pop    rdx
+58                      pop    rax
+45 0f 57 f6             xorps  xmm14,xmm14
+45 0f 57 ff             xorps  xmm15,xmm15
+e9 00 00 00 00          jmp    0x10b
+58                      pop    rax
+e9 00 00 00 00          jmp    0x111</value>
+  </data>
+  <data name="NoClip_ZDirection_KB" xml:space="preserve">
+    <value>48 83 ff 20             cmp    rdi,0x20
+0f 84 00 00 00 00       je     a &lt;_main+0xa&gt;
+48 81 ff a2 00 00 00    cmp    rdi,0xa2
+0f 84 00 00 00 00       je     17 &lt;_main+0x17&gt;
+c6 43 f0 01             mov    BYTE PTR [rbx-0x10],0x1
+c6 00 01                mov    BYTE PTR [rax],0x1
+e9 00 00 00 00          jmp    23 &lt;_main+0x23&gt;
+50                      push   rax
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+c6 00 01                mov    BYTE PTR [rax],0x1
+c6 43 f0 00             mov    BYTE PTR [rbx-0x10],0x0
+58                      pop    rax
+c6 00 00                mov    BYTE PTR [rax],0x0
+e9 00 00 00 00          jmp    3e &lt;_main+0x3e&gt;
+50                      push   rax
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+c6 00 02                mov    BYTE PTR [rax],0x2
+c6 43 f0 00             mov    BYTE PTR [rbx-0x10],0x0
+58                      pop    rax
+c6 00 00                mov    BYTE PTR [rax],0x0
+e9 00 00 00 00          jmp    59 &lt;_main+0x59&gt;</value>
+  </data>
+  <data name="NoClip_ZDirection_R2" xml:space="preserve">
+    <value>0f b6 44 24 27          movzx  eax,BYTE PTR [rsp+0x27]
+3c 1e                   cmp    al,0x1e
+0f 86 00 00 00 00       jbe     d &lt;_main+0xd&gt;
+51                      push   rcx
+48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+c6 01 01                mov    BYTE PTR [rcx],0x1
+30 c0                   xor    al,al
+59                      pop    rcx
+e9 00 00 00 00          jmp    23 &lt;_main+0x23&gt;</value>
+  </data>
+  <data name="NoClip_ZDirection_L2" xml:space="preserve">
+    <value>0f b6 44 24 26          movzx  eax,BYTE PTR [rsp+0x26]
+3c 1e                   cmp    al,0x1e
+0f 86 00 00 00 00       jbe     d &lt;_main+0xd&gt;
+51                      push   rcx
+48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+c6 01 02                mov    BYTE PTR [rcx],0x2
+30 c0                   xor    al,al
+59                      pop    rcx
+e9 00 00 00 00          jmp    23 &lt;_main+0x23&gt;</value>
+  </data>
+  <data name="AllNoDamage" xml:space="preserve">
+    <value>50                      push   rax
+8b 81 ec 03 00 00       mov    eax,DWORD PTR [rcx+0x3ec]
+89 81 e8 03 00 00       mov    DWORD PTR [rcx+0x3e8],eax
+58                      pop    rax
+f6 81 54 01 00 00 40    test   BYTE PTR [rcx+0x154],0x40
+e9 00 00 00 00          jmp    1a &lt;_main+0x1a&gt;</value>
+  </data>
+  <data name="RestoreSpellCasts" xml:space="preserve">
+    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+48 83 ec 28             sub    rsp,0x28
+48 b8 70 04 75 40 01    movabs rax,0x140750470
+00 00 00
+ff d0                   call   rax
+48 83 c4 28             add    rsp,0x28
+c3                      ret</value>
+  </data>
+  <data name="WarpCoords" xml:space="preserve">
+    <value>51                      push   rcx
+48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+44 0f 10 39             movups xmm15,XMMWORD PTR [rcx]
+44 0f 11 b8 80 0a 00    movups XMMWORD PTR [rax+0xa80],xmm15
+00
+45 0f 57 ff             xorps  xmm15,xmm15
+59                      pop    rcx
+e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
+  </data>
+</root>

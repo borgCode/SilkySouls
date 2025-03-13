@@ -1,0 +1,151 @@
+﻿<UserControl x:Class="DSRForge.Views.UtilityTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:DSRForge.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="500">
+    <UserControl.Resources>
+        <converters:BooleanAndConverter x:Key="BooleanAndConverter" />
+    </UserControl.Resources>
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3"
+                Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <CheckBox Content="Enable Draw" 
+                              IsChecked="{Binding IsDrawEnabled}"
+                              Grid.Column="0"/>
+                    
+                    <Border x:Name="InfoBorder"
+                            Background="#3498db" 
+                            CornerRadius="10" 
+                            Width="12" 
+                            Height="12" 
+                            Margin="10,0,0,0" 
+                            Cursor="Hand"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Grid.Column="1"
+                            MouseLeftButtonDown="InfoBorder_MouseLeftButtonDown">
+                        <TextBlock Text="i" 
+                                   Foreground="White" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center" 
+                                   FontWeight="Bold" 
+                                   FontSize="10"/>
+                    </Border>
+                </Grid>
+                
+                <UniformGrid Columns="2" Margin="20,5,0,0">
+                    <CheckBox Content="Hitbox View" Margin="0,2">
+                        <CheckBox.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                <Binding Path="AreOptionsEnabled" />
+                                <Binding Path="IsDrawEnabled" />
+                            </MultiBinding>
+                        </CheckBox.IsEnabled>
+                        <CheckBox.IsChecked>
+                            <Binding Path="IsHitboxEnabled" />
+                        </CheckBox.IsChecked>
+                    </CheckBox>
+                    
+                    <CheckBox Content="Player Sound View" Margin="0,2">
+                        <CheckBox.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                <Binding Path="AreOptionsEnabled" />
+                                <Binding Path="IsDrawEnabled" />
+                            </MultiBinding>
+                        </CheckBox.IsEnabled>
+                        <CheckBox.IsChecked>
+                            <Binding Path="IsSoundViewEnabled" />
+                        </CheckBox.IsChecked>
+                    </CheckBox>
+                    
+                    <CheckBox Content="Draw Events" Margin="0,2">
+                        <CheckBox.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                <Binding Path="AreOptionsEnabled" />
+                                <Binding Path="IsDrawEnabled" />
+                            </MultiBinding>
+                        </CheckBox.IsEnabled>
+                        <CheckBox.IsChecked>
+                            <Binding Path="IsDrawEventEnabled" />
+                        </CheckBox.IsChecked>
+                    </CheckBox>
+                    
+                    <CheckBox Content="Targeting View (Kinda useless)" Margin="0,2">
+                        <CheckBox.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                <Binding Path="AreOptionsEnabled" />
+                                <Binding Path="IsDrawEnabled" />
+                            </MultiBinding>
+                        </CheckBox.IsEnabled>
+                        <CheckBox.IsChecked>
+                            <Binding Path="IsTargetingViewEnabled" />
+                        </CheckBox.IsChecked>
+                    </CheckBox>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="1" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3"
+                Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                
+                <UniformGrid Columns="2">
+                    <CheckBox Content="No Clip"
+                              IsChecked="{Binding IsNoClipEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}"
+                              Margin="0,2"/>
+                              
+                    <CheckBox Content="Visible Tomb of the Giants"
+                              IsChecked="{Binding IsFilterRemoveEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}"
+                              Margin="0,2"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="2" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3">
+            <StackPanel Margin="10">
+                <TextBlock Text="Warp Locations" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,10"/>
+                
+                <ComboBox ItemsSource="{Binding WarpLocations}"
+                          DisplayMemberPath="Value"
+                          SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
+                          IsEnabled="{Binding AreOptionsEnabled}"
+                          Margin="0,0,0,5"/>
+                          
+                <Button Content="Warp" 
+                        Click="Warp_Click"
+                        IsEnabled="{Binding AreOptionsEnabled}"
+                        Height="25"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,390 @@
+﻿<UserControl x:Class="DSRForge.Views.PlayerTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:wpfTool="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:converters="clr-namespace:DSRForge.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="500">
+
+    <UserControl.Resources>
+        <converters:BooleanAndConverter x:Key="BooleanAndConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Text="Health:" Grid.Column="0" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="5,0,0,0">
+                    <wpfTool:IntegerUpDown x:Name="HealthUpDown"
+                                         Value="{Binding CurrentHp}"
+                                         TextAlignment="Center"
+                                         Width="100"
+                                         PreviewKeyDown="HealthUpDown_PreviewKeyDown"
+                                         GotFocus="HealthUpDown_GotFocus"
+                                         LostFocus="HealthUpDown_LostFocus"
+                                         IsEnabled="{Binding AreOptionsEnabled}"
+                                         BorderBrush="#3F3F46"/>
+                    <TextBlock Text="{Binding CurrentMaxHp, StringFormat=Max: {0}}" 
+                               VerticalAlignment="Center" 
+                               Margin="10,0,0,0"/>
+                    <Button Click="SetRtsrClick"
+                            Content="1 HP"
+                            IsEnabled="{Binding AreOptionsEnabled}"
+                            Margin="10,0,0,0"
+                            Width="60"/>
+                </StackPanel>
+            </Grid>
+            
+            <Border Grid.Row="1" Margin="0,10,0,10" BorderThickness="1" BorderBrush="#333" CornerRadius="3">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="1" Rows="2" Columns="2">
+                        <Button Content="Save Pos 1"
+                                Click="SavePos1_Click"
+                                Margin="0,0,5,5"
+                                IsEnabled="{Binding AreOptionsEnabled}"/>
+                        
+                        <Button Content="Restore Pos 1"
+                                Click="RestorePos1_Click"
+                                Margin="5,0,0,5">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="IsPos1Saved"/>
+                                    <Binding Path="AreOptionsEnabled"/>
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                        
+                        <Button Content="Save Pos 2"
+                                Click="SavePos2_Click"
+                                Margin="0,5,5,0"
+                                IsEnabled="{Binding AreOptionsEnabled}"/>
+                        
+                        <Button Content="Restore Pos 2"
+                                Click="RestorePos2_Click"
+                                Margin="5,5,0,0">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="IsPos2Saved"/>
+                                    <Binding Path="AreOptionsEnabled"/>
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                    </UniformGrid>
+                </Grid>
+            </Border>
+            
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <CheckBox Content="No Death" 
+                              IsChecked="{Binding IsNoDeathEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="No Damage" 
+                              IsChecked="{Binding IsNoDamageEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="Infinite Stamina" 
+                              IsChecked="{Binding IsInfiniteStaminaEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="No Goods Consume" 
+                              IsChecked="{Binding IsNoGoodsConsumeEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="Infinite Casts" 
+                              IsChecked="{Binding IsInfiniteCastsEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <CheckBox Content="One Shot" 
+                              IsChecked="{Binding IsOneShotEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="Invisible" 
+                              IsChecked="{Binding IsInvisibleEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="Silent" 
+                              IsChecked="{Binding IsSilentEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <CheckBox Content="No Ammo Consume" 
+                              IsChecked="{Binding IsNoAmmoConsumeEnabled}"
+                              IsEnabled="{Binding AreOptionsEnabled}" 
+                              Margin="0,2"/>
+                    <Button Content="Restore spell casts" 
+                            Click="Restore_Spell_Click"
+                            IsEnabled="{Binding AreOptionsEnabled}" 
+                            Margin="0,2"/>
+                </StackPanel>
+            </Grid>
+            
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="VitalityUpDown"
+                                             Value="{Binding Vitality}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Vitality" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="AttunementUpDown"
+                                             Value="{Binding Attunement}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Attunement" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="EnduranceUpDown"
+                                             Value="{Binding Endurance}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Endurance" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="StrengthUpDown"
+                                             Value="{Binding Strength}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Strength" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="DexterityUpDown"
+                                             Value="{Binding Dexterity}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Dexterity" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="ResistanceUpDown"
+                                             Value="{Binding Resistance}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Resistance" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="IntelligenceUpDown"
+                                             Value="{Binding Intelligence}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Intelligence" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="FaithUpDown"
+                                             Value="{Binding Faith}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Faith" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="HumanityUpDown"
+                                             Value="{Binding Humanity}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="1"
+                                             Maximum="99"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Humanity" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="SoulsUpDown"
+                                               Value="{Binding Souls}"
+                                               TextAlignment="Center"
+                                               Width="120"
+                                               Minimum="0"
+                                               Maximum="999999999"
+                                               Grid.Column="0"
+                                               PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                               LostFocus="AttributeUpDown_LostFocus"
+                                               IsEnabled="{Binding AreOptionsEnabled}"
+                                               BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Souls" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+            
+            <Border Grid.Row="3" VerticalAlignment="Bottom" Margin="0,140,0,0">
+                <StackPanel>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:DoubleUpDown x:Name="SpeedUpDown"
+                                              Value="{Binding PlayerSpeed}"
+                                              TextAlignment="Center"
+                                              Width="80"
+                                              Minimum="0"
+                                              Maximum="10"
+                                              Increment="0.50"
+                                              FormatString="F2"
+                                              Grid.Column="0"
+                                              PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
+                                              LostFocus="SpeedUpDown_LostFocus"
+                                              IsEnabled="{Binding AreOptionsEnabled}"
+                                              BorderBrush="#3F3F46"/>
+                        <TextBlock Text="Player Speed" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <wpfTool:IntegerUpDown x:Name="NewGameUpDown"
+                                             Value="{Binding NewGame}"
+                                             TextAlignment="Center"
+                                             Width="80"
+                                             Minimum="0"
+                                             Maximum="7"
+                                             Grid.Column="0"
+                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                             LostFocus="AttributeUpDown_LostFocus"
+                                             IsEnabled="{Binding AreOptionsEnabled}"
+                                             BorderBrush="#3F3F46"/>
+                        <TextBlock Text="New Game" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
