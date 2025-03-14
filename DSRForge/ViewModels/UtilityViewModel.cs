@@ -226,6 +226,7 @@ namespace DSRForge.ViewModels
         {
             IsNoClipEnabled = false;
             _areAttachedOptionsRestored = false;
+            _utilityService.ResetHook();
         }
         
         public void TryRestoreAttachedFeatures()

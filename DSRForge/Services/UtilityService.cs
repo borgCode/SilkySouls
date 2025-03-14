@@ -134,7 +134,12 @@ namespace DSRForge.Services
             IntPtr valueAddr = _targetView + 3;
             _memoryIo.WriteBytes(valueAddr, new byte[] { 0x00 });
         }
-        
+
+        public void ResetHook()
+        {
+            _targetViewIsInstalled = false;
+        }
+
         public void EnableNoClip()
         {
             var zDirectionAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable;

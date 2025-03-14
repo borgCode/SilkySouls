@@ -59,9 +59,10 @@ namespace DSRForge.Services
             _hookManager.InstallHook(_lastTargetBlock.ToInt64(), LockedTargetOrigin, _lockedTargetOriginBytes);
         }
 
-        internal void ResetHook()
+        internal void ResetHooks()
         {
             _isHookInstalled = false;
+            _isRepeatActionInstalled = false;
         }
         
         private bool IsTargetOriginInitialized()

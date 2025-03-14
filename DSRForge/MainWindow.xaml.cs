@@ -95,7 +95,7 @@ namespace DSRForge
             else
             {
                 _hookManager.ClearHooks();
-                _enemyService.ResetHook();
+                _enemyService.ResetHooks();
                 DisableButtons();
                 _utilityViewModel.ResetAttached();
                 _loaded = false;
