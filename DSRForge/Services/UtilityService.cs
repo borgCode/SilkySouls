@@ -233,7 +233,7 @@ namespace DSRForge.Services
                     (int)Offsets.PlayerInsOffsets.PadMan
                 }, true);
 
-            var camPtr = _memoryIo.FollowPointers(new[] { Offsets.ResistGaugeMenuMan, Offsets.CamBase }, false);
+            var camPtr = _memoryIo.FollowPointers(new[] { Offsets.ChrCamBase, Offsets.ChrCamPtr1, Offsets.ChrCamPtr2 }, true);
 
             byte[] updateCoordsCodeBytes = AsmLoader.GetAsmBytes("NoClip_UpdateCoords");
 
@@ -287,9 +287,8 @@ namespace DSRForge.Services
             }
 
             _noClipHooks.Clear();
-
-
-            _memoryIo.WriteBytes(_codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable, new byte[620]);
+            
+            _memoryIo.WriteBytes(_codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable, new byte[641]);
         }
 
 

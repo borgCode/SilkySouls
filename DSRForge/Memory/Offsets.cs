@@ -54,8 +54,9 @@
         public const int InfiniteCasts = 0x1D151CE;
         public const int NoAmmoConsume = 0x1D151CD;
 
-        public const int ResistGaugeMenuMan = 0x1D26608;
-        public const int CamBase = 0x1D0;
+        public const int ChrCamBase = 0x01D177E8;
+        public const int ChrCamPtr1 = 0x60;
+        public const int ChrCamPtr2 = 0x60;
 
         public const int FileMan = 0x1D1E4F8;
         public const int LoadingScreenFlag = 0x168;
