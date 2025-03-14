@@ -220,10 +220,13 @@ namespace DSRForge.ViewModels
                         case UpgradeType.None:
                             CanUpgrade = false;
                             CanInfuse = false;
+                            SelectedUpgrade = 0;
+                            SelectedInfusionType = "Normal";
                             break;
                         case UpgradeType.Special:
                             CanUpgrade = true;
                             CanInfuse = false;
+                            SelectedInfusionType = "Normal";
                             MaxUpgradeLevel = 5;
                             break;
                         case UpgradeType.Infusable:
@@ -258,11 +261,13 @@ namespace DSRForge.ViewModels
                         case UpgradeType.PyromancyFlame:
                             CanUpgrade = true;
                             CanInfuse = false;
+                            SelectedInfusionType = "Normal";
                             MaxUpgradeLevel = 15;
                             break;
                         case UpgradeType.PyromancyAscended:
                             CanUpgrade = true;
                             CanInfuse = false;
+                            SelectedInfusionType = "Normal";
                             MaxUpgradeLevel = 5;
                             break;
                     }
@@ -326,6 +331,7 @@ namespace DSRForge.ViewModels
         public void DisableButtons()
         {
             AreOptionsEnabled = false;
+            _itemService.UninstallHook();
         }
 
         public void TryEnableActiveOptions()

@@ -11,7 +11,6 @@ namespace DSRForge.Services
         private readonly HookManager _hookManager;
         private readonly IntPtr _itemSpawnBlock;
         private readonly IntPtr _flagLoc;
-        private readonly IntPtr _codeCaveBase;
         private bool _hasSetupCave;
         private bool _isHookInstalled;
 
@@ -21,10 +20,10 @@ namespace DSRForge.Services
             _memoryIo = memoryIo;
             _hookManager = hookManager;
 
-            _codeCaveBase = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave3.Base;
-            _flagLoc = _codeCaveBase;
+            var codeCaveBase = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave3.Base;
+            _flagLoc = codeCaveBase;
 
-            _itemSpawnBlock = _codeCaveBase + CodeCaveOffsets.CodeCave3.ItemSpawn;
+            _itemSpawnBlock = codeCaveBase + CodeCaveOffsets.CodeCave3.ItemSpawn;
         }
 
         public void ItemSpawn(int itemId, int category, int quantity)
@@ -89,6 +88,13 @@ namespace DSRForge.Services
             _memoryIo.WriteInt32(_itemSpawnBlock + 192, category);
             _memoryIo.WriteInt32(_itemSpawnBlock + 198, quantity);
             _memoryIo.WriteInt32(_itemSpawnBlock + 204, itemId);
+        }
+
+        public void UninstallHook()
+        {
+            _hookManager.UninstallHook(_itemSpawnBlock.ToInt64());
+            _isHookInstalled = false;
+            _hasSetupCave = false;
         }
     }
 }
