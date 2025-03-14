@@ -31,6 +31,8 @@ namespace DSRForge.Utilities
             _keyboardHook.Down += KeyboardHook_Down;
             
             _keyboardHook.Start();
+            
+            LoadHotkeys();
         }
 
         public void RegisterAction(string actionId, Action action)
@@ -67,16 +69,70 @@ namespace DSRForge.Utilities
         public void SetHotkey(string actionId, Keys keys)
         {
             _hotkeyMappings[actionId] = keys;
+            SaveHotkeys();
         }
         
         public void ClearHotkey(string actionId)
         {
             _hotkeyMappings.Remove(actionId);
+            SaveHotkeys();
         }
         
         public Keys GetHotkey(string actionId)
         {
             return _hotkeyMappings.TryGetValue(actionId, out var keys) ? keys : null;
+        }
+        
+        
+        public void SaveHotkeys()
+        {
+            try
+            {
+                Properties.Settings.Default.HotkeyActionIds = "";
+                Properties.Settings.Default.HotkeyValues = "";
+                
+                if (_hotkeyMappings.Count > 0)
+                {
+                    Properties.Settings.Default.HotkeyActionIds = string.Join(";", _hotkeyMappings.Keys);
+                    
+                    var hotkeyStrings = _hotkeyMappings.Values.Select(k => k.ToString());
+                    Properties.Settings.Default.HotkeyValues = string.Join(";", hotkeyStrings);
+                }
+                
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving hotkeys: {ex.Message}");
+            }
+        }
+        
+        public void LoadHotkeys()
+        {
+            try
+            {
+                string actionIdsString = Properties.Settings.Default.HotkeyActionIds;
+                string hotkeyValuesString = Properties.Settings.Default.HotkeyValues;
+                
+                if (!string.IsNullOrEmpty(actionIdsString) && !string.IsNullOrEmpty(hotkeyValuesString))
+                {
+                    string[] actionIds = actionIdsString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] hotkeyStrings = hotkeyValuesString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    
+                    if (actionIds.Length == hotkeyStrings.Length)
+                    {
+                        
+                        for (int i = 0; i < actionIds.Length; i++)
+                        {
+                            _hotkeyMappings[actionIds[i]] = Keys.Parse(hotkeyStrings[i]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading hotkeys: {ex.Message}");
+            }
         }
     }
 }

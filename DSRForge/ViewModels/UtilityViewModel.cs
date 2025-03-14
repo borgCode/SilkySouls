@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DSRForge.memory;
 using DSRForge.Models;
 using DSRForge.Services;
 using DSRForge.Utilities;
@@ -43,7 +45,6 @@ namespace DSRForge.ViewModels
             _hotkeyManager.RegisterAction("NoClip", () => { IsNoClipEnabled = !IsNoClipEnabled; });
             _hotkeyManager.RegisterAction("Warp", Warp);
         }
-        
         
         public IEnumerable<KeyValuePair<string, string>> WarpLocations =>
             _warpLocations.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.Name));
@@ -137,7 +138,6 @@ namespace DSRForge.ViewModels
                 {
                     _utilityService.DisableDrawEvent();
                 }
-
             }
         }
 
@@ -155,7 +155,6 @@ namespace DSRForge.ViewModels
                 {
                     _utilityService.DisableTargetingView();
                 }
-
             }
         }
 
@@ -198,7 +197,7 @@ namespace DSRForge.ViewModels
                 IsNoClipEnabled = false;
             }
 
-            _utilityService.Warp(_warpLocations[SelectedLocation.Key]);
+            _ = Task.Run(() => _utilityService.Warp(_warpLocations[SelectedLocation.Key]));
         }
         
         public void DisableButtons()
@@ -237,6 +236,16 @@ namespace DSRForge.ViewModels
                 if (!_utilityService.EnableDraw()) return;
             }
             _areAttachedOptionsRestored = true;
+        }
+
+        public void ShowLevelUpMenu()
+        {
+            _utilityService.ShowMenu(Offsets.MenuManData.LevelUpMenu);
+        }
+
+        public void ShowAttunementMenu()
+        {
+            _utilityService.ShowMenu(Offsets.MenuManData.AttunementMenu);
         }
     }
 }

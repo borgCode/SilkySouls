@@ -10,6 +10,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
         
         <Border Grid.Row="0" 
@@ -110,6 +111,33 @@
                         Click="Warp_Click"
                         IsEnabled="{Binding AreButtonsEnabled}"
                         Height="25"/>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="3" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3">
+            <StackPanel Margin="10">
+                <TextBlock Text="Menu" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,10"/>
+                
+                <UniformGrid Columns="2">
+                    <Button Content="Level Up"
+                            Click="LevelUpMenu_Click"
+                            IsEnabled="{Binding AreButtonsEnabled}"
+                            Height="25"
+                            Width="120"
+                            Margin="0,2,2,2"/>
+                              
+                    <Button Content="Attunement"
+                            Click="AttunementMenu_Click"
+                            IsEnabled="{Binding AreButtonsEnabled}"
+                            Height="25"
+                            Width="120"
+                            Margin="2,2,0,2"/>
+                </UniformGrid>
             </StackPanel>
         </Border>
     </Grid>

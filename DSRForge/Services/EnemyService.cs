@@ -11,13 +11,13 @@ namespace DSRForge.Services
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
 
-        private IntPtr _codeCave;
+        private readonly IntPtr _codeCave;
         private IntPtr _lastTargetBlock;
         private IntPtr _repeatActionBlock;
         private IntPtr _lockedTargetPtr;
         private IntPtr _repeatActionFlag;
         
-        private bool _isHookInstalled = false;
+        private bool _isHookInstalled;
         
         private const long LockedTargetOrigin = 0x142E76196;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8B, 0x03, 0x48, 0x8B, 0xCB };

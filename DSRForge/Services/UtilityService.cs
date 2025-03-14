@@ -364,5 +364,11 @@ namespace DSRForge.Services
                 { Offsets.FieldArea, Offsets.RenderPtr, Offsets.FilterRemoval}, false );
             _memoryIo.WriteByte(filterPtr, value);
         }
+
+        public void ShowMenu(Offsets.MenuManData menuType)
+        {
+            var menuPtr = _memoryIo.FollowPointers(new[] { Offsets.MenuMan, (int)menuType }, false);
+            _memoryIo.WriteByte(menuPtr, 1);
+        }
     }
 }

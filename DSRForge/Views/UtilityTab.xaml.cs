@@ -28,5 +28,15 @@ namespace DSRForge.Views
         {
             MessageBox.Show("'Enable Draw' requires you to exit to main menu before being able to view hitboxes, draw events, etc.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void LevelUpMenu_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.ShowLevelUpMenu();
+        }
+
+        private void AttunementMenu_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.ShowAttunementMenu();
+        }
     }
 }
