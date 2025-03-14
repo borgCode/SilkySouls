@@ -91,8 +91,29 @@ namespace DSRForge.ViewModels
         }
         
         
+        private string _repeatActionHotkeyText;
+        public string RepeatActionHotkeyText
+        {
+            get => _repeatActionHotkeyText;
+            set => SetProperty(ref _repeatActionHotkeyText, value);
+        }
+
+        private string _disableAiHotkeyText;
+        public string DisableAiHotkeyText
+        {
+            get => _disableAiHotkeyText;
+            set => SetProperty(ref _disableAiHotkeyText, value);
+        }
+
+        private string _freezeHpHotkeyText;
+        public string FreezeHpHotkeyText
+        {
+            get => _freezeHpHotkeyText;
+            set => SetProperty(ref _freezeHpHotkeyText, value);
+        }
+        
+        
         private readonly Dictionary<string, Action<string>> _propertySetters;
-        private string _originalHotkeyText;
         
         public SettingsViewModel(HotkeyManager hotkeyManager)
         {
@@ -111,6 +132,9 @@ namespace DSRForge.ViewModels
                 { "IncreaseSpeed", text => IncreaseSpeedHotkeyText = text },
                 { "DecreaseSpeed", text => DecreaseSpeedHotkeyText = text },
                 { "NoClip", text => NoClipHotkeyText = text},
+                { "RepeatAction", text => RepeatActionHotkeyText = text },
+                { "DisableAi", text => DisableAiHotkeyText = text },
+                { "FreezeHp", text => FreezeHpHotkeyText = text },
             };
 
             LoadHotkeyDisplays();
@@ -135,13 +159,15 @@ namespace DSRForge.ViewModels
 
         public void StartSettingHotkey(string actionId)
         {
-            StopSettingHotkey();
+            if (_currentSettingHotkeyId != null && _propertySetters.TryGetValue(_currentSettingHotkeyId, out var prevSetter))
+            {
+                prevSetter(GetHotkeyDisplayText(_currentSettingHotkeyId));
+            }
             
             _currentSettingHotkeyId = actionId;
             
             if (_propertySetters.TryGetValue(actionId, out var setter))
             {
-                _originalHotkeyText = GetHotkeyDisplayText(actionId);
                 setter("Press keys...");
             }
             
@@ -149,19 +175,6 @@ namespace DSRForge.ViewModels
             _tempHook.IsExtendedMode = true;
             _tempHook.Down += TempHook_Down;
             _tempHook.Start();
-        }
-
-        private void StopSettingHotkey()
-        {
-            if (_tempHook != null)
-            {
-                _tempHook.Down -= TempHook_Down;
-                _tempHook.Dispose();
-                _tempHook = null;
-            }
-            
-            _currentSettingHotkeyId = null;
-            _currentKeys = null;
         }
 
         private void TempHook_Down(object sender, KeyboardEventArgs e)
@@ -199,7 +212,7 @@ namespace DSRForge.ViewModels
                 if (e.Keys.IsEmpty) 
                     return;
                 
-                _hotkeyManager.SetHotkey(_currentSettingHotkeyId, e.Keys);
+                _currentKeys = e.Keys;
         
                 if (_propertySetters.TryGetValue(_currentSettingHotkeyId, out var setter))
                 {
@@ -216,8 +229,28 @@ namespace DSRForge.ViewModels
             }
             e.IsHandled = true;
         }
+
+        private void StopSettingHotkey()
+        {
+            if (_tempHook != null)
+            {
+                _tempHook.Down -= TempHook_Down;
+                _tempHook.Dispose();
+                _tempHook = null;
+            }
+            
+            _currentSettingHotkeyId = null;
+            _currentKeys = null;
+        }
+
         public void ConfirmHotkey()
         {
+            if (_currentSettingHotkeyId != null && (_currentKeys == null || _currentKeys.IsEmpty))
+            {
+                CancelSettingHotkey();
+                return;
+            }
+            
             if (_currentSettingHotkeyId != null && _currentKeys != null)
             {
                 _hotkeyManager.SetHotkey(_currentSettingHotkeyId, _currentKeys);
@@ -233,7 +266,8 @@ namespace DSRForge.ViewModels
         {
             if (_currentSettingHotkeyId != null && _propertySetters.TryGetValue(_currentSettingHotkeyId, out var setter))
             {
-                setter(GetHotkeyDisplayText(_currentSettingHotkeyId));
+                setter("None");
+                _hotkeyManager.SetHotkey(_currentSettingHotkeyId, new Keys());
             }
             StopSettingHotkey();
         }

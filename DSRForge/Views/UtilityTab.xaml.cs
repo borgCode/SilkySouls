@@ -24,9 +24,14 @@ namespace DSRForge.Views
             _utilityViewModel.Warp();
         }
 
-        private void InfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void DrawInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MessageBox.Show("'Enable Draw' requires you to exit to main menu before being able to view hitboxes, draw events, etc.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void NoClipInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("Vertical movement with Ctrl/Space or L2/R2 on controller", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LevelUpMenu_Click(object sender, RoutedEventArgs e)

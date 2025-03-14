@@ -29,7 +29,7 @@
                               IsChecked="{Binding IsDrawEnabled}"
                               Grid.Column="0"/>
                     
-                    <Border x:Name="InfoBorder"
+                    <Border
                             Background="#3498db" 
                             CornerRadius="10" 
                             Width="12" 
@@ -39,7 +39,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Left"
                             Grid.Column="1"
-                            MouseLeftButtonDown="InfoBorder_MouseLeftButtonDown">
+                            MouseLeftButtonDown="DrawInfoBorder_MouseLeftButtonDown">
                         <TextBlock Text="i" 
                                    Foreground="White" 
                                    HorizontalAlignment="Center" 
@@ -80,11 +80,38 @@
                 Margin="0,0,0,10">
             <StackPanel Margin="10">
                 <UniformGrid Columns="2">
-                    <CheckBox Content="No Clip"
-                              IsChecked="{Binding IsNoClipEnabled}"
-                              IsEnabled="{Binding AreButtonsEnabled}"
-                              Margin="0,2"/>
-                              
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+            
+                        <CheckBox Content="No Clip"
+                                  IsChecked="{Binding IsNoClipEnabled}"
+                                  IsEnabled="{Binding AreButtonsEnabled}"
+                                  Margin="0,2"
+                                  Grid.Column="0"/>
+            
+                        <Border
+                                Background="#3498db" 
+                                CornerRadius="10" 
+                                Width="12" 
+                                Height="12" 
+                                Margin="10,0,0,0" 
+                                Cursor="Hand"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Grid.Column="1"
+                                MouseLeftButtonDown="NoClipInfoBorder_MouseLeftButtonDown">
+                            <TextBlock Text="i" 
+                                       Foreground="White" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" 
+                                       FontWeight="Bold" 
+                                       FontSize="10"/>
+                        </Border>
+                    </Grid>
+                      
                     <CheckBox Content="Visible Tomb of the Giants"
                               IsChecked="{Binding IsFilterRemoveEnabled}"
                               Margin="0,2"/>

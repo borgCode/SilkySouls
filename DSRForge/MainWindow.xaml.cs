@@ -76,6 +76,7 @@ namespace DSRForge
         {
             if (_memoryIo.IsAttached)
             {
+                ((TextBlock)MainTabControl.Template.FindName("IsAttachedText", MainTabControl)).Text = "Attached to game";
                 _utilityViewModel.TryRestoreAttachedFeatures();
                 _enemyService.TryInstallTargetHook();
                 
@@ -98,6 +99,7 @@ namespace DSRForge
                 DisableButtons();
                 _utilityViewModel.ResetAttached();
                 _loaded = false;
+                ((TextBlock)MainTabControl.Template.FindName("IsAttachedText", MainTabControl)).Text = "Not attached";
             }
         }
 

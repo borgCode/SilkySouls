@@ -41,7 +41,6 @@
             X = 0x120,
             Z = 0x124,
             Y = 0x128,
-            
         }
         
         public const int NoDeath = 0x1D151C9;
@@ -62,7 +61,6 @@
         public const int LoadingScreenFlag = 0x168;
         
         public const int GameDataMan = 0x1D278F0;
-        
         
         public enum GameData
         {
@@ -115,16 +113,12 @@
         public const int DrawEventPatch = 0x49B6B7;
         public const int DrawSoundViewPatch = 0x622289;
         
-        
-
         public const int Warp = 0x744D00; // use with chr man
-        
         
         public const int MenuMan = 0x1d26168;
 
         public enum MenuManData
         {
-            //TODO Set byte to 1
             LevelUpMenu = 0x8C,
             AttunementMenu = 0x94,
         }

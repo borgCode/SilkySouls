@@ -160,14 +160,18 @@
                          LostFocus="HotkeyTextBox_LostFocus"
                          Tag="DecreaseSpeed"
                          KeyDown="HotkeyTextBox_KeyDown"/>
+
             </Grid>
             
             <Grid Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" MinWidth="80"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="20"/> 
+                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+    
                 <TextBlock Grid.Column="0" Text="No Clip:" VerticalAlignment="Center" Width="85" HorizontalAlignment="Left"/>
                 <TextBox Grid.Column="1" 
                          Text="{Binding NoClipHotkeyText}"
@@ -175,6 +179,44 @@
                          GotFocus="HotkeyTextBox_GotFocus"
                          LostFocus="HotkeyTextBox_LostFocus"
                          Tag="NoClip"
+                         KeyDown="HotkeyTextBox_KeyDown"/>
+
+                <TextBlock Grid.Column="3" Text="Freeze HP:" VerticalAlignment="Center" Width="85" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="4" 
+                         Margin="5,0,-10,0"
+                         Text="{Binding FreezeHpHotkeyText}"
+                         Style="{StaticResource HotkeyTextBoxStyle}"
+                         GotFocus="HotkeyTextBox_GotFocus"
+                         LostFocus="HotkeyTextBox_LostFocus"
+                         Tag="FreezeHp"
+                         KeyDown="HotkeyTextBox_KeyDown"/>
+            </Grid>
+            <Grid Margin="0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="20"/> 
+                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+    
+                <TextBlock Grid.Column="0" Text="Repeat Action:" VerticalAlignment="Center" Width="85" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding RepeatActionHotkeyText}"
+                         Style="{StaticResource HotkeyTextBoxStyle}"
+                         GotFocus="HotkeyTextBox_GotFocus"
+                         LostFocus="HotkeyTextBox_LostFocus"
+                         Tag="RepeatAction"
+                         KeyDown="HotkeyTextBox_KeyDown"/>
+    
+                <TextBlock Grid.Column="3" Text="Disable AI:" VerticalAlignment="Center" Width="85" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="4" 
+                         Margin="5,0,-10,0"
+                         Text="{Binding DisableAiHotkeyText}"
+                         Style="{StaticResource HotkeyTextBoxStyle}"
+                         GotFocus="HotkeyTextBox_GotFocus"
+                         LostFocus="HotkeyTextBox_LostFocus"
+                         Tag="DisableAi"
                          KeyDown="HotkeyTextBox_KeyDown"/>
             </Grid>
         </StackPanel>
