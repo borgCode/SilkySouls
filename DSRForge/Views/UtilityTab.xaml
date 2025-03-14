@@ -3,13 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:converters="clr-namespace:DSRForge.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
-    <UserControl.Resources>
-        <converters:BooleanAndConverter x:Key="BooleanAndConverter" />
-    </UserControl.Resources>
-    
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -54,53 +49,25 @@
                 </Grid>
                 
                 <UniformGrid Columns="2" Margin="20,5,0,0">
-                    <CheckBox Content="Hitbox View" Margin="0,2">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                <Binding Path="AreOptionsEnabled" />
-                                <Binding Path="IsDrawEnabled" />
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <CheckBox.IsChecked>
-                            <Binding Path="IsHitboxEnabled" />
-                        </CheckBox.IsChecked>
-                    </CheckBox>
+                    <CheckBox Content="Hitbox View" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsHitboxEnabled}"
+                              Margin="0,2"/>
                     
-                    <CheckBox Content="Player Sound View" Margin="0,2">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                <Binding Path="AreOptionsEnabled" />
-                                <Binding Path="IsDrawEnabled" />
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <CheckBox.IsChecked>
-                            <Binding Path="IsSoundViewEnabled" />
-                        </CheckBox.IsChecked>
-                    </CheckBox>
+                    <CheckBox Content="Player Sound View" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsSoundViewEnabled}"
+                              Margin="0,2"/>
                     
-                    <CheckBox Content="Draw Events" Margin="0,2">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                <Binding Path="AreOptionsEnabled" />
-                                <Binding Path="IsDrawEnabled" />
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <CheckBox.IsChecked>
-                            <Binding Path="IsDrawEventEnabled" />
-                        </CheckBox.IsChecked>
-                    </CheckBox>
+                    <CheckBox Content="Draw Events" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsDrawEventEnabled}"
+                              Margin="0,2"/>
                     
-                    <CheckBox Content="Targeting View (Kinda useless)" Margin="0,2">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                <Binding Path="AreOptionsEnabled" />
-                                <Binding Path="IsDrawEnabled" />
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <CheckBox.IsChecked>
-                            <Binding Path="IsTargetingViewEnabled" />
-                        </CheckBox.IsChecked>
-                    </CheckBox>
+                    <CheckBox Content="Targeting View (Kinda useless)" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsTargetingViewEnabled}"
+                              Margin="0,2"/>
                 </UniformGrid>
             </StackPanel>
         </Border>
@@ -111,16 +78,14 @@
                 CornerRadius="3"
                 Margin="0,0,0,10">
             <StackPanel Margin="10">
-                
                 <UniformGrid Columns="2">
                     <CheckBox Content="No Clip"
                               IsChecked="{Binding IsNoClipEnabled}"
-                              IsEnabled="{Binding AreOptionsEnabled}"
+                              IsEnabled="{Binding AreButtonsEnabled}"
                               Margin="0,2"/>
                               
                     <CheckBox Content="Visible Tomb of the Giants"
                               IsChecked="{Binding IsFilterRemoveEnabled}"
-                              IsEnabled="{Binding AreOptionsEnabled}"
                               Margin="0,2"/>
                 </UniformGrid>
             </StackPanel>
@@ -138,12 +103,12 @@
                 <ComboBox ItemsSource="{Binding WarpLocations}"
                           DisplayMemberPath="Value"
                           SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
-                          IsEnabled="{Binding AreOptionsEnabled}"
+                          IsEnabled="{Binding AreButtonsEnabled}"
                           Margin="0,0,0,5"/>
                           
                 <Button Content="Warp" 
                         Click="Warp_Click"
-                        IsEnabled="{Binding AreOptionsEnabled}"
+                        IsEnabled="{Binding AreButtonsEnabled}"
                         Height="25"/>
             </StackPanel>
         </Border>

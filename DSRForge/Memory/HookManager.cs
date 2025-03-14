@@ -62,5 +62,10 @@ namespace DSRForge.Memory
             _hookRegistry.Remove(key);
 
         }
+
+        public void ClearHooks()
+        {
+            _hookRegistry.Clear();
+        }
     }
 }

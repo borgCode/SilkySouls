@@ -110,7 +110,7 @@ namespace DSRForge.ViewModels
                 { "RestoreSpellCasts", text => RestoreSpellCastsHotkeyText = text },
                 { "IncreaseSpeed", text => IncreaseSpeedHotkeyText = text },
                 { "DecreaseSpeed", text => DecreaseSpeedHotkeyText = text },
-                {"NoClip", text => NoClipHotkeyText = text},
+                { "NoClip", text => NoClipHotkeyText = text},
             };
 
             LoadHotkeyDisplays();
@@ -139,13 +139,11 @@ namespace DSRForge.ViewModels
             
             _currentSettingHotkeyId = actionId;
             
-            
             if (_propertySetters.TryGetValue(actionId, out var setter))
             {
                 _originalHotkeyText = GetHotkeyDisplayText(actionId);
                 setter("Press keys...");
             }
-            
             
             _tempHook = new LowLevelKeyboardHook();
             _tempHook.IsExtendedMode = true;
@@ -161,7 +159,7 @@ namespace DSRForge.ViewModels
                 _tempHook.Dispose();
                 _tempHook = null;
             }
-    
+            
             _currentSettingHotkeyId = null;
             _currentKeys = null;
         }
@@ -173,7 +171,6 @@ namespace DSRForge.ViewModels
     
             try
             {
-                
                 bool containsEnter = e.Keys.Values.Contains(Key.Enter) || e.Keys.Values.Contains(Key.Return);
                 bool containsEscape = e.Keys.Values.Contains(Key.Escape);
                 
@@ -202,10 +199,6 @@ namespace DSRForge.ViewModels
                 if (e.Keys.IsEmpty) 
                     return;
                 
-        
-                Console.WriteLine(e.Keys);
-                
-                
                 _hotkeyManager.SetHotkey(_currentSettingHotkeyId, e.Keys);
         
                 if (_propertySetters.TryGetValue(_currentSettingHotkeyId, out var setter))
@@ -221,11 +214,8 @@ namespace DSRForge.ViewModels
                     setter("Error: Invalid key combination");
                 }
             }
-            
             e.IsHandled = true;
         }
-
-
         public void ConfirmHotkey()
         {
             if (_currentSettingHotkeyId != null && _currentKeys != null)
@@ -245,19 +235,7 @@ namespace DSRForge.ViewModels
             {
                 setter(GetHotkeyDisplayText(_currentSettingHotkeyId));
             }
-    
             StopSettingHotkey();
-        }
-
-
-        public void ResetAllHotkeys()
-        {
-            foreach (var entry in _propertySetters)
-            {
-                _hotkeyManager.ClearHotkey(entry.Key);
-            }
-            
-            LoadHotkeyDisplays();
         }
     }
 }

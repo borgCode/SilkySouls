@@ -27,16 +27,6 @@ namespace DSRForge.ViewModels
         
         private bool _areOptionsEnabled;
         
-        private bool _savedIsNoDeathEnabled;
-        private bool _savedIsNoDamageEnabled;
-        private bool _savedIsInfiniteStaminaEnabled;
-        private bool _savedIsNoGoodsConsumeEnabled;
-        private bool _savedIsInfiniteCastsEnabled;
-        private bool _savedIsOneShotEnabled;
-        private bool _savedIsInvisibleEnabled;
-        private bool _savedIsSilentEnabled;
-        private bool _savedIsNoAmmoConsumeEnabled;
-        
         private int? _vitality;
         private int? _attunement;
         private int? _endurance;
@@ -297,44 +287,32 @@ namespace DSRForge.ViewModels
         }
         
 
-        public void SaveAndDisableOptions()
+        public void DisableButtons()
         {
-            _savedIsNoDeathEnabled = IsNoDeathEnabled;
-            _savedIsNoDamageEnabled = IsNoDamageEnabled;
-            _savedIsInfiniteStaminaEnabled = IsInfiniteStaminaEnabled;
-            _savedIsNoGoodsConsumeEnabled = IsNoGoodsConsumeEnabled;
-            _savedIsInfiniteCastsEnabled = IsInfiniteCastsEnabled;
-            _savedIsOneShotEnabled = IsOneShotEnabled;
-            _savedIsInvisibleEnabled = IsInvisibleEnabled;
-            _savedIsSilentEnabled = IsSilentEnabled;
-            _savedIsNoAmmoConsumeEnabled = IsNoAmmoConsumeEnabled;
-            
             AreOptionsEnabled = false;
-
-            IsNoDeathEnabled = false;
-            IsNoDamageEnabled = false;
-            IsInfiniteStaminaEnabled = false;
-            IsNoGoodsConsumeEnabled = false;
-            IsInfiniteCastsEnabled = false;
-            IsOneShotEnabled = false;
-            IsInvisibleEnabled = false;
-            IsSilentEnabled = false;
-            IsNoAmmoConsumeEnabled = false;
-
         }
 
-        public void RestoreOptions()
+        public void TryEnableActiveOptions()
         {
-            IsNoDeathEnabled = _savedIsNoDeathEnabled;
-            IsNoDamageEnabled = _savedIsNoDamageEnabled;
-            IsInfiniteStaminaEnabled = _savedIsInfiniteStaminaEnabled;
-            IsNoGoodsConsumeEnabled = _savedIsNoGoodsConsumeEnabled;
-            IsInfiniteCastsEnabled = _savedIsInfiniteCastsEnabled;
-            IsOneShotEnabled = _savedIsOneShotEnabled;
-            IsInvisibleEnabled = _savedIsInvisibleEnabled;
-            IsSilentEnabled = _savedIsSilentEnabled;
-            IsNoAmmoConsumeEnabled = _savedIsNoAmmoConsumeEnabled;
-
+            if (IsNoDeathEnabled)
+                _playerService.ToggleNoDeath(1);
+            if (IsNoDamageEnabled)
+                _playerService.ToggleNoDamage(true);
+            if (IsInfiniteStaminaEnabled)
+                _playerService.ToggleInfiniteStamina(true);
+            if (IsNoGoodsConsumeEnabled)
+                _playerService.ToggleNoGoodsConsume(true);
+            if (IsInfiniteCastsEnabled)
+                _playerService.ToggleInfiniteCasts(1);
+            if (IsOneShotEnabled)
+                _playerService.ToggleOneShot(1);
+            if (IsInvisibleEnabled)
+                _playerService.ToggleInvisible(1);
+            if (IsSilentEnabled)
+                _playerService.ToggleSilent(1);
+            if (IsNoAmmoConsumeEnabled)
+                _playerService.ToggleNoAmmoConsume(1);
+    
             AreOptionsEnabled = true;
         }
         

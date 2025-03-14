@@ -87,6 +87,7 @@
 
                 <Button Content="Spawn"
                         Click="SpawnButton_Click"
+                        IsEnabled="{Binding AreOptionsEnabled}"
                         Height="25" />
             </StackPanel>
         </Grid>

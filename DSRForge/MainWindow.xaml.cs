@@ -24,27 +24,29 @@ namespace DSRForge
         private readonly UtilityViewModel _utilityViewModel;
         private readonly EnemyViewModel _enemyViewModel;
         private readonly ItemViewModel _itemViewModel;
+        private readonly EnemyService _enemyService;
+        private readonly HookManager _hookManager;
 
         public MainWindow()
         {
             _memoryIo = new MemoryIo();
-            _memoryIo.FindAndAttach();
+            _memoryIo.StartAutoAttach();
 
             InitializeComponent();
 
-            var hookManager = new HookManager(_memoryIo);
+            _hookManager = new HookManager(_memoryIo);
 
-            var playerService = new PlayerService(_memoryIo, hookManager);
-            var utilityService = new UtilityService(_memoryIo, hookManager);
-            var targetService = new EnemyService(_memoryIo, hookManager);
-            var itemService = new ItemService(_memoryIo, hookManager);
+            var playerService = new PlayerService(_memoryIo, _hookManager);
+            var utilityService = new UtilityService(_memoryIo, _hookManager);
+            _enemyService = new EnemyService(_memoryIo, _hookManager);
+            var itemService = new ItemService(_memoryIo, _hookManager);
 
-            var hotkeyManager = new HotkeyManager(_memoryIo.TargetProcess.Id);
+            var hotkeyManager = new HotkeyManager(_memoryIo);
 
 
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
             _utilityViewModel = new UtilityViewModel(utilityService, playerService, hotkeyManager);
-            _enemyViewModel = new EnemyViewModel(targetService, hotkeyManager);
+            _enemyViewModel = new EnemyViewModel(_enemyService, hotkeyManager);
             _itemViewModel = new ItemViewModel(itemService);
             var settingsViewModel = new SettingsViewModel(hotkeyManager);
 
@@ -69,27 +71,50 @@ namespace DSRForge
             _gameLoadedTimer.Start();
         }
 
-        private bool _loaded; 
+        private bool _loaded;
         private void Timer_Tick(object sender, EventArgs e)
         {
-
-            if (_memoryIo.IsGameLoaded())
+            if (_memoryIo.IsAttached)
             {
-                if (_loaded) return;
-                _loaded = true;
-                _playerViewModel.RestoreOptions();
-                _utilityViewModel.RestoreOptions();
-                _enemyViewModel.RestoreOptions();
-                _itemViewModel.RestoreOptions();
+                _utilityViewModel.TryRestoreAttachedFeatures();
+                _enemyService.TryInstallTargetHook();
+                
+                if (_memoryIo.IsGameLoaded())
+                {
+                    if (_loaded) return;
+                    _loaded = true;
+                    TryEnableActiveOptions();
+                }
+                else if (_loaded)
+                {
+                    DisableButtons();
+                    _loaded = false;
+                }
             }
-            else if (_loaded)
+            else
             {
-                _playerViewModel.SaveAndDisableOptions();
-                _utilityViewModel.SaveAndDisableOptions();
-                _enemyViewModel.SaveAndDisableOptions();
-                _itemViewModel.SaveAndDisableOptions();
+                _hookManager.ClearHooks();
+                _enemyService.ResetHook();
+                DisableButtons();
+                _utilityViewModel.ResetAttached();
                 _loaded = false;
             }
+        }
+
+        private void TryEnableActiveOptions()
+        {
+            _playerViewModel.TryEnableActiveOptions();
+            _utilityViewModel.TryEnableActiveOptions();
+            _enemyViewModel.TryEnableActiveOptions();
+            _itemViewModel.TryEnableActiveOptions();
+        }
+
+        private void DisableButtons()
+        {
+            _playerViewModel.DisableButtons();
+            _utilityViewModel.DisableButtons();
+            _enemyViewModel.DisableButtons();
+            _itemViewModel.DisableButtons();
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -102,7 +127,6 @@ namespace DSRForge
         {
             if (e.ClickCount == 2)
             {
-                // Double-click to maximize/restore
                 if (WindowState == WindowState.Maximized)
                     WindowState = WindowState.Normal;
                 else
@@ -110,7 +134,6 @@ namespace DSRForge
             }
             else
             {
-                // Single click to drag the window
                 DragMove();
             }
         }

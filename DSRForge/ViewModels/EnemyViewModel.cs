@@ -24,13 +24,6 @@ namespace DSRForge.ViewModels
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
         private bool _isAllNoDeathEnabled;
-        
-        private bool _savedDisableAi;
-        private bool _savedAllNoDamage;
-        private bool _savedAllNoDeath;
-        private bool _savedRepeatAction;
-        private bool _savedTargetOptions;
-        private bool _savedFreezeHealth;
 
         private int _frozenHealth;
 
@@ -41,7 +34,7 @@ namespace DSRForge.ViewModels
         {
             _enemyService = enemyService;
             _hotkeyManager = hotkeyManager;
-            _enemyService.EnableTargetOptions();
+            
             RegisterHotkeys();
             
             _targetOptionsTimer = new DispatcherTimer
@@ -193,36 +186,26 @@ namespace DSRForge.ViewModels
             }
         }
 
-        public void SaveAndDisableOptions()
+        public void DisableButtons()
         {
-            _savedDisableAi = IsDisableAiEnabled;
-            _savedAllNoDamage = IsAllNoDamageEnabled;
-            _savedAllNoDeath = IsAllNoDeathEnabled;
-            _savedRepeatAction = IsRepeatActionEnabled;
-            _savedTargetOptions = IsTargetOptionsEnabled;
-            _savedFreezeHealth = IsFreezeHealthEnabled;
-            
-            AreOptionsEnabled = false;
-            
-            IsDisableAiEnabled = false;
-            IsAllNoDamageEnabled = false;
-            IsAllNoDeathEnabled = false;
-            IsRepeatActionEnabled = false;
-            IsTargetOptionsEnabled = false;
+            _targetOptionsTimer.Stop(); 
             IsFreezeHealthEnabled = false;
+            IsRepeatActionEnabled = false;
+            AreOptionsEnabled = false;
         }
-        
-        public void RestoreOptions()
+
+        public void TryEnableActiveOptions()
         {
-            
+            if (IsDisableAiEnabled)
+                _enemyService.ToggleAi(1);
+            if (IsAllNoDamageEnabled)
+                _enemyService.ToggleAllNoDamage(1);
+            if (IsAllNoDeathEnabled)
+                _enemyService.ToggleAllNoDeath(1);
+            if (IsTargetOptionsEnabled)
+                _targetOptionsTimer.Start();
+    
             AreOptionsEnabled = true;
-            
-            IsDisableAiEnabled = _savedDisableAi;
-            IsAllNoDamageEnabled = _savedAllNoDamage;
-            IsAllNoDeathEnabled = _savedAllNoDeath;
-            IsRepeatActionEnabled = _savedRepeatAction;
-            IsTargetOptionsEnabled = _savedTargetOptions;
-            IsFreezeHealthEnabled = _savedFreezeHealth;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DSRForge.Memory;
 using H.Hooks;
 
 namespace DSRForge.Utilities
@@ -13,14 +14,14 @@ namespace DSRForge.Utilities
         [DllImport("user32.dll")]
         private static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
         
-        private readonly int _handleId;
+        private readonly MemoryIo _memoryIo;
         private readonly LowLevelKeyboardHook _keyboardHook;
         private readonly Dictionary<string, Keys> _hotkeyMappings;
         private readonly Dictionary<string, Action> _actions;
 
-        public HotkeyManager(int handleId)
+        public HotkeyManager(MemoryIo memoryIo)
         {
-            _handleId = handleId;
+            _memoryIo = memoryIo;
             _hotkeyMappings = new Dictionary<string, Keys>();
             _actions = new Dictionary<string, Action>();
 
@@ -56,9 +57,11 @@ namespace DSRForge.Utilities
 
         private bool IsGameFocused()
         {
+            if (_memoryIo.TargetProcess == null || _memoryIo.TargetProcess.Id == 0) return false;
+         
             IntPtr foregroundWindow = GetForegroundWindow();
             GetWindowThreadProcessId(foregroundWindow, out uint foregroundProcessId);
-            return foregroundProcessId == (uint)_handleId;
+            return foregroundProcessId == (uint)_memoryIo.TargetProcess.Id;
         }
         
         public void SetHotkey(string actionId, Keys keys)

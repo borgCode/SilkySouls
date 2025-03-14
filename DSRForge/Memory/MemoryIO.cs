@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
+using System.Timers;
 using DSRForge.memory;
 
 namespace DSRForge.Memory
@@ -17,56 +17,73 @@ namespace DSRForge.Memory
         private const int ProcessVmOperation = 0x0008;
 
         private const string ProcessName = "darksoulsremastered";
-        private bool _disposed = false;
+        private bool _disposed;
+        public bool IsAttached;
         
-        public void FindAndAttach()
+        private Timer _autoAttachTimer;
+        
+        public void StartAutoAttach()
         {
+            _autoAttachTimer = new Timer(4000);
+            _autoAttachTimer.Elapsed += (sender, e) => TryAttachToProcess();
+            
+            TryAttachToProcess();
+    
+            _autoAttachTimer.Start();
+        }
 
+        private void TryAttachToProcess()
+        {
+            if (ProcessHandle != IntPtr.Zero)
+            {
+                if (TargetProcess == null || TargetProcess.HasExited)
+                {
+                    Kernel32.CloseHandle(ProcessHandle);
+                    ProcessHandle = IntPtr.Zero;
+                    TargetProcess = null;
+                    IsAttached = false;
+                }
+                return; 
+            }
+    
             var processes = Process.GetProcessesByName(ProcessName);
-
             if (processes.Length > 0 && !processes[0].HasExited)
             {
-                Attach(processes[0]);
-            }
-            else
-            {
-                throw new Exception("DS1 not running");
-            }
-        }
-        
-        private void Attach(Process process)
-        {
-            if (ProcessHandle == IntPtr.Zero)
-            {
-                TargetProcess = process;
+                TargetProcess = processes[0];
                 ProcessHandle = Kernel32.OpenProcess(
                     ProcessVmRead | ProcessVmWrite | ProcessVmOperation,
                     false,
                     TargetProcess.Id);
-
+    
                 if (ProcessHandle == IntPtr.Zero)
                 {
-                    throw new Exception("Attach failed");
+                    TargetProcess = null;
+                    IsAttached = false;
                 }
-
-            }
-            else
-            {
-                //Implement showing messagebox ex.message
-                throw new Exception("Already attached");
-
+                else
+                {
+                    IsAttached = true;
+                }
             }
         }
-
+        
         public void Dispose()
         {
             if (!_disposed)
             {
+                if (_autoAttachTimer != null)
+                {
+                    _autoAttachTimer.Stop();
+                    _autoAttachTimer.Dispose();
+                    _autoAttachTimer = null;
+                }
+        
                 if (ProcessHandle != IntPtr.Zero)
                 {
                     Kernel32.CloseHandle(ProcessHandle);
                     ProcessHandle = IntPtr.Zero;
                     TargetProcess = null;
+                    IsAttached = false;
                 }
                 _disposed = true;
             }

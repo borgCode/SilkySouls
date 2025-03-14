@@ -24,6 +24,8 @@ namespace DSRForge.ViewModels
         private bool _canUpgrade;
         private bool _canInfuse;
         
+        private bool _areOptionsEnabled;
+        
         private string _searchText = string.Empty;
         
         private readonly Dictionary<string, ObservableCollection<Item>> _itemsByCategory;
@@ -85,6 +87,12 @@ namespace DSRForge.ViewModels
             _itemsByCategory.Add("Weapons", new ObservableCollection<Item>(DataLoader.GetItemList("Weapons")));
 
             SelectedCategory = Categories.FirstOrDefault();
+        }
+        
+        public bool AreOptionsEnabled
+        {
+            get => _areOptionsEnabled;
+            set => SetProperty(ref _areOptionsEnabled, value);
         }
         
         public ObservableCollection<ItemCategory> Categories
@@ -315,14 +323,14 @@ namespace DSRForge.ViewModels
                 SelectedQuantity);
         }
 
-        public void SaveAndDisableOptions()
+        public void DisableButtons()
         {
-           
+            AreOptionsEnabled = false;
         }
 
-        public void RestoreOptions()
+        public void TryEnableActiveOptions()
         {
-           
+            AreOptionsEnabled = true;
         }
     }
 }

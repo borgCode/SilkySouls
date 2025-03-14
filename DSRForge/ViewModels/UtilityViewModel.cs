@@ -16,13 +16,9 @@ namespace DSRForge.ViewModels
         private bool _isNoClipEnabled;
         private bool _isFilterRemoveEnabled;
         
-        private bool _savedHitboxEnabled;
-        private bool _savedSoundViewEnabled;
-        private bool _savedDrawEventEnabled;
-        private bool _savedTargetingViewEnabled;
-        private bool _savedFilterRemoval;
-        
-        private bool _areOptionsEnabled;
+        private bool _areButtonsEnabled;
+        private bool _areAttachedOptionsEnabled;
+        private bool _areAttachedOptionsRestored;
 
         private bool _wasNoDeathEnabled;
         
@@ -59,10 +55,16 @@ namespace DSRForge.ViewModels
         }
 
 
-        public bool AreOptionsEnabled
+        public bool AreButtonsEnabled
         {
-            get => _areOptionsEnabled;
-            set => SetProperty(ref _areOptionsEnabled, value);
+            get => _areButtonsEnabled;
+            set => SetProperty(ref _areButtonsEnabled, value);
+        }
+
+        public bool AreAttachedOptionsEnabled
+        {
+            get => _areAttachedOptionsEnabled;
+            set => SetProperty(ref _areAttachedOptionsEnabled, value);
         }
 
 
@@ -194,43 +196,47 @@ namespace DSRForge.ViewModels
             {
                 _utilityService.DisableNoClip();
                 IsNoClipEnabled = false;
-                _utilityService.Warp(_warpLocations[SelectedLocation.Key]);
             }
-            else
-            {
-                _utilityService.Warp(_warpLocations[SelectedLocation.Key]);
-            }
+
+            _utilityService.Warp(_warpLocations[SelectedLocation.Key]);
         }
         
-        public void SaveAndDisableOptions()
+        public void DisableButtons()
         {
-            _savedHitboxEnabled = IsHitboxEnabled;
-            _savedSoundViewEnabled = IsSoundViewEnabled;
-            _savedDrawEventEnabled = IsDrawEventEnabled;
-            _savedTargetingViewEnabled = IsTargetingViewEnabled;
-            _savedFilterRemoval = IsFilterRemoveEnabled;
-            
-            AreOptionsEnabled = false;
-
             IsNoClipEnabled = false;
-            IsHitboxEnabled = false;
-            IsSoundViewEnabled = false;
-            IsDrawEventEnabled = false;
-            IsTargetingViewEnabled = false;
-            IsFilterRemoveEnabled = false;
-
-
+            AreButtonsEnabled = false;
         }
 
-        public void RestoreOptions()
+        public void TryEnableActiveOptions()
         {
-            IsHitboxEnabled = _savedHitboxEnabled;
-            IsSoundViewEnabled = _savedSoundViewEnabled;
-            IsDrawEventEnabled = _savedDrawEventEnabled;
-            IsTargetingViewEnabled = _savedTargetingViewEnabled;
-            IsFilterRemoveEnabled = _savedFilterRemoval;
+            if (IsHitboxEnabled)
+                _utilityService.EnableHitboxView();
+            if (IsSoundViewEnabled)
+                _utilityService.EnableSoundView();
+            if (IsDrawEventEnabled)
+                _utilityService.EnableDrawEvent();
+            if (IsTargetingViewEnabled)
+                _utilityService.EnableTargetingView();
+            if (IsFilterRemoveEnabled)
+                _utilityService.ToggleFilter(1);
             
-            AreOptionsEnabled = true;
+            AreButtonsEnabled = true;
+        }
+        
+        public void ResetAttached()
+        {
+            IsNoClipEnabled = false;
+            _areAttachedOptionsRestored = false;
+        }
+        
+        public void TryRestoreAttachedFeatures()
+        {
+            if (_areAttachedOptionsRestored) return;
+            if (IsDrawEnabled)
+            {
+                if (!_utilityService.EnableDraw()) return;
+            }
+            _areAttachedOptionsRestored = true;
         }
     }
 }

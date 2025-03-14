@@ -19,7 +19,10 @@ namespace DSRForge.Services
         private IntPtr _targetView;
         private IntPtr _draw;
         
+        private readonly byte[] _drawOriginBytes = { 0x44, 0x8B, 0xC6, 0xBA, 0x16, 0x00, 0x00, 0x00 };
+        
         private List<long> _noClipHooks;
+        
 
         public UtilityService(MemoryIo memoryIo, HookManager hookManager)
         {
@@ -29,8 +32,9 @@ namespace DSRForge.Services
             _codeCave2 = _memoryIo.BaseAddress + CodeCaveOffsets.CodeCave2.Base;
         }
 
-        internal void EnableDraw()
+        internal bool EnableDraw()
         {
+            if (!IsDrawOriginInitialized()) return false;
             _draw = _codeCave1 + CodeCaveOffsets.CodeCave1.EnableDraw;
             
             long drawOrigin = 0x1402CD384;
@@ -40,10 +44,16 @@ namespace DSRForge.Services
             Array.Copy(jumpBytes, 0, drawBytes, 168, 4);
             _memoryIo.WriteBytes(_draw, drawBytes);
 
-            _hookManager.InstallHook(_draw.ToInt64(), drawOrigin,
-                new byte[] { 0x44, 0x8B, 0xC6, 0xBA, 0x16, 0x00, 0x00, 0x00 });
+            _hookManager.InstallHook(_draw.ToInt64(), drawOrigin, _drawOriginBytes);
+            return true;
         }
-        
+
+        private bool IsDrawOriginInitialized()
+        {
+            var originBytes = _memoryIo.ReadBytes((IntPtr) 0x1402CD384, 8);
+            return originBytes.SequenceEqual(_drawOriginBytes);
+        }
+
         internal void DisableDraw()
         {
             _hookManager.UninstallHook(_draw.ToInt64());

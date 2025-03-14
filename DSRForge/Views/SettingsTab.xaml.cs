@@ -61,19 +61,6 @@ namespace DSRForge.Views
                 e.Handled = true;
             }
         }
-
-        private void ResetAllHotkeys_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show(
-                "Are you sure you want to reset all hotkeys?", 
-                "Confirm Reset", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Question);
-                
-            if (result == MessageBoxResult.Yes)
-            {
-                _settingsViewModel.ResetAllHotkeys();
-            }
-        }
+        
     }
 }

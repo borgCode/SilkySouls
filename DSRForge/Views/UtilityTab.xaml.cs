@@ -26,7 +26,7 @@ namespace DSRForge.Views
 
         private void InfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("Enabling draw requires you to exit to main menu before being able to use the different draws", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("'Enable Draw' requires you to exit to main menu before being able to view hitboxes, draw events, etc.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

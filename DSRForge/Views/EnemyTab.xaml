@@ -18,7 +18,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <!-- Target Options Section -->
         <Border Grid.Row="0" 
                 BorderThickness="1" 
                 BorderBrush="#333" 
@@ -31,10 +30,8 @@
                 
                 <CheckBox Content="Enable Target Options"
                           IsChecked="{Binding IsTargetOptionsEnabled}"
-                          IsEnabled="{Binding AreOptionsEnabled}"
                           Margin="0,0,0,10"/>
                 
-                <!-- Health Controls - Visible only when Target Options is enabled -->
                 <StackPanel Visibility="{Binding IsTargetOptionsEnabled, Converter={StaticResource BoolToVis}}">
                     <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5">
                         <Run Text="Health: "/>
@@ -115,7 +112,6 @@
             </StackPanel>
         </Border>
         
-        <!-- Global Enemy Options Section -->
         <Border Grid.Row="1" 
                 BorderThickness="1" 
                 BorderBrush="#333" 
@@ -128,17 +124,14 @@
                 <UniformGrid Columns="1">
                     <CheckBox Content="Disable AI" 
                               IsChecked="{Binding IsDisableAiEnabled}" 
-                              IsEnabled="{Binding AreOptionsEnabled}"
                               Margin="0,2" />
                               
                     <CheckBox Content="All No Damage" 
                               IsChecked="{Binding IsAllNoDamageEnabled}" 
-                              IsEnabled="{Binding AreOptionsEnabled}"
                               Margin="0,2" />
                               
                     <CheckBox Content="All No Death" 
                               IsChecked="{Binding IsAllNoDeathEnabled}" 
-                              IsEnabled="{Binding AreOptionsEnabled}"
                               Margin="0,2" />
                 </UniformGrid>
             </StackPanel>

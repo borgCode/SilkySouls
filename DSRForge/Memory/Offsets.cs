@@ -31,14 +31,7 @@
 
         public const int PlayerAnim = 0x18;
         public const int PlayerAnimSpeed = 0xA8;
-
-        public enum PadMan
-        {
-            PlayerYMovement = 0x264,
-            PlayerXMovement = 0x2b4,
-            CircularBuffer = 0x304,
-        }
-  
+        
         public const int CoordsPtr2 = 0x28;
         public const int CoordsPtr3 = 0x50;
         public const int CoordsPtr4 = 0x20;
@@ -126,7 +119,6 @@
         public const int Warp = 0x744D00; // use with chr man
         
         
-        // Likely menu man
         public const int MenuMan = 0x1d26168;
 
         public enum MenuManData
@@ -136,10 +128,6 @@
             AttunementMenu = 0x94,
         }
         
-        public const int DbgFlags = 0x3336B1;
-
-
-        public const int LastLockOnTarget = 0x2E76196;
 
         public enum LockedTarget
         {
@@ -149,15 +137,5 @@
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
         }
-      
-
-        //Not sure if needed
-        public const int EnemyId = 0xC8;
-        public const int EnemyLookDirection = 0x110;
-        // +4 for Y, +8 for Z
-
-        // has item dbg menu test 1413faa58
-        // worldmapmanimpl 0x141313D50
-
     }
 }
