@@ -71,7 +71,7 @@ namespace DSRForge.Utilities
                             coords = new float[coordsString.Length];
                             for (int i = 0; i < coordsString.Length; i++)
                             {
-                                coords[i] = float.Parse(coordsString[i]);
+                                coords[i] = float.Parse(coordsString[i], System.Globalization.CultureInfo.InvariantCulture);
                             }
                         }
                         
