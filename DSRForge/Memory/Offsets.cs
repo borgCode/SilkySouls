@@ -121,6 +121,7 @@
         {
             LevelUpMenu = 0x8C,
             AttunementMenu = 0x94,
+            Quitout = 0x24C
         }
         
 

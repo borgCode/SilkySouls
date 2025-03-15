@@ -40,15 +40,16 @@ namespace DSRForge
             var utilityService = new UtilityService(_memoryIo, _hookManager);
             _enemyService = new EnemyService(_memoryIo, _hookManager);
             var itemService = new ItemService(_memoryIo, _hookManager);
+            var settingsService = new SettingsService(_memoryIo);
 
             var hotkeyManager = new HotkeyManager(_memoryIo);
-
-
+  
+            
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
             _utilityViewModel = new UtilityViewModel(utilityService, playerService, hotkeyManager);
             _enemyViewModel = new EnemyViewModel(_enemyService, hotkeyManager);
             _itemViewModel = new ItemViewModel(itemService);
-            var settingsViewModel = new SettingsViewModel(hotkeyManager);
+            var settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
 
             var playerTab = new PlayerTab(_playerViewModel);
             var utilityTab = new UtilityTab(_utilityViewModel);

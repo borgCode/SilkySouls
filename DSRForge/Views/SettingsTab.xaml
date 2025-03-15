@@ -219,6 +219,26 @@
                          Tag="DisableAi"
                          KeyDown="HotkeyTextBox_KeyDown"/>
             </Grid>
+            
+            <Grid Margin="0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="20"/> 
+                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+    
+                <TextBlock Grid.Column="0" Text="Quitout:" VerticalAlignment="Center" Width="85" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding QuitoutHotkeyText}"
+                         Style="{StaticResource HotkeyTextBoxStyle}"
+                         GotFocus="HotkeyTextBox_GotFocus"
+                         LostFocus="HotkeyTextBox_LostFocus"
+                         Tag="Quitout"
+                         KeyDown="HotkeyTextBox_KeyDown"/>
+                
+            </Grid>
         </StackPanel>
     </Border>
 </UserControl>

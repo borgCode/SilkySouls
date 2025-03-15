@@ -109,6 +109,7 @@
     <Compile Include="Services\ItemService.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\EnemyService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\UtilityService.cs" />
     <Compile Include="Utilities\AsmLoader.cs" />
     <Compile Include="Utilities\HotkeyManager.cs" />

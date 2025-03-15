@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DSRForge.Services;
 using DSRForge.Utilities;
 using H.Hooks;
 
@@ -111,13 +112,23 @@ namespace DSRForge.ViewModels
             get => _freezeHpHotkeyText;
             set => SetProperty(ref _freezeHpHotkeyText, value);
         }
+        private string _quitoutHotkeyText;
+        public string QuitoutHotkeyText
+        {
+            get => _quitoutHotkeyText;
+            set => SetProperty(ref _quitoutHotkeyText, value);
+        }
         
         
         private readonly Dictionary<string, Action<string>> _propertySetters;
+        private readonly SettingsService _settingsService;
         
-        public SettingsViewModel(HotkeyManager hotkeyManager)
+        public SettingsViewModel(SettingsService settingsService, HotkeyManager hotkeyManager)
         {
+            _settingsService = settingsService;
             _hotkeyManager = hotkeyManager;
+
+            RegisterHotkeys();
 
             _propertySetters = new Dictionary<string, Action<string>>
             {
@@ -135,9 +146,15 @@ namespace DSRForge.ViewModels
                 { "RepeatAction", text => RepeatActionHotkeyText = text },
                 { "DisableAi", text => DisableAiHotkeyText = text },
                 { "FreezeHp", text => FreezeHpHotkeyText = text },
+                { "Quitout", text => QuitoutHotkeyText = text },
             };
 
             LoadHotkeyDisplays();
+        }
+
+        private void RegisterHotkeys()
+        {
+            _hotkeyManager.RegisterAction("Quitout", () => _settingsService.Quitout());
         }
 
         private void LoadHotkeyDisplays()
