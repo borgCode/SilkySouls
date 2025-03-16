@@ -544,7 +544,5 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         </Style>
-
-
     </Application.Resources>
 </Application>

@@ -133,5 +133,7 @@
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
         }
+
+        public const int ProgressionFlagMan = 0x1d19950;
     }
 }
