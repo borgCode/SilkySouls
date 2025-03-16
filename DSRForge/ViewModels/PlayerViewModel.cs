@@ -88,16 +88,16 @@ namespace DSRForge.ViewModels
 
         private void InitStats()
         {
-            _vitality = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Vitality);
-            _attunement = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Attunement);
-            _endurance = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Endurance);
-            _strength = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Strength);
-            _dexterity = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Dexterity);
-            _resistance = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Resistance);
-            _intelligence = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Intelligence);
-            _faith = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Faith);
-            _humanity = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Humanity);
-            _souls = _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Souls);
+            _vitality = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Vitality);
+            _attunement = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Attunement);
+            _endurance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Endurance);
+            _strength = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Strength);
+            _dexterity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Dexterity);
+            _resistance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Resistance);
+            _intelligence = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Intelligence);
+            _faith = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Faith);
+            _humanity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Humanity);
+            _souls = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls);
             _newGame = _playerService.GetSetNewGame(null);
             _playerSpeed = _playerService.GetSetPlayerSpeed(null);
 
@@ -324,7 +324,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _vitality, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Vitality, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Vitality, value);
                 }
             }
         }
@@ -336,7 +336,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _attunement, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Attunement, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Attunement, value);
                 }
             }
         }
@@ -348,7 +348,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _endurance, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Endurance, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Endurance, value);
                 }
             }
         }
@@ -360,7 +360,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _strength, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Strength, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Strength, value);
                 }
             }
         }
@@ -372,7 +372,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _dexterity, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Dexterity, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Dexterity, value);
                 }
             }
         }
@@ -384,7 +384,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _resistance, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Resistance, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Resistance, value);
                 }
             }
         }
@@ -396,7 +396,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _intelligence, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Intelligence, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Intelligence, value);
                 }
             }
         }
@@ -408,7 +408,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _faith, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Faith, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Faith, value);
                 }
             }
         }
@@ -420,7 +420,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _humanity, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Humanity, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Humanity, value);
                 }
             }
         }
@@ -432,7 +432,7 @@ namespace DSRForge.ViewModels
             {
                 if (SetProperty(ref _souls, value))
                 {
-                    _playerService.GetSetPlayerStat(Offsets.PlayerGameData.Souls, value);
+                    _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls, value);
                 }
             }
         }

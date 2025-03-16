@@ -280,6 +280,24 @@ namespace DSRForge.Memory
             
             return finalAddress;
         }
+        
+        internal IntPtr FollowPointersV2(IntPtr baseAddress, int[] offsets, bool readFinalPtr)
+        {
+            ulong ptr = ReadUInt64(baseAddress);
+            
+            for (int i = 0; i < offsets.Length - 1; i++)
+            {
+                ptr = ReadUInt64((IntPtr)ptr + offsets[i]);
+            }
+            
+            IntPtr finalAddress = (IntPtr)ptr + offsets[offsets.Length - 1];
+            
+            if (readFinalPtr) 
+                return (IntPtr)ReadUInt64(finalAddress);
+    
+            
+            return finalAddress;
+        }
 
         public void SetBitValue(IntPtr addr, byte flagMask, bool setValue)
         {
@@ -296,7 +314,7 @@ namespace DSRForge.Memory
 
         public bool IsGameLoaded()
         {
-            var loadingCheckPtr = FollowPointers(new[] { Offsets.FileMan, Offsets.LoadingScreenFlag }, false);
+            var loadingCheckPtr = FollowPointersV2(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
             return ReadInt32(loadingCheckPtr) == 0;
             
         }

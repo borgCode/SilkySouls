@@ -14,9 +14,9 @@ namespace DSRForge.Services
         public void Quitout()
         {
             var quitoutPtr =
-                _memoryIo.FollowPointers(new[]
+                _memoryIo.FollowPointersV2(Offsets.MenuMan.Base, new[]
                 {
-                    Offsets.MenuMan, (int)Offsets.MenuManData.Quitout
+                   (int)Offsets.MenuMan.MenuManData.Quitout
                 }, false);
             _memoryIo.WriteByte(quitoutPtr, 2);
         }

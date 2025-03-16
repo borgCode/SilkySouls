@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DSRForge.memory;
 using DSRForge.Memory;
 using DSRForge.Services;
 using DSRForge.Utilities;
@@ -43,8 +44,37 @@ namespace DSRForge
             var settingsService = new SettingsService(_memoryIo);
 
             var hotkeyManager = new HotkeyManager(_memoryIo);
-  
-            
+
+            var aobScanner = new AoBScanner(_memoryIo);
+
+            Offsets.WorldChrMan.Base = aobScanner.FindAddressByPattern(Patterns.WorldChrMan);
+            Offsets.DebugFlags.Base = aobScanner.FindAddressByPattern(Patterns.DebugFlags);
+            Offsets.Cam.Base = aobScanner.FindAddressByPattern(Patterns.CamBase);
+            Offsets.FileMan.Base = aobScanner.FindAddressByPattern(Patterns.FileMan);
+
+            Offsets.GameDataMan.Base = aobScanner.FindAddressByPattern(Patterns.GameDataMan);
+
+            Offsets.ItemGet = aobScanner.FindAddressByPattern(Patterns.ItemGetFunc).ToInt64();
+
+            Offsets.ItemGetMenuMan = aobScanner.FindAddressByPattern(Patterns.ItemGetMenuMan);
+
+            Offsets.ItemDlgFunc = aobScanner.FindAddressByPattern(Patterns.ItemGetDlgFunc).ToInt64();
+
+            Offsets.FieldArea.Base = aobScanner.FindAddressByPattern(Patterns.FieldArea);
+
+            Offsets.GameMan.Base = aobScanner.FindAddressByPattern(Patterns.GameMan);
+
+            Offsets.DamageMan.Base = aobScanner.FindAddressByPattern(Patterns.DamMan);
+
+            Offsets.DrawEventPatch = aobScanner.FindAddressByPattern(Patterns.DrawEventPatch);
+
+            Offsets.DrawSoundViewPatch = aobScanner.FindAddressByPattern(Patterns.DrawSoundViewPatch);
+
+            Offsets.MenuMan.Base = aobScanner.FindAddressByPattern(Patterns.MenuMan);
+
+            IntPtr progression = aobScanner.FindAddressByPattern(Patterns.ProgressionFlagMan);
+
+
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
             _utilityViewModel = new UtilityViewModel(utilityService, playerService, hotkeyManager);
             _enemyViewModel = new EnemyViewModel(_enemyService, hotkeyManager);
@@ -73,14 +103,16 @@ namespace DSRForge
         }
 
         private bool _loaded;
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (_memoryIo.IsAttached)
             {
-                ((TextBlock)MainTabControl.Template.FindName("IsAttachedText", MainTabControl)).Text = "Attached to game";
+                ((TextBlock)MainTabControl.Template.FindName("IsAttachedText", MainTabControl)).Text =
+                    "Attached to game";
                 _utilityViewModel.TryRestoreAttachedFeatures();
                 _enemyService.TryInstallTargetHook();
-                
+
                 if (_memoryIo.IsGameLoaded())
                 {
                     if (_loaded) return;
@@ -125,7 +157,7 @@ namespace DSRForge
             base.OnClosing(e);
             _memoryIo?.Dispose();
         }
-        
+
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)

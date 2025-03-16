@@ -158,7 +158,7 @@ namespace DSRForge.Services
 
         public void ToggleAi(int value)
         {
-            var disableAiPtr = _memoryIo.BaseAddress + Offsets.DisableAi;
+            var disableAiPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.DisableAi;
             _memoryIo.WriteInt32(disableAiPtr, value);
         }
 
@@ -184,7 +184,7 @@ namespace DSRForge.Services
 
         public void ToggleAllNoDeath(int value)
         {
-            var allNoDeathPtr = _memoryIo.BaseAddress + Offsets.AllNoDeath;
+            var allNoDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDeath;
             _memoryIo.WriteInt32(allNoDeathPtr, value);
         }
         

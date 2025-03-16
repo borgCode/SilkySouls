@@ -48,14 +48,10 @@ namespace DSRForge.Services
 
         private byte[] GetItemSpawnBytes()
         {
-            ulong chrItemSpawnAddr =
-                _memoryIo.ReadUInt64(_memoryIo.BaseAddress + Offsets.GameDataMan);
-            long itemSpawnFunc = _memoryIo.BaseAddress.ToInt64() + Offsets.ItemGet;
-
-            ulong itemGetMenuMan = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + Offsets.ItemGetMenuMan);
-
-            long itemGetDlgFunc = _memoryIo.BaseAddress.ToInt64() + Offsets.ItemDlgFunc;
-
+            ulong gameDataMan = _memoryIo.ReadUInt64(Offsets.GameDataMan.Base);
+            
+            ulong itemGetMenuMan = _memoryIo.ReadUInt64(Offsets.ItemGetMenuMan);
+            
             long originLocation = _memoryIo.BaseAddress.ToInt64() + 0x497483;
 
             byte[] spawnBytes = AsmLoader.GetAsmBytes("ItemSpawn");
@@ -64,13 +60,13 @@ namespace DSRForge.Services
             Array.Copy(bytes, 0, spawnBytes, 81, 8);
             bytes = BitConverter.GetBytes(130);
             Array.Copy(bytes, 0, spawnBytes, 94, 4);
-            bytes = BitConverter.GetBytes(chrItemSpawnAddr);
+            bytes = BitConverter.GetBytes(gameDataMan);
             Array.Copy(bytes, 0, spawnBytes, 123, 8);
-            bytes = BitConverter.GetBytes(itemSpawnFunc);
+            bytes = BitConverter.GetBytes(Offsets.ItemGet);
             Array.Copy(bytes, 0, spawnBytes, 164, 8);
             bytes = BitConverter.GetBytes(itemGetMenuMan);
             Array.Copy(bytes, 0, spawnBytes, 180, 8);
-            bytes = BitConverter.GetBytes(itemGetDlgFunc);
+            bytes = BitConverter.GetBytes(Offsets.ItemDlgFunc);
             Array.Copy(bytes, 0, spawnBytes, 214, 8);
             bytes = BitConverter.GetBytes(_flagLoc.ToInt64());
             Array.Copy(bytes, 0, spawnBytes, 230, 8);

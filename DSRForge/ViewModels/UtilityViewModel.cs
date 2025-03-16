@@ -241,12 +241,12 @@ namespace DSRForge.ViewModels
 
         public void ShowLevelUpMenu()
         {
-            _utilityService.ShowMenu(Offsets.MenuManData.LevelUpMenu);
+            _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.LevelUpMenu);
         }
 
         public void ShowAttunementMenu()
         {
-            _utilityService.ShowMenu(Offsets.MenuManData.AttunementMenu);
+            _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.AttunementMenu);
         }
     }
 }

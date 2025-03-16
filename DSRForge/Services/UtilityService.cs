@@ -62,36 +62,36 @@ namespace DSRForge.Services
         internal void EnableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointers(new[] { Offsets.DamageMan, (int)Offsets.DamManOffsets.HitboxFlag }, false);
+                _memoryIo.FollowPointersV2(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
             _memoryIo.WriteInt32(hitboxAddr, 1);
         }
 
         internal void DisableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointers(new[] { Offsets.DamageMan, (int)Offsets.DamManOffsets.HitboxFlag }, false);
+                _memoryIo.FollowPointersV2(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
 
             _memoryIo.WriteInt32(hitboxAddr, 0);
         }
         
         internal void EnableSoundView()
         {
-            _memoryIo.WriteByte(_memoryIo.BaseAddress + Offsets.DrawSoundViewPatch, 1);
+            _memoryIo.WriteByte(Offsets.DrawSoundViewPatch, 1);
         }
 
         internal void DisableSoundView()
         {
-            _memoryIo.WriteByte(_memoryIo.BaseAddress + Offsets.DrawSoundViewPatch, 0);
+            _memoryIo.WriteByte(Offsets.DrawSoundViewPatch, 0);
         }
 
         public void EnableDrawEvent()
         {
-            _memoryIo.WriteByte(_memoryIo.BaseAddress + Offsets.DrawEventPatch, 1);
+            _memoryIo.WriteByte(Offsets.DrawEventPatch, 1);
         }
 
         public void DisableDrawEvent()
         {
-            _memoryIo.WriteByte(_memoryIo.BaseAddress + Offsets.DrawEventPatch, 0);
+            _memoryIo.WriteByte(Offsets.DrawEventPatch, 0);
         }
 
         private bool _targetViewIsInstalled;
@@ -144,10 +144,10 @@ namespace DSRForge.Services
         {
             var zDirectionAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable;
 
-            var playerCoordsBase = _memoryIo.FollowPointers(
+            var playerCoordsBase = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.UpdateCoordsBasePtr, Offsets.UpdateCoords
+                  (int)Offsets.WorldChrMan.BaseOffsets.UpdateCoordsBasePtr, Offsets.WorldChrMan.UpdateCoords
                 },
                 true);
 
@@ -220,25 +220,24 @@ namespace DSRForge.Services
 
             IntPtr updateCoordsBlock = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.UpdateCoords;
 
-            var coordsPtr = _memoryIo.FollowPointers(new[]
+            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,new[]
             {
-                Offsets.WorldChrMan,
-                (int)Offsets.WorldChrOffsets.PlayerIns,
-                (int)Offsets.PlayerInsOffsets.CoordsPtr1,
-                Offsets.CoordsPtr2,
-                Offsets.CoordsPtr3,
-                Offsets.CoordsPtr4,
+                (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
+                Offsets.WorldChrMan.CoordsPtr2,
+                Offsets.WorldChrMan.CoordsPtr3,
+                Offsets.WorldChrMan.CoordsPtr4,
             }, true);
 
             var updateCoordsOrigin = 0x1409c2923;
-            var padManPtr = _memoryIo.FollowPointers(
+            var padManPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns,
-                    (int)Offsets.PlayerInsOffsets.PadMan
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PadMan
                 }, true);
 
-            var camPtr = _memoryIo.FollowPointers(new[] { Offsets.ChrCamBase, Offsets.ChrCamPtr1, Offsets.ChrCamPtr2 }, true);
+            var camPtr = _memoryIo.FollowPointersV2(Offsets.Cam.Base, new[] {Offsets.Cam.ChrCam, Offsets.Cam.ChrExFollowCam }, true);
 
             byte[] updateCoordsCodeBytes = AsmLoader.GetAsmBytes("NoClip_UpdateCoords");
 
@@ -300,7 +299,7 @@ namespace DSRForge.Services
         public void Warp(Location location)
         {
             var lastBonfireAdr =
-                _memoryIo.FollowPointers(new[] { Offsets.GameMan, (int)Offsets.GameManData.LastBonfire }, false);
+                _memoryIo.FollowPointersV2(Offsets.GameMan.Base, new[] {Offsets.GameMan.LastBonfire }, false);
 
             _memoryIo.WriteInt32(lastBonfireAdr, location.Id);
             _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp, AsmLoader.GetAsmBytes("Warp"));
@@ -328,8 +327,7 @@ namespace DSRForge.Services
 
                 _memoryIo.WriteBytes(codeBlockAddr, coordWarpBytes);
 
-                IntPtr loadingFlagAddr = _memoryIo.FollowPointers(new[] { Offsets.FileMan, Offsets.LoadingScreenFlag },
-                    false);
+                IntPtr loadingFlagAddr = _memoryIo.FollowPointersV2(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
 
                 if (!WaitForLoadingFlag(loadingFlagAddr, 1))
                 {
@@ -365,14 +363,14 @@ namespace DSRForge.Services
 
         public void ToggleFilter(int value)
         {
-            var filterPtr = _memoryIo.FollowPointers(new[]
-                { Offsets.FieldArea, Offsets.RenderPtr, Offsets.FilterRemoval}, false );
+            var filterPtr = _memoryIo.FollowPointersV2(Offsets.FieldArea.Base, new[]
+                { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
             _memoryIo.WriteByte(filterPtr, value);
         }
 
-        public void ShowMenu(Offsets.MenuManData menuType)
+        public void ShowMenu(Offsets.MenuMan.MenuManData menuType)
         {
-            var menuPtr = _memoryIo.FollowPointers(new[] { Offsets.MenuMan, (int)menuType }, false);
+            var menuPtr = _memoryIo.FollowPointersV2(Offsets.MenuMan.Base, new[] {(int)menuType }, false);
             _memoryIo.WriteByte(menuPtr, 1);
         }
     }

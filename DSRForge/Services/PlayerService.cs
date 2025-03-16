@@ -11,21 +11,21 @@ namespace DSRForge.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-        
+
         private readonly IntPtr _codeCave2;
 
         private readonly int[] _hpOffsets =
-            { Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns, (int)Offsets.PlayerInsOffsets.Health };
+            { (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.Health };
 
         private readonly int[] _maxHpOffsets =
-            { Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns, (int)Offsets.PlayerInsOffsets.MaxHealth };
+            { (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.MaxHealth };
 
         private readonly Dictionary<int, int> _lowLevelSoulRequirements = new Dictionary<int, int>
         {
             { 2, 673 }, { 3, 690 }, { 4, 707 }, { 5, 724 }, { 6, 741 }, { 7, 758 }, { 8, 775 }, { 9, 793 }, { 10, 811 },
             { 11, 829 },
         };
-        
+
         public PlayerService(MemoryIo memoryIo, HookManager hookManager)
         {
             _memoryIo = memoryIo;
@@ -33,18 +33,18 @@ namespace DSRForge.Services
             _codeCave2 = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave2.Base;
         }
 
-        public int GetSetPlayerStat(Offsets.PlayerGameData statType, int? newValue = null)
+        public int GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData statType, int? newValue = null)
         {
-            var statPtr = _memoryIo.FollowPointers(new[]
-                { Offsets.GameDataMan, (int)Offsets.GameData.PlayerGameData, (int)statType }, false);
-    
+            var statPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base, new[]
+                {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)statType }, false);
+
             int currentValue = _memoryIo.ReadInt32(statPtr);
-            
+
             if (!newValue.HasValue)
             {
                 return currentValue;
             }
-            
+
             if (currentValue == newValue.Value)
             {
                 return currentValue;
@@ -52,26 +52,27 @@ namespace DSRForge.Services
 
             switch (statType)
             {
-                case Offsets.PlayerGameData.Souls:
+                case Offsets.GameDataMan.PlayerGameData.Souls:
                     return HandleSoulEdit(statPtr, newValue.Value, currentValue);
-            
-                case Offsets.PlayerGameData.Humanity:
+
+                case  Offsets.GameDataMan.PlayerGameData.Humanity:
                     var validatedHumanity = newValue.Value;
                     if (validatedHumanity < 1) validatedHumanity = 1;
                     if (validatedHumanity > 99) validatedHumanity = 99;
                     _memoryIo.WriteInt32(statPtr, validatedHumanity);
                     return validatedHumanity;
-            
+
                 default:
                     var validatedStat = newValue.Value;
                     if (validatedStat < 1) validatedStat = 1;
                     if (validatedStat > 99) validatedStat = 99;
-            
+
                     if (validatedStat != currentValue)
                     {
                         _memoryIo.WriteInt32(statPtr, validatedStat);
                         UpdatePlayerStats(validatedStat - currentValue);
                     }
+
                     return validatedStat;
             }
         }
@@ -85,49 +86,53 @@ namespace DSRForge.Services
             }
 
             int difference = newValue - oldValue;
-            var totalSoulsPtr = _memoryIo.FollowPointers(new[]
-                { Offsets.GameDataMan, (int)Offsets.GameData.PlayerGameData, (int)Offsets.PlayerGameData.TotalSouls }, false);
+            var totalSoulsPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,new[]
+                {
+                   (int)Offsets.GameDataMan.GameData.PlayerGameData, (int) Offsets.GameDataMan.PlayerGameData.TotalSouls
+                },
+                false);
             int currentTotalSouls = _memoryIo.ReadInt32(totalSoulsPtr);
-                
+
             _memoryIo.WriteInt32(totalSoulsPtr, difference + currentTotalSouls);
             _memoryIo.WriteInt32(statPtr, newValue);
             return newValue;
         }
-        
+
         private void UpdatePlayerStats(int difference)
         {
             var allStatsPtr =
-                _memoryIo.FollowPointers(new[] { Offsets.GameDataMan, (int)Offsets.GameData.PlayerGameData }, true);
+                _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base, new[] {(int)Offsets.GameDataMan.GameData.PlayerGameData }, true);
 
-            int originalSouls = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Souls);
+            int originalSouls = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls);
 
-            int currentLevel = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.SoulLevel);
+            int currentLevel = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.SoulLevel);
             int newLevel = currentLevel + difference;
 
 
             int[] stats = new int[9];
-            stats[0] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Vitality);
-            stats[1] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Attunement);
-            stats[2] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Endurance);
-            stats[3] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Strength);
-            stats[4] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Dexterity);
-            stats[5] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Resistance);
-            stats[6] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Intelligence);
-            stats[7] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Faith);
-            stats[8] = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.Humanity);
+            stats[0] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Vitality);
+            stats[1] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Attunement);
+            stats[2] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Endurance);
+            stats[3] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Strength);
+            stats[4] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Dexterity);
+            stats[5] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Resistance);
+            stats[6] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Intelligence);
+            stats[7] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Faith);
+            stats[8] = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Humanity);
 
             if (CallLevelUpFunction(newLevel, stats))
             {
                 if (newLevel < currentLevel)
                 {
-                    _memoryIo.WriteInt32(allStatsPtr + (int)Offsets.PlayerGameData.Souls, originalSouls);
+                    _memoryIo.WriteInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls, originalSouls);
                     return;
                 }
+
                 int totalSoulsRequired = CalculateTotalSoulsRequired(currentLevel, newLevel);
-                int currentTotalSouls = _memoryIo.ReadInt32(allStatsPtr + (int)Offsets.PlayerGameData.TotalSouls);
-                _memoryIo.WriteInt32(allStatsPtr + (int)Offsets.PlayerGameData.TotalSouls,
+                int currentTotalSouls = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.TotalSouls);
+                _memoryIo.WriteInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.TotalSouls,
                     totalSoulsRequired + currentTotalSouls);
-                _memoryIo.WriteInt32(allStatsPtr + (int)Offsets.PlayerGameData.Souls, originalSouls);
+                _memoryIo.WriteInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls, originalSouls);
             }
         }
 
@@ -178,45 +183,44 @@ namespace DSRForge.Services
                     totalSouls += Math.Round(levelCost);
                 }
             }
+
             return (int)totalSouls;
         }
 
         public void SetHp(int hp)
         {
-            var hpPtr = _memoryIo.FollowPointers(
+            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns, (int)Offsets.PlayerInsOffsets.Health
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.Health
                 }, false);
             _memoryIo.WriteInt32(hpPtr, hp);
-            GetSetPlayerStat(Offsets.PlayerGameData.Endurance, 99);
         }
 
         public int? GetHp()
         {
-            var hpPtr = _memoryIo.FollowPointers(_hpOffsets, false);
+            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, _hpOffsets, false);
 
             return _memoryIo.ReadInt32(hpPtr);
         }
 
         public int? GetMaxHp()
         {
-            var hpPtr = _memoryIo.FollowPointers(_maxHpOffsets, false);
+            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, _maxHpOffsets, false);
 
             return _memoryIo.ReadInt32(hpPtr);
         }
 
         public void SavePos(int index)
         {
-            var coordsPtr = _memoryIo.FollowPointers(new[]
+            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, new[]
             {
-                Offsets.WorldChrMan,
-                (int)Offsets.WorldChrOffsets.PlayerIns,
-                (int)Offsets.PlayerInsOffsets.CoordsPtr1,
-                Offsets.CoordsPtr2,
-                Offsets.CoordsPtr3,
-                Offsets.CoordsPtr4,
-                (int)Offsets.Coords.X
+                (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
+                Offsets.WorldChrMan.CoordsPtr2,
+                Offsets.WorldChrMan.CoordsPtr3,
+                Offsets.WorldChrMan.CoordsPtr4,
+                (int)Offsets.WorldChrMan.Coords.X
             }, false);
 
             byte[] positionBytes = _memoryIo.ReadBytes(coordsPtr, 12);
@@ -231,27 +235,6 @@ namespace DSRForge.Services
             }
         }
 
-        public int GetSetNewGame(int? value)
-        {
-            var newGamePtr = _memoryIo.FollowPointers(new[]
-                { Offsets.GameDataMan, (int)Offsets.GameData.Ng }, false);
-    
-            int currentValue = _memoryIo.ReadInt32(newGamePtr);
-            
-            if (!value.HasValue)
-            {
-                return currentValue;
-            }
-            
-            if (currentValue == value.Value)
-            {
-                return currentValue;
-            }
-            
-            _memoryIo.WriteInt32(newGamePtr, value.Value);
-            return value.Value;
-        }
-
         public void RestorePos(int index)
         {
             byte[] positionBytes;
@@ -264,27 +247,47 @@ namespace DSRForge.Services
                 positionBytes = _memoryIo.ReadBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos2, 12);
             }
 
-            var coordsPtr = _memoryIo.FollowPointers(new[]
+            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, new[]
             {
-                Offsets.WorldChrMan,
-                (int)Offsets.WorldChrOffsets.PlayerIns,
-                (int)Offsets.PlayerInsOffsets.CoordsPtr1,
-                Offsets.CoordsPtr2,
-                Offsets.CoordsPtr3,
-                Offsets.CoordsPtr4,
-                (int)Offsets.Coords.X
+                (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
+                Offsets.WorldChrMan.CoordsPtr2,
+                Offsets.WorldChrMan.CoordsPtr3,
+                Offsets.WorldChrMan.CoordsPtr4,
+                (int)Offsets.WorldChrMan.Coords.X
             }, false);
 
             _memoryIo.WriteBytes(coordsPtr, positionBytes);
         }
 
+        public int GetSetNewGame(int? value)
+        {
+            var newGamePtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,new[]
+                { (int)Offsets.GameDataMan.GameData.Ng }, false);
+
+            int currentValue = _memoryIo.ReadInt32(newGamePtr);
+
+            if (!value.HasValue)
+            {
+                return currentValue;
+            }
+
+            if (currentValue == value.Value)
+            {
+                return currentValue;
+            }
+
+            _memoryIo.WriteInt32(newGamePtr, value.Value);
+            return value.Value;
+        }
+
         public void RestoreSpellCasts()
         {
-            var magicDataPtr = _memoryIo.FollowPointers(
+            var magicDataPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,
                 new[]
                 {
-                    Offsets.GameDataMan, (int)Offsets.GameData.PlayerGameData,
-                    (int)Offsets.PlayerGameData.EquipMagicData
+                    (int)Offsets.GameDataMan.GameData.PlayerGameData,
+                    (int)Offsets.GameDataMan.PlayerGameData.EquipMagicData
                 }, true);
             byte[] restoreBytes = AsmLoader.GetAsmBytes("RestoreSpellCasts");
             byte[] bytes = BitConverter.GetBytes(magicDataPtr.ToInt64());
@@ -296,101 +299,101 @@ namespace DSRForge.Services
 
         public void ToggleNoDeath(int value)
         {
-            var noDeathPtr = _memoryIo.BaseAddress + Offsets.NoDeath;
+            var noDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.NoDeath;
             _memoryIo.WriteByte(noDeathPtr, value);
         }
 
 
         public void ToggleNoDamage(bool setValue)
         {
-            var noDamagePtr = _memoryIo.FollowPointers(
+            var noDamagePtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns, (int)Offsets.PlayerInsOffsets.NoDamage
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
                 }, false);
-            var flagMask = Offsets.NoDamage;
+            var flagMask = Offsets.WorldChrMan.NoDamage;
             _memoryIo.SetBitValue(noDamagePtr, flagMask, setValue);
         }
 
         public void ToggleInfiniteStamina(bool setValue)
         {
-            var infiniteStamPtr = _memoryIo.FollowPointers(
+            var infiniteStamPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns,
-                    (int)Offsets.PlayerInsOffsets.InfiniteStam
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.InfiniteStam
                 }, false);
 
-            var flagMask = Offsets.InfiniteStam;
+            var flagMask = Offsets.WorldChrMan.InfiniteStam;
             _memoryIo.SetBitValue(infiniteStamPtr, flagMask, setValue);
         }
 
         public void ToggleNoGoodsConsume(bool setValue)
         {
-            var noGoodsConsumePtr = _memoryIo.FollowPointers(
+            var noGoodsConsumePtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns,
-                    (int)Offsets.PlayerInsOffsets.NoGoodsConsume
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.NoGoodsConsume
                 }, false);
-            var flagMask = Offsets.NoGoodsConsume;
+            var flagMask = Offsets.WorldChrMan.NoGoodsConsume;
             _memoryIo.SetBitValue(noGoodsConsumePtr, flagMask, setValue);
         }
 
         public void ToggleInfiniteCasts(int value)
         {
-            var infiniteCastsPtr = _memoryIo.BaseAddress + Offsets.InfiniteCasts;
+            var infiniteCastsPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.InfiniteCasts;
             _memoryIo.WriteByte(infiniteCastsPtr, value);
         }
 
         public void ToggleOneShot(int value)
         {
-            var oneShotPtr = _memoryIo.BaseAddress + Offsets.OneShot;
+            var oneShotPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.OneShot;
             _memoryIo.WriteByte(oneShotPtr, value);
         }
 
         public void ToggleInvisible(int value)
         {
-            var invisiblePtr = _memoryIo.BaseAddress + Offsets.Invisible;
+            var invisiblePtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.Invisible;
             _memoryIo.WriteByte(invisiblePtr, value);
         }
 
         public void ToggleSilent(int value)
         {
-            var silentPtr = _memoryIo.BaseAddress + Offsets.Silent;
+            var silentPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.Silent;
             _memoryIo.WriteByte(silentPtr, value);
         }
 
         public void ToggleNoAmmoConsume(int value)
         {
-            var noAmmoConsumePtr = _memoryIo.BaseAddress + Offsets.NoAmmoConsume;
+            var noAmmoConsumePtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.NoAmmoConsume;
             _memoryIo.WriteByte(noAmmoConsumePtr, value);
         }
 
         public float GetSetPlayerSpeed(float? value)
         {
-            var playerSpeedPtr = _memoryIo.FollowPointers(
+            var playerSpeedPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
                 new[]
                 {
-                    Offsets.WorldChrMan, (int)Offsets.WorldChrOffsets.PlayerIns,
-                    (int)Offsets.PlayerInsOffsets.PlayerCtrl, Offsets.PlayerAnim, Offsets.PlayerAnimSpeed
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PlayerCtrl, Offsets.WorldChrMan.PlayerAnim, Offsets.WorldChrMan.PlayerAnimSpeed
                 }, false);
-            
+
             float currentSpeed = _memoryIo.ReadFloat(playerSpeedPtr);
-            
+
             if (!value.HasValue)
             {
                 return currentSpeed;
             }
-            
+
             _memoryIo.WriteFloat(playerSpeedPtr, value.Value);
             return value.Value;
         }
 
         public bool IsNoDeathOn()
         {
-            var noDeathPtr = _memoryIo.BaseAddress + Offsets.NoDeath;
-            return  _memoryIo.ReadBytes(noDeathPtr, 1)[0] == 1;
+            var noDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.NoDeath;
+            return _memoryIo.ReadBytes(noDeathPtr, 1)[0] == 1;
         }
     }
 }
