@@ -31,12 +31,21 @@ namespace DSRForge.Services
             _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
         }
 
+        public int? GetSoulLevel()
+        {
+            var soulLevelPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[]
+                {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)Offsets.GameDataMan.PlayerGameData.SoulLevel }, false);
+            return _memoryIo.ReadInt32(soulLevelPtr);
+        }
+
         public int GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData statType, int? newValue = null)
         {
             var statPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[]
                 {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)statType }, false);
 
+            
             int currentValue = _memoryIo.ReadInt32(statPtr);
+            
 
             if (!newValue.HasValue)
             {

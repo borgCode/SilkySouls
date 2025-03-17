@@ -19,17 +19,14 @@ namespace DSRForge.Services
         
         private bool _isHookInstalled;
 
-        private readonly long _lockedTargetOrigin;
+        private long _lockedTargetOrigin;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
-        private readonly long _repeatActionOrigin;
+        private long _repeatActionOrigin;
         
         public EnemyService(MemoryIo memoryIo, HookManager hookManager)
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-
-            _lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
-            _repeatActionOrigin = Offsets.Hooks.RepeatAction;
             
             _codeCave = CodeCaveOffsets.CodeCave1.Base;
             _lastTargetBlock = _codeCave + CodeCaveOffsets.CodeCave1.LockedTarget;
@@ -65,6 +62,7 @@ namespace DSRForge.Services
         }
         private bool IsTargetOriginInitialized()
         {
+            _lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
             var originBytes = _memoryIo.ReadBytes((IntPtr)_lockedTargetOrigin, _lockedTargetOriginBytes.Length);
             return originBytes.SequenceEqual(_lockedTargetOriginBytes);
         }
@@ -115,6 +113,7 @@ namespace DSRForge.Services
 
         internal void EnableRepeatAction()
         {
+            _repeatActionOrigin = Offsets.Hooks.RepeatAction;
             if (_isRepeatActionInstalled)
             {
                 _memoryIo.WriteByte(_repeatActionFlag, 1);

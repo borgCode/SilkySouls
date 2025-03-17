@@ -19,6 +19,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -134,12 +135,11 @@
                 </StackPanel>
             </Grid>
             
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
                 <StackPanel Grid.Column="0">
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
@@ -333,8 +333,8 @@
                     </Grid>
                 </StackPanel>
             </Grid>
-            
-            <Border Grid.Row="3" VerticalAlignment="Bottom" Margin="0,140,0,0">
+            <TextBlock Grid.Row="3" Text="{Binding SoulLevel, StringFormat='Soul Level: {0}'}" FontWeight="Bold" Margin="0,0,0,5" />
+            <Border Grid.Row="4" VerticalAlignment="Bottom" Margin="0,140,0,0">
                 <StackPanel>
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>

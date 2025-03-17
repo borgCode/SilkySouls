@@ -11,7 +11,7 @@ namespace DSRForge.Services
         private readonly HookManager _hookManager;
         private readonly IntPtr _itemSpawnBlock;
         private readonly IntPtr _flagLoc;
-        private readonly long _origin;
+        private long _origin;
         private bool _hasSetupCave;
         private bool _isHookInstalled;
         
@@ -24,11 +24,12 @@ namespace DSRForge.Services
             _flagLoc = codeCaveBase;
 
             _itemSpawnBlock = codeCaveBase + CodeCaveOffsets.CodeCave3.ItemSpawn;
-            _origin = Offsets.Hooks.ItemSpawn;
+            
         }
 
         public void ItemSpawn(int itemId, int category, int quantity)
         {
+            _origin = Offsets.Hooks.ItemSpawn;
             if (!_hasSetupCave)
             {
                 _memoryIo.WriteBytes(_itemSpawnBlock, GetItemSpawnBytes());

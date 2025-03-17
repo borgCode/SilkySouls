@@ -18,7 +18,7 @@ namespace DSRForge.Services
         private readonly IntPtr _codeCave2;
         private IntPtr _targetView;
         private IntPtr _draw;
-        private readonly long _drawOrigin;
+        private long _drawOrigin;
         
         private readonly byte[] _drawOriginBytes = { 0x44, 0x8B, 0xC6, 0xBA, 0x16, 0x00, 0x00, 0x00 };
         
@@ -31,8 +31,6 @@ namespace DSRForge.Services
             _hookManager = hookManager;
             _codeCave1 = CodeCaveOffsets.CodeCave1.Base;
             _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
-            Console.WriteLine(Offsets.Hooks.Draw);
-            _drawOrigin = Offsets.Hooks.Draw;
         }
 
         internal bool EnableDraw()
@@ -65,6 +63,7 @@ namespace DSRForge.Services
 
         private bool IsDrawOriginInitialized()
         {
+            _drawOrigin = Offsets.Hooks.Draw;
             var originBytes = _memoryIo.ReadBytes((IntPtr) _drawOrigin, 8);
             return originBytes.SequenceEqual(_drawOriginBytes);
         }
@@ -85,7 +84,6 @@ namespace DSRForge.Services
         {
             var hitboxAddr =
                 _memoryIo.FollowPointers(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
-
             _memoryIo.WriteInt32(hitboxAddr, 0);
         }
         
@@ -116,7 +114,6 @@ namespace DSRForge.Services
             if (!_targetViewIsInstalled)
             {
                 long targetViewOrigin = Offsets.Hooks.TargetingView;
-
                 _targetView = _codeCave1 + CodeCaveOffsets.CodeCave1.TargetView;
                 
                 byte[] targetViewBytes =

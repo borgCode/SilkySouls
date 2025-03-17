@@ -26,7 +26,8 @@ namespace DSRForge.ViewModels
         private bool _isNoAmmoConsumeEnabled;
         
         private bool _areOptionsEnabled;
-        
+
+        private int? _soulLevel;
         private int? _vitality;
         private int? _attunement;
         private int? _endurance;
@@ -39,6 +40,7 @@ namespace DSRForge.ViewModels
         private int? _souls;
         private int? _newGame;
         private float? _playerSpeed;
+        private int? _currentSoulLevel;
         
         private bool _pauseUpdates;
         private readonly PlayerService _playerService;
@@ -52,7 +54,7 @@ namespace DSRForge.ViewModels
             _hotkeyManager = hotkeyManager;
             RegisterHotkeys();
 
-            InitStats();
+            LoadStats();
             
             _timer = new DispatcherTimer
             {
@@ -63,8 +65,15 @@ namespace DSRForge.ViewModels
                 if (_pauseUpdates) return;
                 CurrentHp = _playerService.GetHp();
                 CurrentMaxHp = _playerService.GetMaxHp();
+                int? newSoulLevel = _playerService.GetSoulLevel();
+                if (_currentSoulLevel != newSoulLevel)
+                {
+                    SoulLevel = newSoulLevel;
+                    _currentSoulLevel = newSoulLevel;
+                    LoadStats();
+                }
+
             };
-            _timer.Start();
         }
 
 
@@ -86,20 +95,21 @@ namespace DSRForge.ViewModels
 
         }
 
-        private void InitStats()
+        private void LoadStats()
         {
-            _vitality = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Vitality);
-            _attunement = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Attunement);
-            _endurance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Endurance);
-            _strength = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Strength);
-            _dexterity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Dexterity);
-            _resistance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Resistance);
-            _intelligence = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Intelligence);
-            _faith = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Faith);
-            _humanity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Humanity);
-            _souls = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls);
-            _newGame = _playerService.GetSetNewGame(null);
-            _playerSpeed = _playerService.GetSetPlayerSpeed(null);
+            Vitality = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Vitality);
+            Attunement = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Attunement);
+            Endurance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Endurance);
+            Strength = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Strength);
+            Dexterity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Dexterity);
+            Resistance = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Resistance);
+            Intelligence = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Intelligence);
+            Faith = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Faith);
+            Humanity = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Humanity);
+            Souls = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls);
+            NewGame = _playerService.GetSetNewGame(null);
+            PlayerSpeed = _playerService.GetSetPlayerSpeed(null);
+            SoulLevel = _playerService.GetSoulLevel();
 
         }
 
@@ -290,6 +300,7 @@ namespace DSRForge.ViewModels
         public void DisableButtons()
         {
             AreOptionsEnabled = false;
+            _timer.Stop();
         }
 
         public void TryEnableActiveOptions()
@@ -312,10 +323,17 @@ namespace DSRForge.ViewModels
                 _playerService.ToggleSilent(1);
             if (IsNoAmmoConsumeEnabled)
                 _playerService.ToggleNoAmmoConsume(1);
-    
+
             AreOptionsEnabled = true;
+            LoadStats();
+            _timer.Start();
         }
         
+        public int? SoulLevel 
+        { 
+            get => _soulLevel;
+            private set => SetProperty(ref _soulLevel, value);
+        }
         
         public int? Vitality 
         { 
@@ -437,6 +455,7 @@ namespace DSRForge.ViewModels
             }
         }
 
+        
         public void SetVitality(int? value)
         {
             Vitality = value;

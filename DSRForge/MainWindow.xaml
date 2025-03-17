@@ -18,9 +18,11 @@
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> 
+            <RowDefinition Height="*" /> 
         </Grid.RowDefinitions>
 
+        <!-- Title Bar -->
         <Border Grid.Row="0"
                 Background="{StaticResource PanelBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
@@ -80,8 +82,25 @@
                 </StackPanel>
             </Grid>
         </Border>
+        
+        <Grid Grid.Row="1" Margin="0,5,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" /> 
+                <ColumnDefinition Width="Auto" /> 
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock x:Name="PatchText" Text=""
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Margin="10,0,0,0" />
+
+  
+            <TextBlock x:Name="IsAttachedText" Text=""
+                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                       Margin="0,0,10,0" />
+        </Grid>
+        
         <TabControl x:Name="MainTabControl"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Background="Transparent"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1">
@@ -90,9 +109,6 @@
                     <DockPanel>
                         <Grid DockPanel.Dock="Top">
                             <TabPanel IsItemsHost="True" HorizontalAlignment="Left" />
-                            <TextBlock x:Name="IsAttachedText" Text="" HorizontalAlignment="Right"
-                                       VerticalAlignment="Center"
-                                       Margin="0,0,10,0" />
                         </Grid>
                         <ContentPresenter ContentSource="SelectedContent" />
                     </DockPanel>
