@@ -1,10 +1,12 @@
-﻿namespace DSRForge.Memory
+﻿using System;
+
+namespace DSRForge.Memory
 {
     public static class CodeCaveOffsets
     {
         public static class CodeCave1
         {
-            public const int Base = 0x1298A60;
+            public static IntPtr Base;
 
             public const int EnableDraw = 0x0;
             public const int TargetView = 0x200;
@@ -14,30 +16,30 @@
             public const int RepeatAction = 0x260;
             public const int AllNoDamage = 0x2B0;
         }
-        
+
         public static class CodeCave2
         {
-            public const int Base = 0x1D0DF10;
+            public static IntPtr Base;
 
             public const int SavePos1 = 0x0;
             public const int SavePos2 = 0x10;
 
             public const int Warp = 0x20;
-            
+
             public enum WarpCoords
             {
                 Coords = 0x60,
                 CodeBlock = 0x70
             }
-            
+
             public enum NoClip
             {
-                ZDirectionVariable = 0x90,      
-                InAirTimer = 0xB0,              
-                ZDirectionKbCheck = 0xF0,       
-                ZDirectionL2Check = 0x150,      
+                ZDirectionVariable = 0x90,
+                InAirTimer = 0xB0,
+                ZDirectionKbCheck = 0xF0,
+                ZDirectionL2Check = 0x150,
                 ZDirectionR2Check = 0x180,
-                UpdateCoords = 0x200,           
+                UpdateCoords = 0x200,
             }
 
             public const int RestoreCasts = 0x330;
@@ -52,9 +54,10 @@
                 CurrentSouls = 0x600,
             }
         }
+
         public static class CodeCave3
         {
-            public const int Base = 0x1C70350;
+            public static IntPtr Base;
             public const int ItemSpawn = 0x10;
         }
     }

@@ -18,6 +18,7 @@ namespace DSRForge.Services
         private readonly IntPtr _codeCave2;
         private IntPtr _targetView;
         private IntPtr _draw;
+        private readonly long _drawOrigin;
         
         private readonly byte[] _drawOriginBytes = { 0x44, 0x8B, 0xC6, 0xBA, 0x16, 0x00, 0x00, 0x00 };
         
@@ -28,29 +29,43 @@ namespace DSRForge.Services
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-            _codeCave1 = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base;
-            _codeCave2 = _memoryIo.BaseAddress + CodeCaveOffsets.CodeCave2.Base;
+            _codeCave1 = CodeCaveOffsets.CodeCave1.Base;
+            _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
+            Console.WriteLine(Offsets.Hooks.Draw);
+            _drawOrigin = Offsets.Hooks.Draw;
         }
 
         internal bool EnableDraw()
         {
             if (!IsDrawOriginInitialized()) return false;
             _draw = _codeCave1 + CodeCaveOffsets.CodeCave1.EnableDraw;
+
+            var ezDraw = _memoryIo.FollowPointers(Offsets.HgDraw.Base, new[] { Offsets.HgDraw.EzDraw }, true);
+            long drawFunc1 = _drawOrigin + 11 + 5 + _memoryIo.ReadInt32((IntPtr)(_drawOrigin + 11) + 1);
+            long drawFunc2 = _drawOrigin + 43 + 5 + _memoryIo.ReadInt32((IntPtr)(_drawOrigin + 43) + 1);
             
-            long drawOrigin = 0x1402CD384;
-
             byte[] drawBytes = AsmLoader.GetAsmBytes("EnableDraw");
-            byte[] jumpBytes = BitConverter.GetBytes((int)(drawOrigin + 7 -  ( _codeCave1.ToInt64() + 172)));
-            Array.Copy(jumpBytes, 0, drawBytes, 168, 4);
+            byte[] bytes = BitConverter.GetBytes(ezDraw.ToInt64());
+            Array.Copy(bytes, 0, drawBytes, 2, 8);
+            bytes = BitConverter.GetBytes(drawFunc1);
+            Array.Copy(bytes, 0, drawBytes, 26, 8);
+            bytes = BitConverter.GetBytes(drawFunc2);
+            Array.Copy(bytes, 0, drawBytes, 85, 8);
+            bytes = BitConverter.GetBytes(drawFunc1);
+            Array.Copy(bytes, 0, drawBytes, 108, 8);
+            bytes = BitConverter.GetBytes(drawFunc2);
+            Array.Copy(bytes, 0, drawBytes, 147, 8);
+            byte[] jumpBytes = BitConverter.GetBytes((int)(_drawOrigin + 8 -  ( _codeCave1.ToInt64() + 170)));
+            Array.Copy(jumpBytes, 0, drawBytes, 166, 4);
             _memoryIo.WriteBytes(_draw, drawBytes);
-
-            _hookManager.InstallHook(_draw.ToInt64(), drawOrigin, _drawOriginBytes);
+            
+            _hookManager.InstallHook(_draw.ToInt64(), _drawOrigin, _drawOriginBytes);
             return true;
         }
 
         private bool IsDrawOriginInitialized()
         {
-            var originBytes = _memoryIo.ReadBytes((IntPtr) 0x1402CD384, 8);
+            var originBytes = _memoryIo.ReadBytes((IntPtr) _drawOrigin, 8);
             return originBytes.SequenceEqual(_drawOriginBytes);
         }
 
@@ -62,14 +77,14 @@ namespace DSRForge.Services
         internal void EnableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointersV2(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
+                _memoryIo.FollowPointers(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
             _memoryIo.WriteInt32(hitboxAddr, 1);
         }
 
         internal void DisableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointersV2(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
+                _memoryIo.FollowPointers(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
 
             _memoryIo.WriteInt32(hitboxAddr, 0);
         }
@@ -100,10 +115,10 @@ namespace DSRForge.Services
         {
             if (!_targetViewIsInstalled)
             {
-                long targetViewOrigin = 0x140618d20;
+                long targetViewOrigin = Offsets.Hooks.TargetingView;
 
                 _targetView = _codeCave1 + CodeCaveOffsets.CodeCave1.TargetView;
-
+                
                 byte[] targetViewBytes =
                 {
                     0xC6, 0x41, 0x48, 0x02, // mov    BYTE PTR [rcx+0x48],0x2
@@ -144,14 +159,14 @@ namespace DSRForge.Services
         {
             var zDirectionAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable;
 
-            var playerCoordsBase = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var playerCoordsBase = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                   (int)Offsets.WorldChrMan.BaseOffsets.UpdateCoordsBasePtr, Offsets.WorldChrMan.UpdateCoords
                 },
                 true);
 
-            var inAirTimerOrigin = 0x1402B95E6;
+            var inAirTimerOrigin = Offsets.Hooks.InAirTimer;
             IntPtr inAirTimerBlock = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.InAirTimer;
             byte[] inAirTimerCodeBytes = AsmLoader.GetAsmBytes("NoClip_InAirTimer");
 
@@ -165,7 +180,7 @@ namespace DSRForge.Services
             _memoryIo.WriteBytes(inAirTimerBlock, inAirTimerCodeBytes);
 
             IntPtr zDirectionKbCheck = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionKbCheck;
-            var keyOrigin = 0x140c9cb11;
+            var keyOrigin = Offsets.Hooks.Keyboard;
 
             byte[] zDirectKbBytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_KB");
             bytes = BitConverter.GetBytes(25);
@@ -189,7 +204,7 @@ namespace DSRForge.Services
             _memoryIo.WriteBytes(zDirectionKbCheck, zDirectKbBytes);
 
             IntPtr zDirectionR2Check = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionR2Check;
-            var r2Origin = 0x140C9C11A;
+            var r2Origin = Offsets.Hooks.ControllerR2;
 
             byte[] r2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_R2");
 
@@ -204,7 +219,7 @@ namespace DSRForge.Services
             _memoryIo.WriteBytes(zDirectionR2Check, r2Bytes);
 
             IntPtr zDirectionL2Check = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionL2Check;
-            var l2Origin = 0x140C9C0F0;
+            var l2Origin = Offsets.Hooks.ControllerL2;
 
             byte[] l2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_L2");
 
@@ -220,7 +235,7 @@ namespace DSRForge.Services
 
             IntPtr updateCoordsBlock = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.UpdateCoords;
 
-            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,new[]
+            var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,new[]
             {
                 (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
                 (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
@@ -229,15 +244,15 @@ namespace DSRForge.Services
                 Offsets.WorldChrMan.CoordsPtr4,
             }, true);
 
-            var updateCoordsOrigin = 0x1409c2923;
-            var padManPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var updateCoordsOrigin = Offsets.Hooks.UpdateCoords;
+            var padManPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.PadMan
                 }, true);
 
-            var camPtr = _memoryIo.FollowPointersV2(Offsets.Cam.Base, new[] {Offsets.Cam.ChrCam, Offsets.Cam.ChrExFollowCam }, true);
+            var camPtr = _memoryIo.FollowPointers(Offsets.Cam.Base, new[] {Offsets.Cam.ChrCam, Offsets.Cam.ChrExFollowCam }, true);
 
             byte[] updateCoordsCodeBytes = AsmLoader.GetAsmBytes("NoClip_UpdateCoords");
 
@@ -289,9 +304,7 @@ namespace DSRForge.Services
             {
                 _hookManager.UninstallHook(_noClipHooks[i]);
             }
-
             _noClipHooks.Clear();
-            
             _memoryIo.WriteBytes(_codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable, new byte[641]);
         }
 
@@ -299,16 +312,22 @@ namespace DSRForge.Services
         public void Warp(Location location)
         {
             var lastBonfireAdr =
-                _memoryIo.FollowPointersV2(Offsets.GameMan.Base, new[] {Offsets.GameMan.LastBonfire }, false);
+                _memoryIo.FollowPointers(Offsets.GameMan.Base, new[] {Offsets.GameMan.LastBonfire }, false);
 
             _memoryIo.WriteInt32(lastBonfireAdr, location.Id);
-            _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp, AsmLoader.GetAsmBytes("Warp"));
+
+            byte[] warpBytes = AsmLoader.GetAsmBytes("Warp");
+            byte[] bytes = BitConverter.GetBytes(Offsets.WarpEvent.ToInt64());
+            Array.Copy(bytes, 0, warpBytes, 2, 8);
+            bytes = BitConverter.GetBytes(Offsets.WarpFunc);
+            Array.Copy(bytes, 0, warpBytes, 24, 8);
+            _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp, warpBytes);
             _memoryIo.RunThread(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp);
 
             if (location.HasCoordinates)
             {
                 var coordsAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.Coords;
-                var origin = 0x1402C731A;
+                var origin = Offsets.Hooks.WarpCoords;
                 var codeBlockAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.CodeBlock;
 
                 byte[] byteArray = new byte[4 * sizeof(float)];
@@ -318,8 +337,7 @@ namespace DSRForge.Services
                 _memoryIo.WriteBytes(coordsAddr, byteArray);
 
                 byte[] coordWarpBytes = AsmLoader.GetAsmBytes("WarpCoords");
-                byte[] bytes =
-                    BitConverter.GetBytes(coordsAddr.ToInt64());
+                bytes = BitConverter.GetBytes(coordsAddr.ToInt64());
                 Array.Copy(bytes, 0, coordWarpBytes, 3, 8);
                 int originOffset = (int)(origin + 8 - (codeBlockAddr.ToInt64() + 33));
                 bytes = BitConverter.GetBytes(originOffset);
@@ -327,7 +345,7 @@ namespace DSRForge.Services
 
                 _memoryIo.WriteBytes(codeBlockAddr, coordWarpBytes);
 
-                IntPtr loadingFlagAddr = _memoryIo.FollowPointersV2(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
+                IntPtr loadingFlagAddr = _memoryIo.FollowPointers(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
 
                 if (!WaitForLoadingFlag(loadingFlagAddr, 1))
                 {
@@ -363,14 +381,14 @@ namespace DSRForge.Services
 
         public void ToggleFilter(int value)
         {
-            var filterPtr = _memoryIo.FollowPointersV2(Offsets.FieldArea.Base, new[]
+            var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
                 { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
             _memoryIo.WriteByte(filterPtr, value);
         }
 
         public void ShowMenu(Offsets.MenuMan.MenuManData menuType)
         {
-            var menuPtr = _memoryIo.FollowPointersV2(Offsets.MenuMan.Base, new[] {(int)menuType }, false);
+            var menuPtr = _memoryIo.FollowPointers(Offsets.MenuMan.Base, new[] {(int)menuType }, false);
             _memoryIo.WriteByte(menuPtr, 1);
         }
     }

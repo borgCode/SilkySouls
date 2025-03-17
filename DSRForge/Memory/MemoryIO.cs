@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Timers;
@@ -264,24 +265,8 @@ namespace DSRForge.Memory
             WriteBytes(addr, bytes);
         }
 
-        internal IntPtr FollowPointers(int[] offsets, bool readFinalPtr)
-        {
-            var ptr = ReadUInt64(BaseAddress + offsets[0]);
-
-            for (int i = 1; i < offsets.Length - 1; i++)
-            {
-                ptr = ReadUInt64((IntPtr)ptr + offsets[i]);
-            }
-
-            var finalAddress =  (IntPtr) ptr + offsets[offsets.Length - 1];
-            
-            
-            if (readFinalPtr) return (IntPtr)ReadUInt64(finalAddress);
-            
-            return finalAddress;
-        }
         
-        internal IntPtr FollowPointersV2(IntPtr baseAddress, int[] offsets, bool readFinalPtr)
+        internal IntPtr FollowPointers(IntPtr baseAddress, int[] offsets, bool readFinalPtr)
         {
             ulong ptr = ReadUInt64(baseAddress);
             
@@ -314,9 +299,10 @@ namespace DSRForge.Memory
 
         public bool IsGameLoaded()
         {
-            var loadingCheckPtr = FollowPointersV2(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
+            var loadingCheckPtr = FollowPointers(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
             return ReadInt32(loadingCheckPtr) == 0;
             
         }
+        
     }
 }

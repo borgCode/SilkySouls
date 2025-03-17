@@ -10,7 +10,6 @@ namespace DSRForge.Services
 
     {
         private readonly MemoryIo _memoryIo;
-        private readonly HookManager _hookManager;
 
         private readonly IntPtr _codeCave2;
 
@@ -26,16 +25,15 @@ namespace DSRForge.Services
             { 11, 829 },
         };
 
-        public PlayerService(MemoryIo memoryIo, HookManager hookManager)
+        public PlayerService(MemoryIo memoryIo)
         {
             _memoryIo = memoryIo;
-            _hookManager = hookManager;
-            _codeCave2 = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave2.Base;
+            _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
         }
 
         public int GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData statType, int? newValue = null)
         {
-            var statPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base, new[]
+            var statPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[]
                 {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)statType }, false);
 
             int currentValue = _memoryIo.ReadInt32(statPtr);
@@ -86,7 +84,7 @@ namespace DSRForge.Services
             }
 
             int difference = newValue - oldValue;
-            var totalSoulsPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,new[]
+            var totalSoulsPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,new[]
                 {
                    (int)Offsets.GameDataMan.GameData.PlayerGameData, (int) Offsets.GameDataMan.PlayerGameData.TotalSouls
                 },
@@ -101,7 +99,7 @@ namespace DSRForge.Services
         private void UpdatePlayerStats(int difference)
         {
             var allStatsPtr =
-                _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base, new[] {(int)Offsets.GameDataMan.GameData.PlayerGameData }, true);
+                _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[] {(int)Offsets.GameDataMan.GameData.PlayerGameData }, true);
 
             int originalSouls = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls);
 
@@ -154,6 +152,8 @@ namespace DSRForge.Services
             Array.Copy(bytes, 0, codeBytes, 2, 8);
             bytes = BitConverter.GetBytes(soulsPtr.ToInt64());
             Array.Copy(bytes, 0, codeBytes, 15, 8);
+            bytes = BitConverter.GetBytes(Offsets.LevelUpFunc);
+            Array.Copy(bytes, 0, codeBytes, 32, 8);
             _memoryIo.WriteBytes(codeStart, codeBytes);
 
             var newLevelAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.NewLevel;
@@ -189,7 +189,7 @@ namespace DSRForge.Services
 
         public void SetHp(int hp)
         {
-            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var hpPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.Health
@@ -199,21 +199,21 @@ namespace DSRForge.Services
 
         public int? GetHp()
         {
-            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, _hpOffsets, false);
+            var hpPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, _hpOffsets, false);
 
             return _memoryIo.ReadInt32(hpPtr);
         }
 
         public int? GetMaxHp()
         {
-            var hpPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, _maxHpOffsets, false);
+            var hpPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, _maxHpOffsets, false);
 
             return _memoryIo.ReadInt32(hpPtr);
         }
 
         public void SavePos(int index)
         {
-            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, new[]
+            var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, new[]
             {
                 (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
                 (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
@@ -247,7 +247,7 @@ namespace DSRForge.Services
                 positionBytes = _memoryIo.ReadBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos2, 12);
             }
 
-            var coordsPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base, new[]
+            var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, new[]
             {
                 (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
                 (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
@@ -262,7 +262,7 @@ namespace DSRForge.Services
 
         public int GetSetNewGame(int? value)
         {
-            var newGamePtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,new[]
+            var newGamePtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,new[]
                 { (int)Offsets.GameDataMan.GameData.Ng }, false);
 
             int currentValue = _memoryIo.ReadInt32(newGamePtr);
@@ -283,7 +283,7 @@ namespace DSRForge.Services
 
         public void RestoreSpellCasts()
         {
-            var magicDataPtr = _memoryIo.FollowPointersV2(Offsets.GameDataMan.Base,
+            var magicDataPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,
                 new[]
                 {
                     (int)Offsets.GameDataMan.GameData.PlayerGameData,
@@ -292,6 +292,8 @@ namespace DSRForge.Services
             byte[] restoreBytes = AsmLoader.GetAsmBytes("RestoreSpellCasts");
             byte[] bytes = BitConverter.GetBytes(magicDataPtr.ToInt64());
             Array.Copy(bytes, 0, restoreBytes, 2, 8);
+            bytes = BitConverter.GetBytes(Offsets.RestoreCastsFunc);
+            Array.Copy(bytes, 0, restoreBytes, 16, 8);
             _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.RestoreCasts, restoreBytes);
 
             _memoryIo.RunThread(_codeCave2 + CodeCaveOffsets.CodeCave2.RestoreCasts);
@@ -306,7 +308,7 @@ namespace DSRForge.Services
 
         public void ToggleNoDamage(bool setValue)
         {
-            var noDamagePtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var noDamagePtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
@@ -317,7 +319,7 @@ namespace DSRForge.Services
 
         public void ToggleInfiniteStamina(bool setValue)
         {
-            var infiniteStamPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var infiniteStamPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
@@ -330,7 +332,7 @@ namespace DSRForge.Services
 
         public void ToggleNoGoodsConsume(bool setValue)
         {
-            var noGoodsConsumePtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var noGoodsConsumePtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
@@ -372,7 +374,7 @@ namespace DSRForge.Services
 
         public float GetSetPlayerSpeed(float? value)
         {
-            var playerSpeedPtr = _memoryIo.FollowPointersV2(Offsets.WorldChrMan.Base,
+            var playerSpeedPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,

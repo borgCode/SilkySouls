@@ -143,14 +143,13 @@ c6 80 60 03 00 00 00    mov    BYTE PTR [rax+0x360],0x0
 e9 00 00 00 00          jmp    5f &lt;_main+0x5f&gt;</value>
   </data>
   <data name="EnableDraw" xml:space="preserve">
-    <value>48 b8 60 cf 15 40 01    movabs rax,0x14015cf60
+    <value>48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
-ff d0                   call   rax
 8b 58 08                mov    ebx,DWORD PTR [rax+0x8]
 41 89 f0                mov    r8d,esi
 ba 16 00 00 00          mov    edx,0x16
 48 89 f9                mov    rcx,rdi
-48 b8 40 02 1b 41 01    movabs rax,0x1411b0240
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 8b 0f                mov    rcx,QWORD PTR [rdi]
@@ -166,13 +165,13 @@ c7 01 05 00 01 00       mov    DWORD PTR [rcx],0x10005
 48 89 07                mov    QWORD PTR [rdi],rax
 89 19                   mov    DWORD PTR [rcx],ebx
 48 89 f9                mov    rcx,rdi
-48 b8 e0 01 1b 41 01    movabs rax,0x1411b01e0
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 41 89 f0                mov    r8d,esi
 ba 16 00 00 00          mov    edx,0x16
 48 89 f9                mov    rcx,rdi
-48 b8 40 02 1b 41 01    movabs rax,0x1411b0240
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 8b 0f                mov    rcx,QWORD PTR [rdi]
@@ -182,12 +181,12 @@ ff d0                   call   rax
 48 89 07                mov    QWORD PTR [rdi],rax
 c7 01 05 00 02 00       mov    DWORD PTR [rcx],0x20005
 48 89 f9                mov    rcx,rdi
-48 b8 e0 01 1b 41 01    movabs rax,0x1411b01e0
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 41 89 f0                mov    r8d,esi
 ba 16 00 00 00          mov    edx,0x16
-e9 00 00 00 00          jmp    0xac</value>
+e9 00 00 00 00          jmp    aa &lt;_main+0xaa&gt;</value>
   </data>
   <data name="Armor" xml:space="preserve">
     <value>553000,1,0,Anklet of the Great Lord
@@ -667,7 +666,7 @@ e9 00 00 00 00          jmp    0xac</value>
 41 51                   push   r9
 41 52                   push   r10
 41 53                   push   r11
-48 b8 78 87 d1 41 01    movabs rax,0x141d18778
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 c6 00 00                mov    BYTE PTR [rax],0x0
 48 b8 00 00 00 00 00    movabs rax,0x0
@@ -724,9 +723,7 @@ c6 00 00                mov    BYTE PTR [rax],0x0
 0f 28 84 24 80 00 00    movaps xmm0,XMMWORD PTR [rsp+0x80]
 00
 48 81 c4 a0 00 00 00    add    rsp,0xa0
-e9 00 00 00 00          jmp    0x138
-
-</value>
+e9 00 00 00 00          jmp    0x138</value>
   </data>
   <data name="Ammo" xml:space="preserve">
     <value>2007000,999,0,Dragonslayer Arrow
@@ -988,19 +985,19 @@ e9 00 00 00 00          jmp    0x138
 00 00 00
 48 83 ec 28             sub    rsp,0x28
 48 89 c1                mov    rcx,rax
-48 b8 90 58 69 40 01    movabs rax,0x140695890
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 83 c4 28             add    rsp,0x28
 c3                      ret</value>
   </data>
   <data name="Warp" xml:space="preserve">
-    <value>48 b8 30 85 d1 41 01    movabs rax,0x141d18530
+    <value>48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 48 8b 08                mov    rcx,QWORD PTR [rax]
 ba 01 00 00 00          mov    edx,0x1
 48 83 ec 38             sub    rsp,0x38
-48 b8 e0 5c 48 40 01    movabs rax,0x140485ce0
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 83 c4 38             add    rsp,0x38
@@ -1213,7 +1210,7 @@ e9 00 00 00 00          jmp    1a &lt;_main+0x1a&gt;</value>
     <value>48 b9 00 00 00 00 00    movabs rcx,0x0
 00 00 00
 48 83 ec 28             sub    rsp,0x28
-48 b8 70 04 75 40 01    movabs rax,0x140750470
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 83 c4 28             add    rsp,0x28
@@ -1229,5 +1226,15 @@ c3                      ret</value>
 45 0f 57 ff             xorps  xmm15,xmm15
 59                      pop    rcx
 e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
+  </data>
+  <data name="LastLockedTarget" xml:space="preserve">
+    <value>50                      push   rax
+48 89 d8                mov    rax,rbx
+48 a3 00 00 00 00 00    movabs ds:0x0,rax
+00 00 00
+58                      pop    rax
+48 8d 4c 24 38          lea    rcx,[rsp+0x38]
+e9 00 00 00 00          jmp    19 &lt;_main+0x19&gt;
+</value>
   </data>
 </root>

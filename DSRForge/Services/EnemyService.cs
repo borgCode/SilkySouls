@@ -18,17 +18,20 @@ namespace DSRForge.Services
         private IntPtr _repeatActionFlag;
         
         private bool _isHookInstalled;
-        
-        private const long LockedTargetOrigin = 0x142E76196;
-        private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8B, 0x03, 0x48, 0x8B, 0xCB };
-        private const long RepeatActionOrigin = 0x1405B3FA4;
+
+        private readonly long _lockedTargetOrigin;
+        private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
+        private readonly long _repeatActionOrigin;
         
         public EnemyService(MemoryIo memoryIo, HookManager hookManager)
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
 
-            _codeCave = memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base;
+            _lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
+            _repeatActionOrigin = Offsets.Hooks.RepeatAction;
+            
+            _codeCave = CodeCaveOffsets.CodeCave1.Base;
             _lastTargetBlock = _codeCave + CodeCaveOffsets.CodeCave1.LockedTarget;
             _repeatActionBlock = _codeCave + CodeCaveOffsets.CodeCave1.RepeatAction;
         }
@@ -40,23 +43,19 @@ namespace DSRForge.Services
             
             _lockedTargetPtr = _codeCave + CodeCaveOffsets.CodeCave1.LockedTargetPtr;
             
-            byte[] lockedTargetBytes = {
-                    0x48, 0x89, 0xD8,                               // mov    rax,rbx
-                    0x48, 0xA3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,    //   movabs ds:0x0,rax
-                     0x48, 0x8B, 0x03,                               //   mov    rax,QWORD PTR [rbx]
-                    0x48, 0x89, 0xD9,                                              //   mov    rcx,rbx
-                    0xE9, 0x00, 0x00, 0x00, 0x00                                   //  jmp    18 <_main+0x18>
-                };
+            byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
           
             byte[] lockedTargetPtrBytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
-            Array.Copy(lockedTargetPtrBytes, 0, lockedTargetBytes, 5, lockedTargetPtrBytes.Length);
+            Array.Copy(lockedTargetPtrBytes, 0, lockedTargetBytes, 6, lockedTargetPtrBytes.Length);
 
-            int originOffset = (int)(LockedTargetOrigin + 6 - (_lastTargetBlock.ToInt64() + 24));
+            int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 25));
             byte[] originAddr = BitConverter.GetBytes(originOffset);
-            Array.Copy(originAddr, 0, lockedTargetBytes, 20, originAddr.Length);
+            Array.Copy(originAddr, 0, lockedTargetBytes, 21, originAddr.Length);
 
+            Console.WriteLine(BitConverter.ToString(lockedTargetBytes));
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
-            _hookManager.InstallHook(_lastTargetBlock.ToInt64(), LockedTargetOrigin, _lockedTargetOriginBytes);
+            _hookManager.InstallHook(_lastTargetBlock.ToInt64(), _lockedTargetOrigin, _lockedTargetOriginBytes);
+            _isHookInstalled = true;
         }
 
         internal void ResetHooks()
@@ -64,51 +63,50 @@ namespace DSRForge.Services
             _isHookInstalled = false;
             _isRepeatActionInstalled = false;
         }
-        
         private bool IsTargetOriginInitialized()
         {
-            var originBytes = _memoryIo.ReadBytes((IntPtr)LockedTargetOrigin, 6);
+            var originBytes = _memoryIo.ReadBytes((IntPtr)_lockedTargetOrigin, _lockedTargetOriginBytes.Length);
             return originBytes.SequenceEqual(_lockedTargetOriginBytes);
         }
 
         public int GetTargetHp()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                    CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetHp);
         }
 
         public int GetTargetMaxHp()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetMaxHp);
         }
 
         public void SetTargetHp(int value)
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             _memoryIo.WriteInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetHp, value);
         }
 
         public float GetTargetPoise()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.CurrentPoise);
         }
 
         public float GetTargetMaxPoise()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.MaxPoise);
         }
 
         public float GetTargetPoiseTimer()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(_memoryIo.BaseAddress + CodeCaveOffsets.CodeCave1.Base +
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoiseTimer);
         }
@@ -138,17 +136,16 @@ namespace DSRForge.Services
                 Array.Copy(bytes, 0, asmBytes, 52, bytes.Length);
                 bytes = BitConverter.GetBytes(7); 
                 Array.Copy(bytes, 0, asmBytes, 69, bytes.Length);
-                int originOffset = (int)(RepeatActionOrigin + 7 - (_repeatActionBlock.ToInt64() + 95));
+                int originOffset = (int)(_repeatActionOrigin + 7 - (_repeatActionBlock.ToInt64() + 95));
                 byte[] originAddr = BitConverter.GetBytes(originOffset);
                 Array.Copy(originAddr, 0, asmBytes, asmBytes.Length - 4, originAddr.Length);
 
                 _memoryIo.WriteBytes(_repeatActionBlock, asmBytes);
             
-                _hookManager.InstallHook(_repeatActionBlock.ToInt64(), RepeatActionOrigin,
+                _hookManager.InstallHook(_repeatActionBlock.ToInt64(), _repeatActionOrigin,
                     new byte[] { 0x0F, 0xBE, 0x80, 0x60, 0x03, 0x00, 0x00 });
                 _isRepeatActionInstalled = true;
             }
-            
         }
 
         internal void DisableRepeatAction()
@@ -167,7 +164,8 @@ namespace DSRForge.Services
             var codeBlock = _codeCave + CodeCaveOffsets.CodeCave1.AllNoDamage;
             if (value == 1)
             {
-                long origin = 0x1403206c9;
+                long origin = Offsets.Hooks.AllNoDamage;
+                
                 
                 byte[] restoreHealthBytes = AsmLoader.GetAsmBytes("AllNoDamage");
                 byte[] jumpBytes = BitConverter.GetBytes(origin + 7 - (codeBlock.ToInt64() + 26));

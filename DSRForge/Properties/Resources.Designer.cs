@@ -148,20 +148,20 @@ namespace DSRForge.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 48 b8 60 cf 15 40 01    movabs rax,0x14015cf60
+        ///   Looks up a localized string similar to 48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
-        ///ff d0                   call   rax
         ///8b 58 08                mov    ebx,DWORD PTR [rax+0x8]
         ///41 89 f0                mov    r8d,esi
         ///ba 16 00 00 00          mov    edx,0x16
         ///48 89 f9                mov    rcx,rdi
-        ///48 b8 40 02 1b 41 01    movabs rax,0x1411b0240
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///ff d0                   call   rax
         ///48 8b 0f                mov    rcx,QWORD PTR [rdi]
         ///48 83 c1 03             add    rcx,0x3
         ///48 83 e1 fc             and    rcx,0xfffffffffffffffc
-        /// [rest of string was truncated]&quot;;.
+        ///48 8d 41 04             lea    rax,[rcx+0x4]
+        ///48 89  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string EnableDraw {
             get {
@@ -249,6 +249,22 @@ namespace DSRForge.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 50                      push   rax
+        ///48 89 d8                mov    rax,rbx
+        ///48 a3 00 00 00 00 00    movabs ds:0x0,rax
+        ///00 00 00
+        ///58                      pop    rax
+        ///48 8d 4c 24 38          lea    rcx,[rsp+0x38]
+        ///e9 00 00 00 00          jmp    19 &lt;_main+0x19&gt;
+        ///.
+        /// </summary>
+        internal static string LastLockedTarget {
+            get {
+                return ResourceManager.GetString("LastLockedTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///48 89 c2                mov    rdx,rax
@@ -256,7 +272,7 @@ namespace DSRForge.Properties {
         ///00 00 00
         ///48 83 ec 28             sub    rsp,0x28
         ///48 89 c1                mov    rcx,rax
-        ///48 b8 90 58 69 40 01    movabs rax,0x140695890
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///ff d0                   call   rax
         ///48 83 c4 28             add    rsp,0x28
@@ -378,8 +394,7 @@ namespace DSRForge.Properties {
         ///0f 85 00 00 00 00       jne    25 &lt;_main+0x25&gt;
         ///48 bb 00 00 00 00 00    movabs rbx,0x0
         ///00 00 00
-        ///80 3b 01                cmp    BYTE PTR [rbx],0x1
-        /// [rest of string was truncated]&quot;;.
+        ///80 3b 01                cmp    BYTE PTR [rbx],0x1        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RepeatAction {
             get {
@@ -391,7 +406,7 @@ namespace DSRForge.Properties {
         ///   Looks up a localized string similar to 48 b9 00 00 00 00 00    movabs rcx,0x0
         ///00 00 00
         ///48 83 ec 28             sub    rsp,0x28
-        ///48 b8 70 04 75 40 01    movabs rax,0x140750470
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///ff d0                   call   rax
         ///48 83 c4 28             add    rsp,0x28
@@ -481,12 +496,12 @@ namespace DSRForge.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 48 b8 30 85 d1 41 01    movabs rax,0x141d18530
+        ///   Looks up a localized string similar to 48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///48 8b 08                mov    rcx,QWORD PTR [rax]
         ///ba 01 00 00 00          mov    edx,0x1
         ///48 83 ec 38             sub    rsp,0x38
-        ///48 b8 e0 5c 48 40 01    movabs rax,0x140485ce0
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
         ///00 00 00
         ///ff d0                   call   rax
         ///48 83 c4 38             add    rsp,0x38

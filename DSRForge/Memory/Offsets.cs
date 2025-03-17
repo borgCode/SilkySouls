@@ -109,6 +109,8 @@ namespace DSRForge.memory
         public static long ItemGet;
         public static IntPtr ItemGetMenuMan;
         public static long ItemDlgFunc;
+        public static long LevelUpFunc;
+        public static long RestoreCastsFunc;
 
         public static class FieldArea
         {
@@ -123,6 +125,9 @@ namespace DSRForge.memory
             public const int BonfireCoords = 0xA80;
             public const int LastBonfire = 0xB34;
         }
+
+        public static IntPtr WarpEvent;
+        public static long WarpFunc;
 
         public static class DamageMan
         {
@@ -153,13 +158,35 @@ namespace DSRForge.memory
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
         }
-        public static readonly byte[] ProgressionFlagManAoB = { 0x8B, 0x13, 0x85, 0xD2, 0x7E, 0x15, 0x48 };
-        public const int ProgressionFlagMan = 0x1d19950;
 
+        public static class ProgressionFlagMan
+        {
+            public static IntPtr Base;
+            
+        }
 
+        public static class HgDraw
+        {
+            public static IntPtr Base;
+            public const int EzDraw = 0x58;
+        }
+        
+        
+        
         public static class Hooks
         {
-            
+            public static long LastLockedTarget;
+            public static long RepeatAction;
+            public static long AllNoDamage;
+            public static long ItemSpawn;
+            public static long Draw;
+            public static long TargetingView;
+            public static long InAirTimer;
+            public static long Keyboard;
+            public static long ControllerR2;
+            public static long ControllerL2;
+            public static long UpdateCoords;
+            public static long WarpCoords;
         }
     }
 }

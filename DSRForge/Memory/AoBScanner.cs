@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace DSRForge.Memory
 {
     public class AoBScanner
-    
     {
-        
         private readonly MemoryIo _memoryIo;
-        
         public AoBScanner(MemoryIo memoryIo)
         {
             _memoryIo = memoryIo;
         }
-        
         
         public IntPtr FindAddressByPattern(Pattern pattern)
         {
@@ -29,13 +24,13 @@ namespace DSRForge.Memory
                     return instructionAddress;
             
                 case RipType.Standard:
-                    // 48 8B 05/0D - Standard mov rax/rcx,[rip+offset]
-                    int stdOffset = ReadMemory<int>(IntPtr.Add(instructionAddress, 3));
+                    // e.g. 48 8B 05/0D - Standard mov rax/rcx,[rip+offset]
+                    int stdOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
                     return IntPtr.Add(instructionAddress, stdOffset + 7);
             
                 case RipType.Comparison:
-                    // 80 3D - cmp byte ptr [rip+offset],imm
-                    int cmpOffset = ReadMemory<int>(IntPtr.Add(instructionAddress, 2));
+                    // e.g. 80 3D - cmp byte ptr [rip+offset],imm
+                    int cmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 2));
                     return IntPtr.Add(instructionAddress, cmpOffset + 7);
             
                 default:
@@ -43,10 +38,8 @@ namespace DSRForge.Memory
             }
         }
         
-      
         public IntPtr PatternScan(byte[] pattern, string mask)
         {
-            
             const int chunkSize = 4096 * 16; 
             byte[] buffer = new byte[chunkSize];
             
@@ -78,41 +71,12 @@ namespace DSRForge.Memory
                             break;
                         }
                     }
-                    
                     if (found)
                         return IntPtr.Add(currentAddress, i);
                 }
                 currentAddress = IntPtr.Add(currentAddress, bytesToRead - pattern.Length + 1);
             }
-            
             return IntPtr.Zero;
         }
-        
-        public T ReadMemory<T>(IntPtr address) where T : struct
-        {
-            if (typeof(T) == typeof(int))
-                return (T)(object)_memoryIo.ReadInt32(address);
-            if (typeof(T) == typeof(float))
-                return (T)(object)_memoryIo.ReadFloat(address);
-            if (typeof(T) == typeof(byte))
-                return (T)(object)_memoryIo.ReadUInt8(address);
-            if (typeof(T) == typeof(uint))
-                return (T)(object)_memoryIo.ReadUInt32(address);
-            if (typeof(T) == typeof(long))
-                return (T)(object)_memoryIo.ReadInt64(address);
-            if (typeof(T) == typeof(ulong))
-                return (T)(object)_memoryIo.ReadUInt64(address);
-            if (typeof(T) == typeof(double))
-                return (T)(object)_memoryIo.ReadDouble(address);
-            int size = Marshal.SizeOf<T>();
-            byte[] buffer = _memoryIo.ReadBytes(address, size);
-                
-            GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            T result = Marshal.PtrToStructure<T>(handle.AddrOfPinnedObject());
-            handle.Free();
-                
-            return result;
-        }
-        
     }
 }
