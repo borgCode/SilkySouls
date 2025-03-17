@@ -26,7 +26,7 @@ namespace DSRForge.Utilities
             _actions = new Dictionary<string, Action>();
 
             _keyboardHook = new LowLevelKeyboardHook();
-            _keyboardHook.IsExtendedMode = true;
+            _keyboardHook.HandleModifierKeys = true;
             
             _keyboardHook.Down += KeyboardHook_Down;
             

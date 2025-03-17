@@ -48,8 +48,7 @@ namespace DSRForge.Services
             int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 25));
             byte[] originAddr = BitConverter.GetBytes(originOffset);
             Array.Copy(originAddr, 0, lockedTargetBytes, 21, originAddr.Length);
-
-            Console.WriteLine(BitConverter.ToString(lockedTargetBytes));
+            
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
             _hookManager.InstallHook(_lastTargetBlock.ToInt64(), _lockedTargetOrigin, _lockedTargetOriginBytes);
             _isHookInstalled = true;

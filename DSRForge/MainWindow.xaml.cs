@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using DSRForge.memory;
 using DSRForge.Memory;
 using DSRForge.Services;
 using DSRForge.Utilities;
 using DSRForge.ViewModels;
 using DSRForge.Views;
-using Microsoft.Win32;
 
 namespace DSRForge
 {
@@ -31,23 +26,21 @@ namespace DSRForge
         private readonly ItemViewModel _itemViewModel;
         private readonly EnemyService _enemyService;
         private readonly HookManager _hookManager;
-        private readonly AoBScanner aobScanner;
-
-        private string _patch;
+        private readonly AoBScanner _aobScanner;
 
         public MainWindow()
         {
             _memoryIo = new MemoryIo();
-            _patch = VersionChecker.GetPatch();
+            var patch = VersionChecker.GetPatch();
             _memoryIo.StartAutoAttach();
 
             InitializeComponent();
 
             _hookManager = new HookManager(_memoryIo);
             var hotkeyManager = new HotkeyManager(_memoryIo);
-            aobScanner = new AoBScanner(_memoryIo);
+            _aobScanner = new AoBScanner(_memoryIo);
             
-            switch (_patch)
+            switch (patch)
             {
                 case "1.3.0.0":
                     CodeCaveOffsets.CodeCave1.Base = _memoryIo.BaseAddress + 0x1298A60;
@@ -60,7 +53,7 @@ namespace DSRForge
                     CodeCaveOffsets.CodeCave3.Base = _memoryIo.BaseAddress + 0x1BE1A30;
                     break;
             }
-            PatchText.Text = "Patch: " + _patch;
+            PatchText.Text = "Patch: " + patch;
             var playerService = new PlayerService(_memoryIo);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
             _enemyService = new EnemyService(_memoryIo, _hookManager);
@@ -104,7 +97,7 @@ namespace DSRForge
                 IsAttachedText.Text = "Attached to game";
                 if (!_hasScanned)
                 {
-                    aobScanner.Scan();
+                    _aobScanner.Scan();
                     _hasScanned = true;
                 }
                 
