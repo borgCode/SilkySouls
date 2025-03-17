@@ -222,6 +222,7 @@ namespace DSRForge.Services
 
         public void SavePos(int index)
         {
+           
             var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, new[]
             {
                 (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
@@ -246,6 +247,15 @@ namespace DSRForge.Services
 
         public void RestorePos(int index)
         {
+            var playerSpeedPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PlayerCtrl, Offsets.WorldChrMan.PlayerAnim, Offsets.WorldChrMan.PlayerAnimSpeed
+                }, false);
+
+            float originalSpeed = _memoryIo.ReadFloat(playerSpeedPtr);
+            _memoryIo.WriteFloat(playerSpeedPtr, 0f);
             byte[] positionBytes;
             if (index == 0)
             {
@@ -267,6 +277,7 @@ namespace DSRForge.Services
             }, false);
 
             _memoryIo.WriteBytes(coordsPtr, positionBytes);
+            _memoryIo.WriteFloat(playerSpeedPtr, originalSpeed);
         }
 
         public int GetSetNewGame(int? value)

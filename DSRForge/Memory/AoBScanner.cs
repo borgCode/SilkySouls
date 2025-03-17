@@ -52,7 +52,7 @@ namespace DSRForge.Memory
             // Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
             // Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
             // Console.WriteLine($"FileMan.Base: 0x{Offsets.FileMan.Base.ToInt64():X}");
-            Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
+            // Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
             // Console.WriteLine($"ItemGet: 0x{Offsets.ItemGet:X}");
             // Console.WriteLine($"ItemGetMenuMan: 0x{Offsets.ItemGetMenuMan.ToInt64():X}");
             // Console.WriteLine($"ItemDlgFunc: 0x{Offsets.ItemDlgFunc:X}");
