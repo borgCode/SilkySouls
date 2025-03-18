@@ -4,7 +4,6 @@
     {
         None,
         Special,
-        Armor,
         Infusable,
         InfusableLimited,
         PyromancyFlame,

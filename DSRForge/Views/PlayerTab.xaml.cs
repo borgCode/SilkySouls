@@ -45,6 +45,11 @@ namespace DSRForge.Views
         }
 
 
+        private void SetMaxHpClick(object sender, RoutedEventArgs e)
+        {
+            _playerViewModel.SetMaxHp();
+        }
+
         private void HealthUpDown_GotFocus(object sender, RoutedEventArgs e)
         {
             _playerViewModel.PauseUpdates();
@@ -121,7 +126,7 @@ namespace DSRForge.Views
             Focus();
             e.Handled = true;
         }
-        
+
         private void SpeedUpDown_LostFocus(object sender, RoutedEventArgs e)
         {
             var upDown = sender as DoubleUpDown;
@@ -143,6 +148,5 @@ namespace DSRForge.Views
             Focus();
             e.Handled = true;
         }
-         
     }
 }

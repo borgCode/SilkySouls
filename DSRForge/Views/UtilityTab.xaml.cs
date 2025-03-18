@@ -11,14 +11,15 @@ namespace DSRForge.Views
     public partial class UtilityTab
     {
         private readonly UtilityViewModel _utilityViewModel;
+
         public UtilityTab(UtilityViewModel utilityViewModel)
         {
             InitializeComponent();
             _utilityViewModel = utilityViewModel;
             DataContext = utilityViewModel;
         }
-        
-        
+
+
         private void Warp_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.Warp();
@@ -26,12 +27,23 @@ namespace DSRForge.Views
 
         private void DrawInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("'Enable Draw' requires you to exit to main menu before being able to view hitboxes, draw events, etc.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                "DRAW INFORMATION\n\n" +
+                "Enable Draw Instructions:\n" +
+                "• You must exit to the main menu before you can view hitboxes, draw events, and other visual elements.\n\n" +
+                "Known Display Issues:\n" +
+                "• Temporal Anti-Aliasing (default setting) will prevent hitboxes from displaying properly.\n" +
+                "• Solution: Select any other anti-aliasing option in quality settings to fix the display.",
+                "Info",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
 
         private void NoClipInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("Vertical movement with Ctrl/Space or L2/R2 on controller", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Vertical movement with Ctrl/Space or L2/R2 on controller", "Info", MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void LevelUpMenu_Click(object sender, RoutedEventArgs e)

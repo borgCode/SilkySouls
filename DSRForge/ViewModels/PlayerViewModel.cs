@@ -124,20 +124,23 @@ namespace DSRForge.ViewModels
             get => _currentHp;
             set => SetProperty(ref _currentHp, value);
         }
-        
+
         public int? CurrentMaxHp
         {
             get => _currentMaxHp;
             set => SetProperty(ref _currentMaxHp, value);
         }
-        
+
         public void SetHp(int? hp)
         {
-            if (hp.HasValue)
-            {
-                _playerService.SetHp(hp.Value);
-                CurrentHp = hp;
-            }
+            if (!hp.HasValue) return;
+            _playerService.SetHp(hp.Value);
+            CurrentHp = hp;
+        }
+
+        public void SetMaxHp()
+        {
+            if (CurrentMaxHp != null) _playerService.SetHp(CurrentMaxHp.Value);
         }
 
         public bool IsPos1Saved
@@ -151,13 +154,13 @@ namespace DSRForge.ViewModels
             get => _isPos2Saved;
             set => SetProperty(ref _isPos2Saved, value);
         }
-        
-        
+
+
         public void PauseUpdates()
         {
             _pauseUpdates = true;
         }
-        
+
         public void ResumeUpdates()
         {
             _pauseUpdates = false;
@@ -183,7 +186,7 @@ namespace DSRForge.ViewModels
             _playerService.RestorePos(index);
             
         }
-        
+
         public bool IsNoDeathEnabled
         {
             get => _isNoDeathEnabled;
@@ -195,7 +198,7 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public bool IsNoDamageEnabled
         {
             get => _isNoDamageEnabled;
@@ -207,7 +210,7 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public bool IsInfiniteStaminaEnabled
         {
             get => _isInfiniteStaminaEnabled;
@@ -219,7 +222,7 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public bool IsNoGoodsConsumeEnabled
         {
             get => _isNoGoodsConsumeEnabled;
@@ -279,6 +282,7 @@ namespace DSRForge.ViewModels
                 }
             }
         }
+
         public bool IsNoAmmoConsumeEnabled
         {
             get => _isNoAmmoConsumeEnabled;
@@ -290,12 +294,12 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public void RestoreSpellCasts()
         {
             _playerService.RestoreSpellCasts();
         }
-        
+
 
         public void DisableButtons()
         {
@@ -328,13 +332,13 @@ namespace DSRForge.ViewModels
             LoadStats();
             _timer.Start();
         }
-        
+
         public int? SoulLevel 
         { 
             get => _soulLevel;
             private set => SetProperty(ref _soulLevel, value);
         }
-        
+
         public int? Vitality 
         { 
             get => _vitality; 
@@ -455,7 +459,7 @@ namespace DSRForge.ViewModels
             }
         }
 
-        
+
         public void SetVitality(int? value)
         {
             Vitality = value;
@@ -495,17 +499,17 @@ namespace DSRForge.ViewModels
         {
             Faith = value;
         }
-        
+
         public void SetHumanity(int? value)
         {
             Humanity = value;
         }
-        
+
         public void SetSouls(int? value)
         {
             Souls = value;
         }
-        
+
         public int? NewGame 
         { 
             get => _newGame; 
@@ -517,12 +521,12 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public void SetNewGame(int? value)
         {
             NewGame = value;
         }
-        
+
         public float? PlayerSpeed 
         { 
             get => _playerSpeed; 
@@ -534,11 +538,10 @@ namespace DSRForge.ViewModels
                 }
             }
         }
-        
+
         public void SetSpeed(float? value)
         {
             PlayerSpeed = value;
         }
-
     }
 }

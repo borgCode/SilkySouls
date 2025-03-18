@@ -46,6 +46,11 @@
                             IsEnabled="{Binding AreOptionsEnabled}"
                             Margin="10,0,0,0"
                             Width="60"/>
+                    <Button Click="SetMaxHpClick"
+                            Content="Max Hp"
+                            IsEnabled="{Binding AreOptionsEnabled}"
+                            Margin="10,0,0,0"
+                            Width="60"/>
                 </StackPanel>
             </Grid>
             

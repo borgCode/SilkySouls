@@ -23,11 +23,11 @@ namespace DSRForge.ViewModels
         private int _maxQuantity;
         private bool _canUpgrade;
         private bool _canInfuse;
-        
+
         private bool _areOptionsEnabled;
-        
+
         private string _searchText = string.Empty;
-        
+
         private readonly Dictionary<string, ObservableCollection<Item>> _itemsByCategory;
         private readonly Dictionary<string, InfusionType> _infusionTypes = new Dictionary<string, InfusionType>();
 
@@ -75,26 +75,28 @@ namespace DSRForge.ViewModels
             Categories.Add(new ItemCategory(0x40000000, "Spells"));
             Categories.Add(new ItemCategory(0x40000000, "Upgrade Materials"));
             Categories.Add(new ItemCategory(0x00000000, "Weapons"));
-            
+
             _itemsByCategory.Add("Ammo", new ObservableCollection<Item>(DataLoader.GetItemList("Ammo")));
             _itemsByCategory.Add("Armor", new ObservableCollection<Item>(DataLoader.GetItemList("Armor")));
             _itemsByCategory.Add("Consumables", new ObservableCollection<Item>(DataLoader.GetItemList("Consumables")));
-            _itemsByCategory.Add("Infinite Use Items", new ObservableCollection<Item>(DataLoader.GetItemList("InfiniteUseItems")));
+            _itemsByCategory.Add("Infinite Use Items",
+                new ObservableCollection<Item>(DataLoader.GetItemList("InfiniteUseItems")));
             _itemsByCategory.Add("Key Items", new ObservableCollection<Item>(DataLoader.GetItemList("KeyItems")));
             _itemsByCategory.Add("Rings", new ObservableCollection<Item>(DataLoader.GetItemList("Rings")));
             _itemsByCategory.Add("Spells", new ObservableCollection<Item>(DataLoader.GetItemList("Spells")));
-            _itemsByCategory.Add("Upgrade Materials", new ObservableCollection<Item>(DataLoader.GetItemList("UpgradeMaterials")));
+            _itemsByCategory.Add("Upgrade Materials",
+                new ObservableCollection<Item>(DataLoader.GetItemList("UpgradeMaterials")));
             _itemsByCategory.Add("Weapons", new ObservableCollection<Item>(DataLoader.GetItemList("Weapons")));
 
             SelectedCategory = Categories.FirstOrDefault();
         }
-        
+
         public bool AreOptionsEnabled
         {
             get => _areOptionsEnabled;
             set => SetProperty(ref _areOptionsEnabled, value);
         }
-        
+
         public ObservableCollection<ItemCategory> Categories
         {
             get => _categories;
@@ -125,7 +127,7 @@ namespace DSRForge.ViewModels
                     {
                         Items = _itemsByCategory[_selectedCategory.Name];
                         SelectedItem = Items.FirstOrDefault();
-                        
+
                         if (!string.IsNullOrEmpty(SearchText))
                         {
                             ApplyFilter();
@@ -152,7 +154,7 @@ namespace DSRForge.ViewModels
             get => _maxUpgradeLevel;
             private set => SetProperty(ref _maxUpgradeLevel, value);
         }
-        
+
         public bool QuantityEnabled
         {
             get => _quantityEnabled;
@@ -164,7 +166,7 @@ namespace DSRForge.ViewModels
             get => _maxQuantity;
             private set => SetProperty(ref _maxQuantity, value);
         }
-        
+
         public string SearchText
         {
             get => _searchText;
@@ -180,7 +182,7 @@ namespace DSRForge.ViewModels
         private void ApplyFilter()
         {
             ICollectionView view = CollectionViewSource.GetDefaultView(Items);
-    
+
             if (string.IsNullOrEmpty(SearchText))
             {
                 view.Filter = null;
@@ -199,8 +201,13 @@ namespace DSRForge.ViewModels
                 SetProperty(ref _selectedItem, value);
                 if (_selectedItem != null)
                 {
-
-                    if (_selectedItem.StackSize > 1)
+                    if (_selectedCategory.Name == "Spells")
+                    {
+                        QuantityEnabled = true;
+                        MaxQuantity = _selectedItem.StackSize;
+                        SelectedQuantity = 1;
+                    }
+                    else if (_selectedItem.StackSize > 1)
                     {
                         QuantityEnabled = true;
                         MaxQuantity = _selectedItem.StackSize;
@@ -211,10 +218,10 @@ namespace DSRForge.ViewModels
                         QuantityEnabled = false;
                         MaxQuantity = 1;
                         SelectedQuantity = 1;
-                    }                  
-                    
+                    }
+
                     var newInfusions = new ObservableCollection<string>();
-                    
+
                     switch (_selectedItem.UpgradeType)
                     {
                         case UpgradeType.None:
@@ -236,11 +243,11 @@ namespace DSRForge.ViewModels
                             {
                                 newInfusions.Add(key);
                             }
-                            
+
                             AvailableInfusions = newInfusions;
                             if (!newInfusions.Contains(SelectedInfusionType))
                                 SelectedInfusionType = "Normal";
-                    
+
                             MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
                             break;
                         case UpgradeType.InfusableLimited:
@@ -251,11 +258,12 @@ namespace DSRForge.ViewModels
                                 if (kvp.Value.Limited) continue;
                                 newInfusions.Add(kvp.Key);
                             }
+
                             AvailableInfusions = newInfusions;
-                    
+
                             if (!newInfusions.Contains(SelectedInfusionType))
                                 SelectedInfusionType = "Normal";
-                    
+
                             MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
                             break;
                         case UpgradeType.PyromancyFlame:
@@ -272,7 +280,6 @@ namespace DSRForge.ViewModels
                             break;
                     }
                 }
-
             }
         }
 
@@ -300,12 +307,13 @@ namespace DSRForge.ViewModels
                 if (SetProperty(ref _selectedInfusionType, value) && value != null)
                 {
                     MaxUpgradeLevel = _infusionTypes[value].MaxUpgrade;
-                    
+
                     if (SelectedUpgrade > MaxUpgradeLevel)
                         SelectedUpgrade = MaxUpgradeLevel;
                 }
             }
         }
+
         public void SpawnItem()
         {
             if (_selectedItem == null) return;
