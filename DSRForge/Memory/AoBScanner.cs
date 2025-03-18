@@ -62,10 +62,10 @@ namespace DSRForge.Memory
             // Console.WriteLine($"DrawEventPatch: 0x{Offsets.DrawEventPatch.ToInt64():X}");
             // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.DrawSoundViewPatch.ToInt64():X}");
             // Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
-            // Console.WriteLine($"ProgressionFlagMan.Base: 0x{Offsets.ProgressionFlagMan.Base.ToInt64():X}");
+            Console.WriteLine($"ProgressionFlagMan.Base: 0x{Offsets.ProgressionFlagMan.Base.ToInt64():X}");
             // Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
             // Console.WriteLine($"RestoreCastsFunc: 0x{Offsets.RestoreCastsFunc:X}");
-            // Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
+            Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
             // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             //
@@ -73,7 +73,7 @@ namespace DSRForge.Memory
             // Console.WriteLine($"Hooks.RepeatAction: 0x{Offsets.Hooks.RepeatAction:X}");
             // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
             // Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
-            // Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");
+            Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");
             // Console.WriteLine($"Hooks.TargetingView: 0x{Offsets.Hooks.TargetingView:X}");
             // Console.WriteLine($"Hooks.InAirTimer: 0x{Offsets.Hooks.InAirTimer:X}");
             // Console.WriteLine($"Hooks.Keyboard: 0x{Offsets.Hooks.Keyboard:X}");

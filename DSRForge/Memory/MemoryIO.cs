@@ -296,6 +296,22 @@ namespace DSRForge.Memory
         
             WriteUInt8(addr, modifiedByte);
         }
+        public void SetBit32(IntPtr addr, int bitPosition, bool setValue)
+        {
+            IntPtr wordAddr = IntPtr.Add(addr, (bitPosition / 32) * 4);
+            
+            int bitPos = bitPosition % 32;
+            
+            uint currentValue = ReadUInt32(wordAddr);
+            
+            uint bitMask = 1u << bitPos;
+            
+            uint newValue = setValue 
+                ? currentValue | bitMask 
+                : currentValue & ~bitMask;
+            
+            WriteInt32(wordAddr, (int)newValue);
+        }
 
         public bool IsGameLoaded()
         {

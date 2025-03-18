@@ -162,7 +162,28 @@ namespace DSRForge.memory
         public static class ProgressionFlagMan
         {
             public static IntPtr Base;
-            
+            public static int Offset = 0x0;
+            public static int BonfireFlag = 0x18;
+
+            public enum BonfireBitFlag
+            {
+                OolaSanc = 1 << 13,
+                Anorlondo1 = 1 << 29,
+                Gwyndolin = 1 << 15,
+                Parish = 1 << 8,
+                sunlight = 1 << 18,
+                depths = 1 << 9,
+                Quelana = 1 << 19,
+                ashlake = 1 << 22,
+                OS = 1 << 16,
+                paintedWorld = 1 << 7,
+                Dukearchives = 1 << 5,
+                vamos = 1 << 3,
+                oolatown = 1 << 12,
+                ooladung = 1 << 10,
+                tomb = 1 << 6,
+                
+            }
         }
 
         public static class HgDraw
