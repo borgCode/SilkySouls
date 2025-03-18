@@ -56,12 +56,11 @@ namespace DSRForge.Services
             {
                 return currentValue;
             }
-
+            
             switch (statType)
             {
                 case Offsets.GameDataMan.PlayerGameData.Souls:
                     return HandleSoulEdit(statPtr, newValue.Value, currentValue);
-
                 case  Offsets.GameDataMan.PlayerGameData.Humanity:
                     var validatedHumanity = newValue.Value;
                     if (validatedHumanity < 1) validatedHumanity = 1;
@@ -74,12 +73,14 @@ namespace DSRForge.Services
                     if (validatedStat < 1) validatedStat = 1;
                     if (validatedStat > 99) validatedStat = 99;
 
+                    bool wasNoDeathEnabled = IsNoDeathOn();
+                    ToggleNoDeath(1);
                     if (validatedStat != currentValue)
                     {
                         _memoryIo.WriteInt32(statPtr, validatedStat);
                         UpdatePlayerStats(validatedStat - currentValue);
                     }
-
+                    ToggleNoDeath(wasNoDeathEnabled ? 1 : 0);
                     return validatedStat;
             }
         }
@@ -178,6 +179,8 @@ namespace DSRForge.Services
 
         private int CalculateTotalSoulsRequired(int startLevel, int endLevel)
         {
+            
+            startLevel = Math.Max(1, startLevel);
             double totalSouls = 0;
             for (int level = startLevel + 1; level <= endLevel; level++)
             {
