@@ -21,8 +21,7 @@
             <RowDefinition Height="Auto" /> 
             <RowDefinition Height="*" /> 
         </Grid.RowDefinitions>
-
-        <!-- Title Bar -->
+        
         <Border Grid.Row="0"
                 Background="{StaticResource PanelBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
@@ -30,18 +29,28 @@
                 MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <Image Source="/Assets/Silky.ico" 
+                       Grid.Column="0"
+                       Width="16" 
+                       Height="16"
+                       Margin="10,0,5,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center" />
+
                 <TextBlock Text="SilkySouls"
-                           Grid.Column="0"
-                           Margin="10,0,0,0"
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           Margin="0,0,0,0"
                            VerticalAlignment="Center"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource TextBrush}" />
 
-                <StackPanel Grid.Column="1"
+                <StackPanel Grid.Column="2"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
                     <Button x:Name="MinimizeButton"

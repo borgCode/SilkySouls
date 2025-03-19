@@ -252,7 +252,6 @@ namespace SilkySouls.Services
         private byte[] _lastKnownCoordsBytes;
         public void RestorePos(int index)
         {
-          //Ugly but works
             var coordsUpdate = (IntPtr) Offsets.Hooks.UpdateCoords;
             byte[] originBytes = _memoryIo.ReadBytes(coordsUpdate, 7);
             bool allNops = true;

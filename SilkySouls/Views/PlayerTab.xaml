@@ -7,7 +7,7 @@
              xmlns:converters="clr-namespace:SilkySouls.Converters"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="500">
-
+    
     <UserControl.Resources>
         <converters:BooleanAndConverter x:Key="BooleanAndConverter" />
     </UserControl.Resources>
