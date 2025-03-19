@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SilkySouls.Models
+﻿namespace SilkySouls.Models
 {
     public class ItemCategory
     {

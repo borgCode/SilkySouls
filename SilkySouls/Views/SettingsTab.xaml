@@ -25,10 +25,10 @@
                           IsChecked="{Binding IsFastQuitoutEnabled}" 
                           Margin="0,0,10,0"/>
     
-                <!-- <CheckBox Grid.Column="1" Content="Option 2"  -->
-                <!--           IsChecked="{Binding Option2Enabled}"  -->
-                <!--           Margin="0,0,10,0"/> -->
-                <!-- -->
+                <CheckBox Grid.Column="1" Content="Enable Hotkeys"
+                          IsChecked="{Binding IsEnableHotkeysEnabled}"
+                          Margin="0,0,10,0"/>
+                
                 <!-- <CheckBox Grid.Column="2" Content="Option 3"  -->
                 <!--           IsChecked="{Binding Option3Enabled}"/> -->
             </Grid>

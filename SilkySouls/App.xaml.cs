@@ -12,7 +12,7 @@ namespace SilkySouls
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            const string appName = "MyAppName";
+            const string appName = "SilkySouls";
 
             _mutex = new Mutex(true, appName, out var createdNew);
 

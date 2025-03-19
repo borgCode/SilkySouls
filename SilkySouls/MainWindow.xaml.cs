@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using SilkySouls.memory;
 using SilkySouls.Memory;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
@@ -80,7 +79,8 @@ namespace SilkySouls
             MainTabControl.Items.Add(new TabItem { Header = "Items", Content = itemTab });
             MainTabControl.Items.Add(new TabItem { Header = "Settings", Content = settingsTab });
 
-
+            _settingsViewModel.ApplyStartUpOptions();
+            
             _gameLoadedTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(1)
@@ -110,7 +110,7 @@ namespace SilkySouls
                     if (_loaded) return;
                     _loaded = true;
                     TryEnableActiveOptions();
-                    _settingsViewModel.ApplyOptions();
+                    _settingsViewModel.ApplyLoadedOptions();
                 }
                 else if (_loaded)
                 {
@@ -124,6 +124,7 @@ namespace SilkySouls
                 _enemyService.ResetHooks();
                 DisableButtons();
                 _utilityViewModel.ResetAttached();
+                _settingsViewModel.ResetAttached();
                 _loaded = false;
                 IsAttachedText.Text = "Not attached";
             }

@@ -17,6 +17,7 @@ namespace SilkySouls.Utilities
         private readonly MemoryIo _memoryIo;
         private readonly LowLevelKeyboardHook _keyboardHook;
         private readonly Dictionary<string, Keys> _hotkeyMappings;
+
         private readonly Dictionary<string, Action> _actions;
 
         public HotkeyManager(MemoryIo memoryIo)
@@ -30,16 +31,26 @@ namespace SilkySouls.Utilities
             
             _keyboardHook.Down += KeyboardHook_Down;
             
-            _keyboardHook.Start();
-            
             LoadHotkeys();
+
+            if (Properties.Settings.Default.EnableHotkeys) _keyboardHook.Start();
+        }
+
+        public void Start()
+        {
+            _keyboardHook.Start();
+        }
+
+        public void Stop()
+        {
+            _keyboardHook.Stop();
         }
 
         public void RegisterAction(string actionId, Action action)
         {
             _actions[actionId] = action;
         }
-        
+
         private void KeyboardHook_Down(object sender, KeyboardEventArgs e)
         {
             if (!IsGameFocused())
@@ -65,25 +76,25 @@ namespace SilkySouls.Utilities
             GetWindowThreadProcessId(foregroundWindow, out uint foregroundProcessId);
             return foregroundProcessId == (uint)_memoryIo.TargetProcess.Id;
         }
-        
+
         public void SetHotkey(string actionId, Keys keys)
         {
             _hotkeyMappings[actionId] = keys;
             SaveHotkeys();
         }
-        
+
         public void ClearHotkey(string actionId)
         {
             _hotkeyMappings.Remove(actionId);
             SaveHotkeys();
         }
-        
+
         public Keys GetHotkey(string actionId)
         {
             return _hotkeyMappings.TryGetValue(actionId, out var keys) ? keys : null;
         }
-        
-        
+
+
         public void SaveHotkeys()
         {
             try
@@ -106,7 +117,7 @@ namespace SilkySouls.Utilities
                 Console.WriteLine($"Error saving hotkeys: {ex.Message}");
             }
         }
-        
+
         public void LoadHotkeys()
         {
             try

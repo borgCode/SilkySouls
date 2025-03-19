@@ -57,5 +57,17 @@ namespace SilkySouls.Properties {
                 this["FastQuitout"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableHotkeys {
+            get {
+                return ((bool)(this["EnableHotkeys"]));
+            }
+            set {
+                this["EnableHotkeys"] = value;
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace SilkySouls.ViewModels
     public class SettingsViewModel : BaseViewModel
     {
         private bool _isFastQuitoutEnabled;
+        private bool _isEnableHotkeysEnabled;
+        private bool _isLoaded;
         
         private readonly HotkeyManager _hotkeyManager;
         private string _currentSettingHotkeyId;
@@ -304,16 +306,48 @@ namespace SilkySouls.ViewModels
                 {
                     Properties.Settings.Default.FastQuitout = value;
                     Properties.Settings.Default.Save();
-                    _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
+                    if (_isLoaded)
+                    {
+                        _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
+                    }
                 }
             }
         }
-
-        public void ApplyOptions()
+        
+        public bool IsEnableHotkeysEnabled
         {
+            get => _isEnableHotkeysEnabled;
+            set
+            {
+                if (SetProperty(ref _isEnableHotkeysEnabled, value))
+                {
+                    Properties.Settings.Default.EnableHotkeys = value;
+                    Properties.Settings.Default.Save();
+                    if (_isEnableHotkeysEnabled) _hotkeyManager.Start();
+                    else _hotkeyManager.Stop();
+                }
+            }
+        }
+        
+        public void ApplyLoadedOptions()
+        {
+            _isLoaded = true;
+            if (IsFastQuitoutEnabled)  _settingsService.ToggleFastQuitout(1);
+        }
+
+        public void ApplyStartUpOptions()
+        {
+            _isEnableHotkeysEnabled = Properties.Settings.Default.EnableHotkeys;
+            if (_isEnableHotkeysEnabled) _hotkeyManager.Start();
+            else _hotkeyManager.Stop();
+            OnPropertyChanged(nameof(IsEnableHotkeysEnabled));
             _isFastQuitoutEnabled = Properties.Settings.Default.FastQuitout;
-            _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
             OnPropertyChanged(nameof(IsFastQuitoutEnabled));
+        }
+
+        public void ResetAttached()
+        {
+            _isLoaded = false;
         }
     }
 }
