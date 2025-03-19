@@ -17,7 +17,6 @@ namespace DSRForge.Memory
             Offsets.WorldChrMan.Base = FindAddressByPattern(Patterns.WorldChrMan);
             Offsets.DebugFlags.Base = FindAddressByPattern(Patterns.DebugFlags);
             Offsets.Cam.Base = FindAddressByPattern(Patterns.CamBase);
-            Offsets.FileMan.Base = FindAddressByPattern(Patterns.FileMan);
             Offsets.GameDataMan.Base = FindAddressByPattern(Patterns.GameDataMan);
             Offsets.ItemGet = FindAddressByPattern(Patterns.ItemGetFunc).ToInt64();
             Offsets.ItemGetMenuMan = FindAddressByPattern(Patterns.ItemGetMenuMan);
@@ -34,6 +33,7 @@ namespace DSRForge.Memory
             Offsets.HgDraw.Base = FindAddressByPattern(Patterns.HgDraw);
             Offsets.WarpEvent = FindAddressByPattern(Patterns.WarpEvent);
             Offsets.WarpFunc = FindAddressByPattern(Patterns.WarpFunc).ToInt64();
+            Offsets.QuitoutPatch = FindAddressByPattern(Patterns.QuitoutPatch);
 
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.RepeatAction = FindAddressByPattern(Patterns.RepeatAction).ToInt64();
@@ -51,7 +51,6 @@ namespace DSRForge.Memory
             // Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
             // Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
             // Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
-            // Console.WriteLine($"FileMan.Base: 0x{Offsets.FileMan.Base.ToInt64():X}");
             // Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
             // Console.WriteLine($"ItemGet: 0x{Offsets.ItemGet:X}");
             // Console.WriteLine($"ItemGetMenuMan: 0x{Offsets.ItemGetMenuMan.ToInt64():X}");
@@ -61,13 +60,14 @@ namespace DSRForge.Memory
             // Console.WriteLine($"DamageMan.Base: 0x{Offsets.DamageMan.Base.ToInt64():X}");
             // Console.WriteLine($"DrawEventPatch: 0x{Offsets.DrawEventPatch.ToInt64():X}");
             // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.DrawSoundViewPatch.ToInt64():X}");
-            // Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
+            Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
             Console.WriteLine($"ProgressionFlagMan.Base: 0x{Offsets.ProgressionFlagMan.Base.ToInt64():X}");
             // Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
             // Console.WriteLine($"RestoreCastsFunc: 0x{Offsets.RestoreCastsFunc:X}");
             Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
             // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
+            Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
             //
             // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             // Console.WriteLine($"Hooks.RepeatAction: 0x{Offsets.Hooks.RepeatAction:X}");

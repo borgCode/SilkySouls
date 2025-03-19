@@ -342,9 +342,9 @@ namespace DSRForge.Services
 
                 _memoryIo.WriteBytes(codeBlockAddr, coordWarpBytes);
 
-                IntPtr loadingFlagAddr = _memoryIo.FollowPointers(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
+                IntPtr loadingFlagAddr = _memoryIo.FollowPointers(Offsets.MenuMan.Base,new[] { (int)Offsets.MenuMan.MenuManData.LoadedFlag }, false);
 
-                if (!WaitForLoadingFlag(loadingFlagAddr, 1))
+                if (!WaitForLoadingFlag(loadingFlagAddr, 0))
                 {
                     return;
                 }
@@ -352,7 +352,7 @@ namespace DSRForge.Services
                 _hookManager.InstallHook(codeBlockAddr.ToInt64(), origin,
                     new byte[] { 0x66, 0x0F, 0x7F, 0x80, 0x80, 0x0A, 0x00, 0x00 });
 
-                if (!WaitForLoadingFlag(loadingFlagAddr, 0))
+                if (!WaitForLoadingFlag(loadingFlagAddr, 1))
                 {
                 }
 
@@ -371,7 +371,8 @@ namespace DSRForge.Services
                 {
                     return true;
                 }
-                Thread.Sleep(100);
+               
+                Thread.Sleep(50);
             }
             return false;
         }

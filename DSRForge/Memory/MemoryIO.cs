@@ -315,8 +315,8 @@ namespace DSRForge.Memory
 
         public bool IsGameLoaded()
         {
-            var loadingCheckPtr = FollowPointers(Offsets.FileMan.Base,new[] { Offsets.FileMan.LoadedFlag }, false);
-            return ReadInt32(loadingCheckPtr) == 0;
+            var loadingCheckPtr = FollowPointers(Offsets.MenuMan.Base,new[] { (int)Offsets.MenuMan.MenuManData.LoadedFlag }, false);
+            return ReadInt32(loadingCheckPtr) == 1;
             
         }
         

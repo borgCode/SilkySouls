@@ -38,13 +38,7 @@
             15,
             RipType.Standard
         );
-
-        public static readonly Pattern FileMan = new Pattern(
-            new byte[] { 0x80, 0x62, 0x39, 0xE3, 0x41 },
-            "xxxx",
-            22,
-            RipType.Standard
-        );
+        
 
         public static readonly Pattern GameDataMan = new Pattern(
             new byte[] { 0x8B, 0x70, 0x4C, 0x89 },
@@ -119,6 +113,12 @@
             8,
             RipType.Standard
         );
+
+        public static readonly Pattern QuitoutPatch = new Pattern(
+            new byte[] { 0x74, 0x35, 0x83, 0xBB },
+            "xxxx",
+            8,
+            RipType.None);
 
         public static readonly Pattern ProgressionFlagMan = new Pattern(
             new byte[] { 0x8B, 0x13, 0x85, 0xD2, 0x7E, 0x15, 0x48 },

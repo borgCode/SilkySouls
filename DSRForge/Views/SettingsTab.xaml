@@ -12,9 +12,29 @@
 
     <Border BorderThickness="1" BorderBrush="#333" CornerRadius="3" Margin="10">
         <StackPanel Margin="10">
-            <TextBlock Text="Hotkey Bindings" FontWeight="Bold" Margin="0,0,0,10"/>
+            <TextBlock Text="Options" FontWeight="Bold" Margin="0,0,0,10"/>
             
-         
+            <Grid Margin="0,5,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                </Grid.ColumnDefinitions>
+    
+                <CheckBox Grid.Column="0" Content="Fast Quitout (Skips dialogs and online check)" 
+                          IsChecked="{Binding IsFastQuitoutEnabled}" 
+                          Margin="0,0,10,0"/>
+    
+                <!-- <CheckBox Grid.Column="1" Content="Option 2"  -->
+                <!--           IsChecked="{Binding Option2Enabled}"  -->
+                <!--           Margin="0,0,10,0"/> -->
+                <!-- -->
+                <!-- <CheckBox Grid.Column="2" Content="Option 3"  -->
+                <!--           IsChecked="{Binding Option3Enabled}"/> -->
+            </Grid>
+            
+            <Separator Margin="0,0,0,10"/>
+            <TextBlock Text="Hotkey Bindings" FontWeight="Bold" Margin="0,0,0,10"/>
             <Grid Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" MinWidth="80"/>

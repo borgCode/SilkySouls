@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DSRForge.memory;
 using DSRForge.Memory;
 using DSRForge.Services;
 using DSRForge.Utilities;
@@ -24,6 +25,7 @@ namespace DSRForge
         private readonly UtilityViewModel _utilityViewModel;
         private readonly EnemyViewModel _enemyViewModel;
         private readonly ItemViewModel _itemViewModel;
+        private readonly SettingsViewModel _settingsViewModel;
         private readonly EnemyService _enemyService;
         private readonly HookManager _hookManager;
         private readonly AoBScanner _aobScanner;
@@ -64,13 +66,13 @@ namespace DSRForge
             _utilityViewModel = new UtilityViewModel(utilityService, playerService, hotkeyManager);
             _enemyViewModel = new EnemyViewModel(_enemyService, hotkeyManager);
             _itemViewModel = new ItemViewModel(itemService);
-            var settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
+            _settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
 
             var playerTab = new PlayerTab(_playerViewModel);
             var utilityTab = new UtilityTab(_utilityViewModel);
             var enemyTab = new EnemyTab(_enemyViewModel);
             var itemTab = new ItemTab(_itemViewModel);
-            var settingsTab = new SettingsTab(settingsViewModel);
+            var settingsTab = new SettingsTab(_settingsViewModel);
 
             MainTabControl.Items.Add(new TabItem { Header = "Player", Content = playerTab });
             MainTabControl.Items.Add(new TabItem { Header = "Utility", Content = utilityTab });
@@ -81,7 +83,7 @@ namespace DSRForge
 
             _gameLoadedTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(16)
+                Interval = TimeSpan.FromMilliseconds(1)
             };
             _gameLoadedTimer.Tick += Timer_Tick;
             _gameLoadedTimer.Start();
@@ -103,12 +105,12 @@ namespace DSRForge
                 
                 _utilityViewModel.TryRestoreAttachedFeatures();
                 _enemyService.TryInstallTargetHook();
-
                 if (_memoryIo.IsGameLoaded())
                 {
                     if (_loaded) return;
                     _loaded = true;
                     TryEnableActiveOptions();
+                    _settingsViewModel.ApplyOptions();
                 }
                 else if (_loaded)
                 {
@@ -126,7 +128,6 @@ namespace DSRForge
                 IsAttachedText.Text = "Not attached";
             }
         }
-        
         private void TryEnableActiveOptions()
         {
             _playerViewModel.TryEnableActiveOptions();

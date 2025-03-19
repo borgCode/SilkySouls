@@ -69,14 +69,7 @@ namespace DSRForge.memory
             public const int ChrCam = 0x60;
             public const int ChrExFollowCam = 0x60;
         }
-
-        public static class FileMan
-        {
-            public static IntPtr Base;
-            public const int LoadedFlag = 0x168;
-            
-        }
-
+        
         public static class GameDataMan
         {
             public static IntPtr Base;
@@ -146,9 +139,12 @@ namespace DSRForge.memory
             {
                 LevelUpMenu = 0x8C,
                 AttunementMenu = 0x94,
-                Quitout = 0x24C
+                Quitout = 0x24C,
+                LoadedFlag = 0x258
             }
         }
+
+        public static IntPtr QuitoutPatch;
 
         public enum LockedTarget
         {
@@ -163,7 +159,7 @@ namespace DSRForge.memory
         {
             public static IntPtr Base;
             public static int Offset = 0x0;
-            public static int BonfireFlag = 0x18;
+            public static int BonfireFlags = 0x18;
 
             public enum BonfireBitFlag
             {

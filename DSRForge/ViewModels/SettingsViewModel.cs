@@ -9,6 +9,8 @@ namespace DSRForge.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
     {
+        private bool _isFastQuitoutEnabled;
+        
         private readonly HotkeyManager _hotkeyManager;
         private string _currentSettingHotkeyId;
         private LowLevelKeyboardHook _tempHook;
@@ -173,6 +175,9 @@ namespace DSRForge.ViewModels
             Keys keys = _hotkeyManager.GetHotkey(actionId);
             return keys != null && keys.Values.ToArray().Length > 0 ? string.Join(" + ", keys) : "None";
         }
+        
+        
+        
 
         public void StartSettingHotkey(string actionId)
         {
@@ -287,6 +292,28 @@ namespace DSRForge.ViewModels
                 _hotkeyManager.SetHotkey(_currentSettingHotkeyId, new Keys());
             }
             StopSettingHotkey();
+        }
+        
+        
+        public bool IsFastQuitoutEnabled
+        {
+            get => _isFastQuitoutEnabled;
+            set
+            {
+                if (SetProperty(ref _isFastQuitoutEnabled, value))
+                {
+                    Properties.Settings.Default.FastQuitout = value;
+                    Properties.Settings.Default.Save();
+                    _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
+                }
+            }
+        }
+
+        public void ApplyOptions()
+        {
+            _isFastQuitoutEnabled = Properties.Settings.Default.FastQuitout;
+            _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
+            OnPropertyChanged(nameof(IsFastQuitoutEnabled));
         }
     }
 }

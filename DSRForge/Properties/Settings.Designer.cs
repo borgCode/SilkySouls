@@ -45,5 +45,17 @@ namespace DSRForge.Properties {
                 this["HotkeyValues"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FastQuitout {
+            get {
+                return ((bool)(this["FastQuitout"]));
+            }
+            set {
+                this["FastQuitout"] = value;
+            }
+        }
     }
 }

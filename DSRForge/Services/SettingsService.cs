@@ -20,5 +20,10 @@ namespace DSRForge.Services
                 }, false);
             _memoryIo.WriteByte(quitoutPtr, 2);
         }
+
+        public void ToggleFastQuitout(int value)
+        {
+            _memoryIo.WriteByte(Offsets.QuitoutPatch, value);
+        }
     }
 }
