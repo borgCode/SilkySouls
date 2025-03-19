@@ -1,0 +1,171 @@
+﻿<UserControl x:Class="SilkySouls.Views.UtilityTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="500">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3"
+                Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <CheckBox Content="Enable Draw" 
+                              IsChecked="{Binding IsDrawEnabled}"
+                              Grid.Column="0"/>
+                    
+                    <Border
+                            Background="#3498db" 
+                            CornerRadius="10" 
+                            Width="12" 
+                            Height="12" 
+                            Margin="10,0,0,0" 
+                            Cursor="Hand"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Grid.Column="1"
+                            MouseLeftButtonDown="DrawInfoBorder_MouseLeftButtonDown">
+                        <TextBlock Text="i" 
+                                   Foreground="White" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center" 
+                                   FontWeight="Bold" 
+                                   FontSize="10"/>
+                    </Border>
+                </Grid>
+                
+                <UniformGrid Columns="2" Margin="20,5,0,0">
+                    <CheckBox Content="Hitbox View" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsHitboxEnabled}"
+                              Margin="0,2"/>
+                    
+                    <CheckBox Content="Player Sound View" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsSoundViewEnabled}"
+                              Margin="0,2"/>
+                    
+                    <CheckBox Content="Draw Events" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsDrawEventEnabled}"
+                              Margin="0,2"/>
+                    
+                    <CheckBox Content="Targeting View (Kinda useless)" 
+                              IsEnabled="{Binding IsDrawEnabled}"
+                              IsChecked="{Binding IsTargetingViewEnabled}"
+                              Margin="0,2"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="1" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3"
+                Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <UniformGrid Columns="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+            
+                        <CheckBox Content="No Clip"
+                                  IsChecked="{Binding IsNoClipEnabled}"
+                                  IsEnabled="{Binding AreButtonsEnabled}"
+                                  Margin="0,2"
+                                  Grid.Column="0"/>
+            
+                        <Border
+                                Background="#3498db" 
+                                CornerRadius="10" 
+                                Width="12" 
+                                Height="12" 
+                                Margin="10,0,0,0" 
+                                Cursor="Hand"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Grid.Column="1"
+                                MouseLeftButtonDown="NoClipInfoBorder_MouseLeftButtonDown">
+                            <TextBlock Text="i" 
+                                       Foreground="White" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" 
+                                       FontWeight="Bold" 
+                                       FontSize="10"/>
+                        </Border>
+                    </Grid>
+                      
+                    <CheckBox Content="Visible Tomb of the Giants"
+                              IsChecked="{Binding IsFilterRemoveEnabled}"
+                              Margin="0,2"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="2" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3">
+            <StackPanel Margin="10">
+                <TextBlock Text="Warp Locations" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,10"/>
+                
+                <ComboBox ItemsSource="{Binding WarpLocations}"
+                          DisplayMemberPath="Value"
+                          SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
+                          IsEnabled="{Binding AreButtonsEnabled}"
+                          Margin="0,0,0,5"/>
+                          
+                <Button Content="Warp" 
+                        Click="Warp_Click"
+                        IsEnabled="{Binding AreButtonsEnabled}"
+                        Height="25"/>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="3" 
+                BorderThickness="1" 
+                BorderBrush="#333" 
+                CornerRadius="3">
+            <StackPanel Margin="10">
+                <TextBlock Text="Menu" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,10"/>
+                
+                <UniformGrid Columns="2">
+                    <Button Content="Level Up"
+                            Click="LevelUpMenu_Click"
+                            IsEnabled="{Binding AreButtonsEnabled}"
+                            Height="25"
+                            Width="120"
+                            Margin="0,2,2,2"/>
+                              
+                    <Button Content="Attunement"
+                            Click="AttunementMenu_Click"
+                            IsEnabled="{Binding AreButtonsEnabled}"
+                            Height="25"
+                            Width="120"
+                            Margin="2,2,0,2"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
