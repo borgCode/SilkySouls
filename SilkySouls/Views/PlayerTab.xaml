@@ -34,7 +34,7 @@
                                          TextAlignment="Center"
                                          Width="100"
                                          PreviewKeyDown="HealthUpDown_PreviewKeyDown"
-                                         GotFocus="HealthUpDown_GotFocus"
+                                         GotFocus="PauseUpdates_GotFocus"
                                          LostFocus="HealthUpDown_LostFocus"
                                          IsEnabled="{Binding AreOptionsEnabled}"
                                          BorderBrush="#3F3F46"/>
@@ -330,6 +330,7 @@
                                                Minimum="0"
                                                Maximum="999999999"
                                                Grid.Column="0"
+                                               GotFocus="PauseUpdates_GotFocus"
                                                PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
                                                LostFocus="AttributeUpDown_LostFocus"
                                                IsEnabled="{Binding AreOptionsEnabled}"

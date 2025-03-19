@@ -50,7 +50,7 @@ namespace SilkySouls.Views
             _playerViewModel.SetMaxHp();
         }
 
-        private void HealthUpDown_GotFocus(object sender, RoutedEventArgs e)
+        private void PauseUpdates_GotFocus(object sender, RoutedEventArgs e)
         {
             _playerViewModel.PauseUpdates();
         }
@@ -112,6 +112,7 @@ namespace SilkySouls.Views
             {
                 setter(upDown.Value);
             }
+            _playerViewModel.ResumeUpdates();
         }
 
         private void AttributeUpDown_PreviewKeyDown(object sender, KeyEventArgs e)

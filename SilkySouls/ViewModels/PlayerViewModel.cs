@@ -63,8 +63,10 @@ namespace SilkySouls.ViewModels
             _timer.Tick += (s, e) =>
             {
                 if (_pauseUpdates) return;
+                
                 CurrentHp = _playerService.GetHp();
                 CurrentMaxHp = _playerService.GetMaxHp();
+                Souls = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls);
                 int? newSoulLevel = _playerService.GetSoulLevel();
                 if (_currentSoulLevel != newSoulLevel)
                 {
