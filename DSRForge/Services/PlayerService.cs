@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using DSRForge.memory;
 using DSRForge.Memory;
 using DSRForge.Utilities;
@@ -248,8 +249,29 @@ namespace DSRForge.Services
             }
         }
 
+        private byte[] _lastKnownCoordsBytes;
         public void RestorePos(int index)
         {
+          //Ugly but works
+            var coordsUpdate = (IntPtr) Offsets.Hooks.UpdateCoords;
+            byte[] originBytes = _memoryIo.ReadBytes(coordsUpdate, 7);
+            bool allNops = true;
+            for (int i = 0; i < originBytes.Length; i++)
+            {
+                if (originBytes[i] != 0x90)
+                {
+                    allNops = false;
+                    break;
+                }
+            }
+            if (allNops)
+            {
+                originBytes = _lastKnownCoordsBytes;
+            }
+
+            _lastKnownCoordsBytes = originBytes;
+            _memoryIo.WriteBytes(coordsUpdate, new byte[]{ 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
+            _memoryIo.WriteBytes(coordsUpdate + 0x252, new byte[]{ 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
             
             byte[] positionBytes;
             if (index == 0)
@@ -272,6 +294,9 @@ namespace DSRForge.Services
             }, false);
 
             _memoryIo.WriteBytes(coordsPtr, positionBytes);
+            Thread.Sleep(15);
+            _memoryIo.WriteBytes(coordsUpdate, originBytes);
+            _memoryIo.WriteBytes(coordsUpdate + 0x252, new byte[]{ 0x0F, 0x29, 0x81, 0x20, 0x01, 0x00, 0x00 });
         }
 
         public int GetSetNewGame(int? value)
