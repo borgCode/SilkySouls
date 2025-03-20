@@ -361,10 +361,10 @@ namespace SilkySouls.Services
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
-                    (int)Offsets.WorldChrMan.PlayerInsOffsets.InfiniteStam
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.ChrFlags
                 }, false);
 
-            var flagMask = Offsets.WorldChrMan.InfiniteStam;
+            var flagMask = (byte) Offsets.WorldChrMan.ChrFlags.InfiniteStam;
             _memoryIo.SetBitValue(infiniteStamPtr, flagMask, setValue);
         }
 

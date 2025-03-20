@@ -16,18 +16,18 @@ namespace SilkySouls.Services
         private IntPtr _repeatActionBlock;
         private IntPtr _lockedTargetPtr;
         private IntPtr _repeatActionFlag;
-        
+
         private bool _isHookInstalled;
 
         private long _lockedTargetOrigin;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
         private long _repeatActionOrigin;
-        
+
         public EnemyService(MemoryIo memoryIo, HookManager hookManager)
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-            
+
             _codeCave = CodeCaveOffsets.CodeCave1.Base;
             _lastTargetBlock = _codeCave + CodeCaveOffsets.CodeCave1.LockedTarget;
             _repeatActionBlock = _codeCave + CodeCaveOffsets.CodeCave1.RepeatAction;
@@ -37,18 +37,18 @@ namespace SilkySouls.Services
         {
             if (_isHookInstalled) return;
             if (!IsTargetOriginInitialized()) return;
-            
+
             _lockedTargetPtr = _codeCave + CodeCaveOffsets.CodeCave1.LockedTargetPtr;
-            
+
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
-          
+
             byte[] lockedTargetPtrBytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
             Array.Copy(lockedTargetPtrBytes, 0, lockedTargetBytes, 6, lockedTargetPtrBytes.Length);
 
             int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 25));
             byte[] originAddr = BitConverter.GetBytes(originOffset);
             Array.Copy(originAddr, 0, lockedTargetBytes, 21, originAddr.Length);
-            
+
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
             _hookManager.InstallHook(_lastTargetBlock.ToInt64(), _lockedTargetOrigin, _lockedTargetOriginBytes);
             _isHookInstalled = true;
@@ -59,6 +59,7 @@ namespace SilkySouls.Services
             _isHookInstalled = false;
             _isRepeatActionInstalled = false;
         }
+
         private bool IsTargetOriginInitialized()
         {
             _lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
@@ -69,14 +70,14 @@ namespace SilkySouls.Services
         public int GetTargetHp()
         {
             var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                   CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetHp);
         }
 
         public int GetTargetMaxHp()
         {
             var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                      CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetMaxHp);
         }
 
@@ -107,27 +108,26 @@ namespace SilkySouls.Services
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoiseTimer);
         }
-        
-        public int GetTargetId()
+
+        public ulong GetTargetId()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
-            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.Id);
+            return _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
         }
-        
+
         public void SetTargetSpeed(float value)
         {
             var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
-                                     CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+                                   CodeCaveOffsets.CodeCave1.LockedTargetPtr;
             var targetSpeedPtr = _memoryIo.FollowPointers(lockedTargetBase,
                 new[]
                 {
                     (int)Offsets.LockedTarget.EnemyCtrl, Offsets.WorldChrMan.ChrAnim, Offsets.WorldChrMan.ChrAnimSpeed
                 }, false);
-          
+
             _memoryIo.WriteFloat(targetSpeedPtr, value);
         }
-        
+
         public float GetTargetSpeed()
         {
             var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
@@ -137,10 +137,10 @@ namespace SilkySouls.Services
                 {
                     (int)Offsets.LockedTarget.EnemyCtrl, Offsets.WorldChrMan.ChrAnim, Offsets.WorldChrMan.ChrAnimSpeed
                 }, false);
-          
+
             return _memoryIo.ReadFloat(targetSpeedPtr);
         }
-        
+
         private bool _isRepeatActionInstalled;
 
         internal void EnableRepeatAction()
@@ -154,7 +154,7 @@ namespace SilkySouls.Services
             {
                 _repeatActionFlag = _codeCave + CodeCaveOffsets.CodeCave1.RepeatActionFlag;
                 _memoryIo.WriteByte(_repeatActionFlag, 1);
-                
+
                 byte[] asmBytes = AsmLoader.GetAsmBytes("RepeatAction");
 
                 byte[] bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
@@ -165,14 +165,14 @@ namespace SilkySouls.Services
                 Array.Copy(bytes, 0, asmBytes, 39, 8);
                 bytes = BitConverter.GetBytes(17); //Skip repeat when disabled
                 Array.Copy(bytes, 0, asmBytes, 52, bytes.Length);
-                bytes = BitConverter.GetBytes(7); 
+                bytes = BitConverter.GetBytes(7);
                 Array.Copy(bytes, 0, asmBytes, 69, bytes.Length);
                 int originOffset = (int)(_repeatActionOrigin + 7 - (_repeatActionBlock.ToInt64() + 95));
                 byte[] originAddr = BitConverter.GetBytes(originOffset);
                 Array.Copy(originAddr, 0, asmBytes, asmBytes.Length - 4, originAddr.Length);
 
                 _memoryIo.WriteBytes(_repeatActionBlock, asmBytes);
-            
+
                 _hookManager.InstallHook(_repeatActionBlock.ToInt64(), _repeatActionOrigin,
                     new byte[] { 0x0F, 0xBE, 0x80, 0x60, 0x03, 0x00, 0x00 });
                 _isRepeatActionInstalled = true;
@@ -182,6 +182,30 @@ namespace SilkySouls.Services
         internal void DisableRepeatAction()
         {
             _memoryIo.WriteByte(_repeatActionFlag, 0);
+        }
+
+        public void ToggleTargetAi(bool setValue)
+        {
+            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.ChrFlags
+                }, false);
+            var flagMask = (byte)Offsets.WorldChrMan.ChrFlags.NoUpdate;
+            _memoryIo.SetBitValue(disableTargetAiPtr, flagMask, setValue);
+        }
+
+        public bool IsTargetAiDisabled()
+        {
+            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.ChrFlags
+                }, false);
+            var flagMask = (byte)Offsets.WorldChrMan.ChrFlags.NoUpdate;
+            return _memoryIo.IsBitSet(disableTargetAiPtr, flagMask);
         }
 
         public void ToggleAi(int value)
@@ -196,8 +220,8 @@ namespace SilkySouls.Services
             if (value == 1)
             {
                 long origin = Offsets.Hooks.AllNoDamage;
-                
-                
+
+
                 byte[] restoreHealthBytes = AsmLoader.GetAsmBytes("AllNoDamage");
                 byte[] jumpBytes = BitConverter.GetBytes(origin + 7 - (codeBlock.ToInt64() + 26));
                 Array.Copy(jumpBytes, 0, restoreHealthBytes, 22, 4);
@@ -216,6 +240,5 @@ namespace SilkySouls.Services
             var allNoDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDeath;
             _memoryIo.WriteInt32(allNoDeathPtr, value);
         }
-        
     }
 }

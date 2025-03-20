@@ -296,6 +296,14 @@ namespace SilkySouls.Memory
         
             WriteUInt8(addr, modifiedByte);
         }
+        
+        public bool IsBitSet(IntPtr addr, byte flagMask)
+        {
+            byte currentByte = ReadUInt8(addr);
+            
+            return (currentByte & flagMask) != 0;
+        }
+        
         public void SetBit32(IntPtr addr, int bitPosition, bool setValue)
         {
             IntPtr wordAddr = IntPtr.Add(addr, (bitPosition / 32) * 4);

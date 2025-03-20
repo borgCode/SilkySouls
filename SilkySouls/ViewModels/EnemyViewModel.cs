@@ -17,11 +17,11 @@ namespace SilkySouls.ViewModels
         private float _targetCurrentPoise;
         private float _targetMaxPoise;
         private float _targetPoiseTimer;
-        private int _currentTargetId;
+        private ulong _currentTargetId;
         private float _targetSpeed;
-        
         private bool _isRepeatActionEnabled;
         private bool _isFreezeHealthEnabled;
+        private bool _isDisableTargetAiEnabled;
         
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
@@ -58,10 +58,11 @@ namespace SilkySouls.ViewModels
             TargetCurrentHealth = _enemyService.GetTargetHp();
             TargetMaxHealth = _enemyService.GetTargetMaxHp();
             
-            int targetId = _enemyService.GetTargetId();
+            ulong targetId = _enemyService.GetTargetId();
+            
             if (targetId != _currentTargetId)
             {
-                IsFreezeHealthEnabled = false;
+                ResetTargetOptions();
                 _currentTargetId = targetId;
             }
             
@@ -75,13 +76,20 @@ namespace SilkySouls.ViewModels
             TargetMaxPoise = _enemyService.GetTargetMaxPoise();
             TargetPoiseTimer = _enemyService.GetTargetPoiseTimer();
         }
-        
+
+        private void ResetTargetOptions()
+        {
+            IsFreezeHealthEnabled = false;
+            IsRepeatActionEnabled = false;
+            IsDisableTargetAiEnabled = _enemyService.IsTargetAiDisabled();
+        }
+
         public bool AreOptionsEnabled
         {
             get => _areOptionsEnabled;
             set => SetProperty(ref _areOptionsEnabled, value);
         }
-
+        
         public bool IsTargetOptionsEnabled
         {
             get => _isTargetOptionsEnabled;
@@ -174,6 +182,18 @@ namespace SilkySouls.ViewModels
                 if (!SetProperty(ref _isRepeatActionEnabled, value)) return;
                 if (value) _enemyService.EnableRepeatAction();
                 else _enemyService.DisableRepeatAction();
+            }
+        }
+        
+        public bool IsDisableTargetAiEnabled
+        {
+            get => _isDisableTargetAiEnabled;
+            set
+            {
+                if (SetProperty(ref _isDisableTargetAiEnabled, value))
+                {
+                    _enemyService.ToggleTargetAi(_isDisableTargetAiEnabled);
+                }
             }
         }
         

@@ -24,12 +24,18 @@ namespace SilkySouls.memory
                 Health = 0x3E8,
                 MaxHealth = 0x3EC,
                 NoDamage = 0x524,
-                InfiniteStam = 0x525,
+                ChrFlags = 0x525,
                 NoGoodsConsume = 0x527,
             }
             
             public const byte NoDamage = 1 << 6;
-            public const byte InfiniteStam = 1 << 2;
+
+            public enum ChrFlags : byte
+            {
+                InfiniteStam = 1 << 2,
+                NoUpdate = 1 << 7,
+            }
+            
             public const byte NoGoodsConsume = 1 << 0;
             
             public const int ChrAnim = 0x18;
@@ -149,12 +155,19 @@ namespace SilkySouls.memory
         public enum LockedTarget
         {
             EnemyCtrl = 0x68,
-            Id = 0xC8,
             TargetHp = 0x3E8,
             TargetMaxHp = 0x3EC,
             CurrentPoise = 0x250,
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
+            PoisonRes = 0x418,
+            ToxicRes = 0x41C,
+            BleedRes = 0x420,
+            CurseRes = 0x424,
+            PoisonResMax = 0x428,
+            ToxicResMax = 0x42C,
+            BleedResMax = 0x430,
+            CurseResMax = 0x434,
         }
 
         public static class ProgressionFlagMan

@@ -114,22 +114,37 @@
                                               FormatString="F2"
                                               Minimum="0"
                                               Maximum="5"
+                                              Increment="0.50"
                                               PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
                                               LostFocus="SpeedUpDown_LostFocus"
                                               Width="100"
                                               HorizontalAlignment="Left"/>
                     </Grid>
-                    <CheckBox Content="Enable Repeat Action" Margin="0,5,0,0">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                <Binding Path="AreOptionsEnabled" />
-                                <Binding Path="IsTargetOptionsEnabled" />
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <CheckBox.IsChecked>
-                            <Binding Path="IsRepeatActionEnabled" />
-                        </CheckBox.IsChecked>
-                    </CheckBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <!-- Your original checkbox -->
+                        <CheckBox Content="Enable Repeat Action">
+                            <CheckBox.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="AreOptionsEnabled" />
+                                    <Binding Path="IsTargetOptionsEnabled" />
+                                </MultiBinding>
+                            </CheckBox.IsEnabled>
+                            <CheckBox.IsChecked>
+                                <Binding Path="IsRepeatActionEnabled" />
+                            </CheckBox.IsChecked>
+                        </CheckBox>
+                        <CheckBox Content="Disable Target AI" Margin="10,0,0,0">
+                            <CheckBox.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="AreOptionsEnabled" />
+                                    <Binding Path="IsTargetOptionsEnabled" />
+                                </MultiBinding>
+                            </CheckBox.IsEnabled>
+                            <CheckBox.IsChecked>
+                                <Binding Path="IsDisableTargetAiEnabled" />
+                            </CheckBox.IsChecked>
+                        </CheckBox>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </Border>
