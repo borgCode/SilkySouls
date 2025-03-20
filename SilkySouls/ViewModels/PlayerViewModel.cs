@@ -67,6 +67,7 @@ namespace SilkySouls.ViewModels
                 CurrentHp = _playerService.GetHp();
                 CurrentMaxHp = _playerService.GetMaxHp();
                 Souls = _playerService.GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData.Souls);
+                PlayerSpeed = _playerService.GetSetPlayerSpeed(null);
                 int? newSoulLevel = _playerService.GetSoulLevel();
                 if (_currentSoulLevel != newSoulLevel)
                 {
