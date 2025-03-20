@@ -416,7 +416,7 @@ namespace SilkySouls.Services
                 new[]
                 {
                     (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
-                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PlayerCtrl, Offsets.WorldChrMan.PlayerAnim, Offsets.WorldChrMan.PlayerAnimSpeed
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PlayerCtrl, Offsets.WorldChrMan.ChrAnim, Offsets.WorldChrMan.ChrAnimSpeed
                 }, false);
 
             float currentSpeed = _memoryIo.ReadFloat(playerSpeedPtr);

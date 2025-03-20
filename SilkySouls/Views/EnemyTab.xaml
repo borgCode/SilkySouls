@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:wpfTool="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:converters="clr-namespace:SilkySouls.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
@@ -97,6 +98,27 @@
                         </ProgressBar.Template>
                     </ProgressBar>
                     
+                    <Grid Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+    
+                        <TextBlock Grid.Column="0" 
+                                   Text="Speed Modifier:" 
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,10,0"/>
+    
+                        <wpfTool:DoubleUpDown x:Name="SpeedUpDown" Grid.Column="1"
+                                              Value="{Binding TargetSpeed}"
+                                              FormatString="F2"
+                                              Minimum="0"
+                                              Maximum="5"
+                                              PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
+                                              LostFocus="SpeedUpDown_LostFocus"
+                                              Width="100"
+                                              HorizontalAlignment="Left"/>
+                    </Grid>
                     <CheckBox Content="Enable Repeat Action" Margin="0,5,0,0">
                         <CheckBox.IsEnabled>
                             <MultiBinding Converter="{StaticResource BooleanAndConverter}">

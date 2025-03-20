@@ -107,7 +107,40 @@ namespace SilkySouls.Services
                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoiseTimer);
         }
-
+        
+        public int GetTargetId()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.Id);
+        }
+        
+        public void SetTargetSpeed(float value)
+        {
+            var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
+                                     CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+            var targetSpeedPtr = _memoryIo.FollowPointers(lockedTargetBase,
+                new[]
+                {
+                    (int)Offsets.LockedTarget.EnemyCtrl, Offsets.WorldChrMan.ChrAnim, Offsets.WorldChrMan.ChrAnimSpeed
+                }, false);
+          
+            _memoryIo.WriteFloat(targetSpeedPtr, value);
+        }
+        
+        public float GetTargetSpeed()
+        {
+            var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
+                                   CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+            var targetSpeedPtr = _memoryIo.FollowPointers(lockedTargetBase,
+                new[]
+                {
+                    (int)Offsets.LockedTarget.EnemyCtrl, Offsets.WorldChrMan.ChrAnim, Offsets.WorldChrMan.ChrAnimSpeed
+                }, false);
+          
+            return _memoryIo.ReadFloat(targetSpeedPtr);
+        }
+        
         private bool _isRepeatActionInstalled;
 
         internal void EnableRepeatAction()

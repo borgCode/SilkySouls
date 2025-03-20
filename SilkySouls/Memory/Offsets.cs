@@ -32,8 +32,8 @@ namespace SilkySouls.memory
             public const byte InfiniteStam = 1 << 2;
             public const byte NoGoodsConsume = 1 << 0;
             
-            public const int PlayerAnim = 0x18;
-            public const int PlayerAnimSpeed = 0xA8;
+            public const int ChrAnim = 0x18;
+            public const int ChrAnimSpeed = 0xA8;
             
             public const int CoordsPtr2 = 0x28;
             public const int CoordsPtr3 = 0x50;
@@ -148,6 +148,8 @@ namespace SilkySouls.memory
 
         public enum LockedTarget
         {
+            EnemyCtrl = 0x68,
+            Id = 0xC8,
             TargetHp = 0x3E8,
             TargetMaxHp = 0x3EC,
             CurrentPoise = 0x250,

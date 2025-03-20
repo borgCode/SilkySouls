@@ -17,6 +17,8 @@ namespace SilkySouls.ViewModels
         private float _targetCurrentPoise;
         private float _targetMaxPoise;
         private float _targetPoiseTimer;
+        private int _currentTargetId;
+        private float _targetSpeed;
         
         private bool _isRepeatActionEnabled;
         private bool _isFreezeHealthEnabled;
@@ -55,11 +57,20 @@ namespace SilkySouls.ViewModels
         {
             TargetCurrentHealth = _enemyService.GetTargetHp();
             TargetMaxHealth = _enemyService.GetTargetMaxHp();
+            
+            int targetId = _enemyService.GetTargetId();
+            if (targetId != _currentTargetId)
+            {
+                IsFreezeHealthEnabled = false;
+                _currentTargetId = targetId;
+            }
+            
             if (IsFreezeHealthEnabled)
             {
                 _enemyService.SetTargetHp(_frozenHealth);
             }
 
+            TargetSpeed = _enemyService.GetTargetSpeed();
             TargetCurrentPoise = _enemyService.GetTargetPoise();
             TargetMaxPoise = _enemyService.GetTargetMaxPoise();
             TargetPoiseTimer = _enemyService.GetTargetPoiseTimer();
@@ -126,6 +137,23 @@ namespace SilkySouls.ViewModels
         {
             get => _targetPoiseTimer;
             set => SetProperty(ref _targetPoiseTimer, value);
+        }
+        
+        public float TargetSpeed
+        {
+            get => _targetSpeed;
+            set 
+            {
+                if (SetProperty(ref _targetSpeed, value))
+                {
+                    _enemyService.SetTargetSpeed(value);
+                }
+            }
+        }
+        
+        public void SetSpeed(float value)
+        {
+            TargetSpeed = value;
         }
         
         public bool IsFreezeHealthEnabled
