@@ -34,6 +34,7 @@ namespace SilkySouls.Memory
             Offsets.WarpEvent = FindAddressByPattern(Patterns.WarpEvent);
             Offsets.WarpFunc = FindAddressByPattern(Patterns.WarpFunc).ToInt64();
             Offsets.QuitoutPatch = FindAddressByPattern(Patterns.QuitoutPatch);
+            Offsets.SoloParamMan.Base = FindAddressByPattern(Patterns.SoloParamMan);
 
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.RepeatAction = FindAddressByPattern(Patterns.RepeatAction).ToInt64();

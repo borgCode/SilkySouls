@@ -69,5 +69,17 @@ namespace SilkySouls.Properties {
                 this["EnableHotkeys"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GuaranteedBkh {
+            get {
+                return ((bool)(this["GuaranteedBkh"]));
+            }
+            set {
+                this["GuaranteedBkh"] = value;
+            }
+        }
     }
 }

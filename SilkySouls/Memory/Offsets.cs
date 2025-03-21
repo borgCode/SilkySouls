@@ -100,7 +100,6 @@ namespace SilkySouls.memory
                 SoulLevel = 0x90,
                 Souls = 0x94,
                 TotalSouls = 0x98,
-
                 EquipMagicData = 0x418,
             }
         }
@@ -163,11 +162,9 @@ namespace SilkySouls.memory
             PoisonRes = 0x418,
             ToxicRes = 0x41C,
             BleedRes = 0x420,
-            CurseRes = 0x424,
             PoisonResMax = 0x428,
             ToxicResMax = 0x42C,
             BleedResMax = 0x430,
-            CurseResMax = 0x434,
         }
 
         public static class ProgressionFlagMan
@@ -201,6 +198,21 @@ namespace SilkySouls.memory
         {
             public static IntPtr Base;
             public const int EzDraw = 0x58;
+        }
+
+        public static class SoloParamMan
+        {
+            public static IntPtr Base;
+            public const int ParamResCap = 0x570;
+            public const int ItemLot = 0x38;
+            public const int BkhDropRateBase = 0x32C30;
+
+            public enum BkhDropRateSlots
+            {
+                Nothing = 0x40,
+                Bkh = 0x42,
+                Bks = 0x44,
+            }
         }
         
         

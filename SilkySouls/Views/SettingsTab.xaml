@@ -15,8 +15,11 @@
             <TextBlock Text="Options" FontWeight="Bold" Margin="0,0,0,10"/>
             
             <Grid Margin="0,5,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="150"/>
                     <ColumnDefinition Width="Auto" MinWidth="150"/>
                     <ColumnDefinition Width="Auto" MinWidth="150"/>
                 </Grid.ColumnDefinitions>
@@ -27,10 +30,11 @@
     
                 <CheckBox Grid.Column="1" Content="Enable Hotkeys"
                           IsChecked="{Binding IsEnableHotkeysEnabled}"
-                          Margin="0,0,10,0"/>
+                          Margin="0,0,0,0"/>
                 
-                <!-- <CheckBox Grid.Column="2" Content="Option 3"  -->
-                <!--           IsChecked="{Binding Option3Enabled}"/> -->
+                <CheckBox Grid.Column="0" Grid.Row="1" Content="100% BKH drop"
+                          IsChecked="{Binding IsGuaranteedBkhEnabled}"
+                          Margin="0,5,0,0"/>
             </Grid>
             
             <Separator Margin="0,0,0,10"/>
