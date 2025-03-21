@@ -250,13 +250,19 @@ namespace SilkySouls.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 50                      push   rax
+        ///51                      push   rcx
+        ///48 a1 00 00 00 00 00    movabs rax,0x0
+        ///00 00 00
+        ///48 8b 48 68             mov    rcx,QWORD PTR [rax+0x68]
+        ///48 39 d9                cmp    rcx,rbx
+        ///0f 84 00 00 00 00       je     19 &lt;_main+0x19&gt;
         ///48 89 d8                mov    rax,rbx
         ///48 a3 00 00 00 00 00    movabs ds:0x0,rax
         ///00 00 00
+        ///59                      pop    rcx
         ///58                      pop    rax
         ///48 8d 4c 24 38          lea    rcx,[rsp+0x38]
-        ///e9 00 00 00 00          jmp    19 &lt;_main+0x19&gt;
-        ///.
+        ///e9 00 00 00 00          jmp    32 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LastLockedTarget {
             get {
@@ -394,8 +400,7 @@ namespace SilkySouls.Properties {
         ///0f 85 00 00 00 00       jne    25 &lt;_main+0x25&gt;
         ///48 bb 00 00 00 00 00    movabs rbx,0x0
         ///00 00 00
-        ///80 3b 01                cmp    BYTE PTR [rbx],0x1
-        /// [rest of string was truncated]&quot;;.
+        ///80 3b 01                cmp    BYTE PTR [rbx],0x1        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RepeatAction {
             get {

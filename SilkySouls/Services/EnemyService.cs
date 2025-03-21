@@ -42,12 +42,18 @@ namespace SilkySouls.Services
 
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
 
-            byte[] lockedTargetPtrBytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
-            Array.Copy(lockedTargetPtrBytes, 0, lockedTargetBytes, 6, lockedTargetPtrBytes.Length);
+           
+            byte[] bytes = BitConverter.GetBytes(Offsets.WorldChrMan.Base.ToInt64());
+            Array.Copy(bytes, 0, lockedTargetBytes, 4, bytes.Length);
 
-            int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 25));
-            byte[] originAddr = BitConverter.GetBytes(originOffset);
-            Array.Copy(originAddr, 0, lockedTargetBytes, 21, originAddr.Length);
+            bytes = BitConverter.GetBytes(13); // Jump to exit if player
+            Array.Copy(bytes, 0, lockedTargetBytes, 21, bytes.Length);
+            bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
+            Array.Copy(bytes, 0, lockedTargetBytes, 30, bytes.Length);
+
+            int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 50));
+            bytes = BitConverter.GetBytes(originOffset);
+            Array.Copy(bytes, 0, lockedTargetBytes, 46, bytes.Length);
 
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
             _hookManager.InstallHook(_lastTargetBlock.ToInt64(), _lockedTargetOrigin, _lockedTargetOriginBytes);
@@ -118,8 +124,7 @@ namespace SilkySouls.Services
                     (int)Offsets.LockedTarget.NpcSpEffectEquipCtrl, Offsets.SpEffectPtr1, Offsets.SpEffectPtr2,
                     Offsets.SpEffectOffset
                 }, false);
-
-            _memoryIo.ReadTestFull(spEffectPtr);
+            
             return _memoryIo.ReadInt32(spEffectPtr);
         }
 

@@ -11,10 +11,10 @@ namespace SilkySouls.Memory
             public const int EnableDraw = 0x0;
             public const int TargetView = 0x200;
             public const int LockedTarget = 0x220;
-            public const int LockedTargetPtr = 0x240;
-            public const int RepeatActionFlag = 0x250;
-            public const int RepeatAction = 0x260;
-            public const int AllNoDamage = 0x2B0;
+            public const int LockedTargetPtr = 0x270;
+            public const int RepeatActionFlag = 0x280;
+            public const int RepeatAction = 0x290;
+            public const int AllNoDamage = 0x300;
         }
 
         public static class CodeCave2
