@@ -184,7 +184,7 @@
         public static readonly Pattern RepeatAction = new Pattern(
             new byte[] { 0x48, 0x8B, 0x41, 0x08, 0x0F, 0xBE },
             "xxxxxx",
-            0,
+            4,
             RipType.None);
 
         public static readonly Pattern AllNoDamage = new Pattern(
