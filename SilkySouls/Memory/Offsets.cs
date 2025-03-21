@@ -154,19 +154,26 @@ namespace SilkySouls.memory
         public enum LockedTarget
         {
             EnemyCtrl = 0x68,
+            NpcSpEffectEquipCtrl = 0x2D8,
             TargetHp = 0x3E8,
             TargetMaxHp = 0x3EC,
             CurrentPoise = 0x250,
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
-            PoisonRes = 0x418,
-            ToxicRes = 0x41C,
-            BleedRes = 0x420,
-            PoisonResMax = 0x428,
-            ToxicResMax = 0x42C,
-            BleedResMax = 0x430,
+           
+            PoisonCurrent = 0x418,
+            ToxicCurrent = 0x41C,
+            BleedCurrent = 0x420,
+            PoisonMax = 0x428,
+            ToxicMax = 0x42C,
+            BleedMax = 0x430,
         }
 
+        public const int SpEffectPtr1 = 0x28;
+        public const int SpEffectPtr2 = 0x8;
+        public const int SpEffectOffset = 0x50;
+        
+             
         public static class ProgressionFlagMan
         {
             public static IntPtr Base;

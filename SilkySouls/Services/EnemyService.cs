@@ -109,6 +109,62 @@ namespace SilkySouls.Services
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoiseTimer);
         }
 
+        public int GetImmunitySpEffect()
+        {
+            var spEffectPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int)Offsets.LockedTarget.NpcSpEffectEquipCtrl, Offsets.SpEffectPtr1, Offsets.SpEffectPtr2,
+                    Offsets.SpEffectOffset
+                }, false);
+
+            _memoryIo.ReadTestFull(spEffectPtr);
+            return _memoryIo.ReadInt32(spEffectPtr);
+        }
+
+        public int GetTargetBleed()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.BleedCurrent);
+        }
+
+        public int GetTargetMaxBleed()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.BleedMax);
+        }
+
+        public int GetTargetPoison()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoisonCurrent);
+        }
+
+        public int GetTargetMaxPoison()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoisonMax);
+        }
+
+        public int GetTargetToxic()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.ToxicCurrent);
+        }
+
+        public int GetTargetMaxToxic()
+        {
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
+                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.ToxicMax);
+        }
+
         public ulong GetTargetId()
         {
             return _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +

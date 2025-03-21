@@ -1,5 +1,4 @@
-﻿using System;
-using SilkySouls.memory;
+﻿using SilkySouls.memory;
 using SilkySouls.Memory;
 
 namespace SilkySouls.Services
