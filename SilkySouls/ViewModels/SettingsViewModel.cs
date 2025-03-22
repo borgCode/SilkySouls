@@ -104,27 +104,78 @@ namespace SilkySouls.ViewModels
             set => SetProperty(ref _repeatActionHotkeyText, value);
         }
 
-        private string _disableAiHotkeyText;
-        public string DisableAiHotkeyText
-        {
-            get => _disableAiHotkeyText;
-            set => SetProperty(ref _disableAiHotkeyText, value);
-        }
+        private string _disableTargetAiHotkeyText;
 
+        public string DisableTargetAiHotkeyText
+        {
+            get => _disableTargetAiHotkeyText;
+            set => SetProperty(ref _disableTargetAiHotkeyText, value);
+        }
+        
         private string _freezeHpHotkeyText;
         public string FreezeHpHotkeyText
         {
             get => _freezeHpHotkeyText;
             set => SetProperty(ref _freezeHpHotkeyText, value);
         }
+        
+        private string _increaseTargetSpeedHotkeyText;
+        public string IncreaseTargetSpeedHotkeyText
+        {
+            get => _increaseTargetSpeedHotkeyText;
+            set => SetProperty(ref _increaseTargetSpeedHotkeyText, value);
+        }
+
+        private string _decreaseTargetSpeedHotkeyText;
+        public string DecreaseTargetSpeedHotkeyText
+        {
+            get => _decreaseTargetSpeedHotkeyText;
+            set => SetProperty(ref _decreaseTargetSpeedHotkeyText, value);
+        }
+        
+        private string _enableTargetOptionsHotkeyText;
+        public string EnableTargetOptionsHotkeyText
+        {
+            get => _enableTargetOptionsHotkeyText;
+            set => SetProperty(ref _enableTargetOptionsHotkeyText, value);
+        }
+
+        private string _showAllResistancesHotkeyText;
+        public string ShowAllResistancesHotkeyText
+        {
+            get => _showAllResistancesHotkeyText;
+            set => SetProperty(ref _showAllResistancesHotkeyText, value);
+        }
+
         private string _quitoutHotkeyText;
         public string QuitoutHotkeyText
         {
             get => _quitoutHotkeyText;
             set => SetProperty(ref _quitoutHotkeyText, value);
         }
+
+        private string _disableAiHotkeyText;
+        public string DisableAiHotkeyText
+        {
+            get => _disableAiHotkeyText;
+            set => SetProperty(ref _disableAiHotkeyText, value);
+        }
         
-        
+        private string _allNoDeathHotkeyText;
+        public string AllNoDeathHotkeyText
+        {
+            get => _allNoDeathHotkeyText;
+            set => SetProperty(ref _allNoDeathHotkeyText, value);
+        }
+
+        private string _allNoDamageHotkeyText;
+        public string AllNoDamageHotkeyText
+        {
+            get => _allNoDamageHotkeyText;
+            set => SetProperty(ref _allNoDamageHotkeyText, value);
+        }
+
+
         private readonly Dictionary<string, Action<string>> _propertySetters;
         private readonly SettingsService _settingsService;
         
@@ -149,9 +200,16 @@ namespace SilkySouls.ViewModels
                 { "DecreaseSpeed", text => DecreaseSpeedHotkeyText = text },
                 { "NoClip", text => NoClipHotkeyText = text},
                 { "RepeatAction", text => RepeatActionHotkeyText = text },
-                { "DisableAi", text => DisableAiHotkeyText = text },
+                {"DisableTargetAi", text => DisableTargetAiHotkeyText = text},
                 { "FreezeHp", text => FreezeHpHotkeyText = text },
                 { "Quitout", text => QuitoutHotkeyText = text },
+                { "DisableAi", text => DisableAiHotkeyText = text },
+                { "AllNoDeath", text => AllNoDeathHotkeyText = text },
+                { "AllNoDamage", text => AllNoDamageHotkeyText = text },
+                { "IncreaseTargetSpeed", text => IncreaseTargetSpeedHotkeyText = text },
+                { "DecreaseTargetSpeed", text => DecreaseTargetSpeedHotkeyText = text },
+                { "EnableTargetOptions", text => EnableTargetOptionsHotkeyText = text },
+                { "ShowAllResistances", text => ShowAllResistancesHotkeyText = text },
             };
 
             LoadHotkeyDisplays();
@@ -180,8 +238,6 @@ namespace SilkySouls.ViewModels
         }
         
         
-        
-
         public void StartSettingHotkey(string actionId)
         {
             if (_currentSettingHotkeyId != null && _propertySetters.TryGetValue(_currentSettingHotkeyId, out var prevSetter))

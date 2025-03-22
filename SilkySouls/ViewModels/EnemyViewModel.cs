@@ -41,6 +41,7 @@ namespace SilkySouls.ViewModels
         private bool _showToxic;
         private bool _isToxicImmune;
 
+        private bool _showAllResistances;
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
         private bool _isAllNoDeathEnabled;
@@ -66,10 +67,26 @@ namespace SilkySouls.ViewModels
 
         private void RegisterHotkeys()
         {
+            _hotkeyManager.RegisterAction("EnableTargetOptions",
+                () => { IsTargetOptionsEnabled = !IsTargetOptionsEnabled; });
+            _hotkeyManager.RegisterAction("ShowAllResistances", () =>
+            {
+                _showAllResistances = !_showAllResistances;
+                UpdateResistancesDisplay();
+            });
             _hotkeyManager.RegisterAction("RepeatAction", () => { IsRepeatActionEnabled = !IsRepeatActionEnabled; });
-            _hotkeyManager.RegisterAction("DisableAi", () => { IsDisableAiEnabled = !IsDisableAiEnabled; });
             _hotkeyManager.RegisterAction("FreezeHp", () => { IsFreezeHealthEnabled = !IsFreezeHealthEnabled; });
+            _hotkeyManager.RegisterAction("DisableTargetAi",
+                () => { IsDisableTargetAiEnabled = !IsDisableTargetAiEnabled; });
+            _hotkeyManager.RegisterAction("IncreaseTargetSpeed", () => SetSpeed(Math.Min(5, TargetSpeed + 0.25f)));
+            _hotkeyManager.RegisterAction("DecreaseTargetSpeed", () => SetSpeed(Math.Max(0, TargetSpeed - 0.25f)));
+            _hotkeyManager.RegisterAction("DisableAi", () => { IsDisableAiEnabled = !IsDisableAiEnabled; });
+            _hotkeyManager.RegisterAction("AllNoDeath", () => { IsAllNoDeathEnabled = !IsAllNoDeathEnabled; });
+            _hotkeyManager.RegisterAction("AllNoDamage", () => { IsAllNoDamageEnabled = !IsAllNoDamageEnabled; });
         }
+
+        
+
 
         private void TargetOptionsTimerTick(object sender, EventArgs e)
         {
@@ -79,7 +96,7 @@ namespace SilkySouls.ViewModels
                 _enemyService.EnableRepeatAction();
                 _shouldEnableRepeatAction = false;
             }
-            
+
             TargetCurrentHealth = _enemyService.GetTargetHp();
             TargetMaxHealth = _enemyService.GetTargetMaxHp();
 
@@ -114,19 +131,38 @@ namespace SilkySouls.ViewModels
             ulong targetId = _enemyService.GetTargetId();
             if (targetId == 0)
                 return false;
-            
+
             float health = _enemyService.GetTargetHp();
             float maxHealth = _enemyService.GetTargetMaxHp();
             if (health < 0 || maxHealth <= 0 || health > 10000000 || maxHealth > 10000000)
                 return false;
-            
+
             if (health > maxHealth * 1.5)
                 return false;
-            
+
 
             return true;
         }
-
+        
+        private void UpdateResistancesDisplay()
+        {
+            if (!IsTargetOptionsEnabled) return;
+            if (_showAllResistances)
+            {
+                ShowBleed = true;
+                ShowPoise = true;
+                ShowPoison = true;
+                ShowToxic = true;
+            }
+            else
+            {
+                ShowBleed = false;
+                ShowPoise = false;
+                ShowPoison = false;
+                ShowToxic = false;
+            }
+        }
+        
         private void ResetTargetOptions()
         {
             IsFreezeHealthEnabled = false;
@@ -367,7 +403,7 @@ namespace SilkySouls.ViewModels
             }
         }
 
-        
+
         public bool IsRepeatActionEnabled
         {
             get => _isRepeatActionEnabled;
@@ -379,7 +415,6 @@ namespace SilkySouls.ViewModels
                 else
                 {
                     _enemyService.DisableRepeatAction();
-                    
                 }
             }
         }

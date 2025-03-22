@@ -61,6 +61,5 @@ namespace SilkySouls.Views
                 e.Handled = true;
             }
         }
-        
     }
 }
