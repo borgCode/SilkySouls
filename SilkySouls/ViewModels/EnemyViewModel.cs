@@ -123,8 +123,6 @@ namespace SilkySouls.ViewModels
             if (health > maxHealth * 1.5)
                 return false;
             
-            float speed = _enemyService.GetTargetSpeed();
-            if (speed < 0.5f || speed > 2.0f) return false;
 
             return true;
         }

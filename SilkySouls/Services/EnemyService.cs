@@ -220,7 +220,7 @@ namespace SilkySouls.Services
 
                 byte[] bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
                 Array.Copy(bytes, 0, asmBytes, 5, 8);
-                bytes = BitConverter.GetBytes(43); //Skip repeat if not locked target
+                bytes = BitConverter.GetBytes(36); //Skip repeat if not locked target
                 Array.Copy(bytes, 0, asmBytes, 33, bytes.Length);
                 bytes = BitConverter.GetBytes(_repeatActionFlag.ToInt64());
                 Array.Copy(bytes, 0, asmBytes, 39, 8);
