@@ -34,6 +34,8 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         </Style>
 
+        <Color x:Key="TitleBarColor">#002A2A</Color>
+        <SolidColorBrush x:Key="TitleBarBrush" Color="{StaticResource TitleBarColor}" />
         
         <Style TargetType="Button">
             <Setter Property="Background" Value="{StaticResource ControlBackgroundBrush}" />

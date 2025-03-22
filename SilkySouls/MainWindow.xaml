@@ -13,19 +13,21 @@
         ResizeMode="NoResize">
 
     <Window.Resources>
+        
     </Window.Resources>
 
     <Grid Margin="0">
         <Grid.RowDefinitions>
+            
             <RowDefinition Height="30" />
-            <RowDefinition Height="Auto" /> 
-            <RowDefinition Height="*" /> 
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <Border Grid.Row="0"
-                Background="{StaticResource PanelBrush}"
+                Background="{StaticResource TitleBarBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1,1,1,0"
+                BorderThickness="0,0,0,1"
                 MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -34,18 +36,17 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="/Assets/Silky.ico" 
+                <Image Source="/Assets/Silky.ico"
                        Grid.Column="0"
-                       Width="16" 
+                       Width="16"
                        Height="16"
-                       Margin="10,0,5,0"
-                       HorizontalAlignment="Left"
+                       Margin="5,0,5,0"
+                       HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
 
                 <TextBlock Text="SilkySouls"
                            Grid.Column="1"
                            HorizontalAlignment="Left"
-                           Margin="0,0,0,0"
                            VerticalAlignment="Center"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource TextBrush}" />
@@ -91,23 +92,23 @@
                 </StackPanel>
             </Grid>
         </Border>
-        
+
         <Grid Grid.Row="1" Margin="0,5,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" /> 
-                <ColumnDefinition Width="Auto" /> 
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock x:Name="PatchText" Text=""
                        HorizontalAlignment="Left" VerticalAlignment="Center"
                        Margin="10,0,0,0" />
 
-  
+
             <TextBlock x:Name="IsAttachedText" Text=""
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0,0,10,0" />
         </Grid>
-        
+
         <TabControl x:Name="MainTabControl"
                     Grid.Row="2"
                     Background="Transparent"
