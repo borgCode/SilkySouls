@@ -105,6 +105,7 @@ namespace SilkySouls
                 
                 _utilityViewModel.TryRestoreAttachedFeatures();
                 _enemyService.TryInstallTargetHook();
+                
                 if (_memoryIo.IsGameLoaded())
                 {
                     if (_loaded) return;

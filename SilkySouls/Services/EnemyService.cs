@@ -36,8 +36,9 @@ namespace SilkySouls.Services
         internal void TryInstallTargetHook()
         {
             if (_isHookInstalled) return;
+            if (IsHookInstalled()) return;
             if (!IsTargetOriginInitialized()) return;
-
+            
             _lockedTargetPtr = _codeCave + CodeCaveOffsets.CodeCave1.LockedTargetPtr;
 
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
@@ -64,6 +65,19 @@ namespace SilkySouls.Services
         {
             _isHookInstalled = false;
             _isRepeatActionInstalled = false;
+        }
+
+        private bool IsHookInstalled()
+        {
+            byte[] codeCaveBytes = _memoryIo.ReadBytes(_lastTargetBlock, 2);
+            byte[] expectedSignature = { 0x50, 0x51 };
+            if (codeCaveBytes.SequenceEqual(expectedSignature))
+            {
+                _isHookInstalled = true;
+                return true;
+            }
+            
+            return false;
         }
 
         private bool IsTargetOriginInitialized()

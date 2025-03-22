@@ -70,7 +70,7 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             // Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
             //
-            // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
+            Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             // Console.WriteLine($"Hooks.RepeatAction: 0x{Offsets.Hooks.RepeatAction:X}");
             // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
             // Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
