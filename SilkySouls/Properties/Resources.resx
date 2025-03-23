@@ -980,21 +980,21 @@ c3                      ret</value>
   </data>
   <data name="WarpLocations" xml:space="preserve">
     <value>1512960,0,Anor Londo (1st Bonfire)
-1512961,440.43|132.00|226.83,Anor Londo (Archers)
+1512961,440.74|132.00|227.13|1.24,Anor Londo (Archers)
 1512962,0,Anor Londo (Gwyndolin)
 1512961,0,Anor Londo (Interior)
-1512961,532.78|142.60|255.11,Anor Londo (O&amp;S)
-1512960,263.48|129.20|301.31,Anor Londo (Rafters)
+1512961,532.77|142.60|254.83|-1.60,Anor Londo (O&amp;S)
+1512960,265.49|129.20|301.03|-2.04,Anor Londo (Rafters)
 1322960,0,Ash Lake (Covenant)
 1322961,0,Ash Lake (Entrance)
-1602951,-67.30|-138.94|19.06,Blighttown (Back Entrance)
+1602951,-90.09|-138.74|17.78|2.11,Blighttown (Back Entrance)
 1402962,0,Blighttown (Bridge)
 1402963,0,Blighttown (Entrance)
 1402961,0,Blighttown (Swamp)
 1602961,0,Darkroot Basin
-1202961,183.24|5.77|26.80,Darkroot Garden (Butterfly)
-1202961,155.49|-33.02|-154.67,Darkroot Garden (Hydra)
-1202961,292.83|-18.16|-224.44,Darkroot Garden (Sif)
+1202961,182.12|6.69|27.69|2.15,Darkroot Garden (Butterfly)
+1202961,161.66|-32.03|-153.44|1.29,Darkroot Garden (Hydra)
+1202961,292.66|-18.37|-225.22|0.39,Darkroot Garden (Sif)
 1202961,0,Darkroot Garden Bonfire
 1412961,0,Demon Ruins (Ceaseless)
 1412963,0,Demon Ruins (Centipede)
@@ -1003,42 +1003,42 @@ c3                      ret</value>
 1000999,0,Depths Entrance
 1022960,0,Firelink Shrine
 1322962,0,Great Hollow
-1802130,422.41|-115.76|166.85,Gwyn
-1412960,451.95|-362.22|335.60,Lost Izalith (BoC)
+1802130,422.48|-115.82|166.68|2.12,Gwyn
+1412960,450.79|-361.68|335.68|-2.18,Lost Izalith (BoC)
 1412960,0,Lost Izalith (Dinos)
-1412960,303.12|-360.18|212.17,Lost Izalith (Titanite Demon)
+1412960,305.44|-360.18|214.23|-2.28,Lost Izalith (Titanite Demon)
 1412964,0,Lost Izalith Bonfire 1
 1602951,0,New Londo Ruins (Entrance)
 1602960,0,New Londo Ruins (Ingward)
-1602960,87.84|-148.00|-28.27,New Londo Ruins (4 Kings)
+1602960,87.87|-148.00|-28.19|1.54,New Londo Ruins (4 Kings)
 1812960,0,Northern Undead Asylum Bonfire 1
 1812961,0,Northern Undead Asylum Bonfire 2
 1812900,0,Northern Undead Asylum (Start)
-1812900,3.41|207.60|-75.17,Northern Undead Asylum (Stray Demon)
+1812900,3.41|207.41|-74.73|3.12,Northern Undead Asylum (Stray Demon)
 1212961,0,Oolacile Sanctuary
-1212961,1016.20|-329.24|807.15,Oolacile Sanctuary (Artorias)
-1212961,872.31|-344.21|747.75,Oolacile Sanctuary (Kalameet)
+1212961,1023.09|-328.60|807.80|-1.85,Oolacile Sanctuary (Artorias)
+1212961,878.08|-344.66|751.87|0.75,Oolacile Sanctuary (Kalameet)
 1212962,0,Oolacile Township
 1212964,0,Oolacile Township Dungeon
-1212964,868.71|-534.91|886.52,Oolacile Township Dungeon (Manus)
-1102960,-22.95|58.37|721.05,Painted World (Pricilla)
+1212964,865.48|-536.76|884.27|0.74,Oolacile Township Dungeon (Manus)
+1102960,-22.82|58.62|719.24|-0.01,Painted World (Pricilla)
 1102960,0,Painted World Bonfire
 1402960,0,Quelaag's Domain (Covenant)
-1402960,9.15|-236.50|112.37,Quelaag's Domain (Quelagg)
+1402960,11.06|-236.86|112.53|-1.71,Quelaag's Domain (Quelagg)
 1212963,0,Sanctuary Garden
-1702960,187.66|146.40|779.41,Seath
+1702960,180.81|146.31|790.53|2.14,Seath
 1502961,0,Sen's Fortress (Bonfire)
-1502961,79.85|82.25|255.26,Sen's Fortress (Iron Golem)
+1502961,80.35|82.25|255.39|-1.52,Sen's Fortress (Iron Golem)
 1302961,0,The Catacombs (Patches)
 1302962,0,The Catacombs (Vamos)
 1302960,0,The Catacombs Bonfire 
 1702960,0,The Duke's Archives (Balcony)
 1702962,0,The Duke's Archives (Boar)
 1702961,0,The Duke's Archives (Cell)
-1702962,296.20|288.62|551.65,The Duke's Archives (Duke Skip)
+1702962,296.09|288.62|551.54|-0.70,The Duke's Archives (Duke Skip)
 1312960,0,Tomb of the Giants Bonfire 1
 1312961,0,Tomb of the Giants Bonfire 2
-1312961,-110.78|-249.03|-33.88,Tomb of the Giants (Nito)
+1312961,-110.95|-249.05|-33.80|1.82,Tomb of the Giants (Nito)
 1302950,0,Tomb of the Giants Entrance
 1012961,0,Undead Burg (Below Hellkite)
 1012960,0,Undead Burg (Dragon Event)
@@ -1217,5 +1217,16 @@ e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
 58                      pop    rax
 48 8d 4c 24 38          lea    rcx,[rsp+0x38]
 e9 00 00 00 00          jmp    32 &lt;_main+0x32&gt;</value>
+  </data>
+  <data name="WarpAngle" xml:space="preserve">
+    <value>51                      push   rcx
+48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+44 0f 10 39             movups xmm15,XMMWORD PTR [rcx]
+44 0f 11 b8 90 0a 00    movups XMMWORD PTR [rax+0xa90],xmm15
+00
+45 0f 57 ff             xorps  xmm15,xmm15
+59                      pop    rcx
+e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
   </data>
 </root>

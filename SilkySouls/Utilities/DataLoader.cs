@@ -65,9 +65,13 @@ namespace SilkySouls.Utilities
                         int id = int.Parse(parts[0]);
                         
                         float[] coords = null;
+                        float angle = 0f;
                         if (parts[1] != "0")
                         {
                             string[] coordsString = parts[1].Split('|');
+                            
+                            angle = float.Parse(coordsString[coordsString.Length - 1], System.Globalization.CultureInfo.InvariantCulture);
+                            
                             coords = new float[coordsString.Length];
                             for (int i = 0; i < coordsString.Length; i++)
                             {
@@ -84,6 +88,7 @@ namespace SilkySouls.Utilities
                         {
                             Id = id,
                             Coords = coords,
+                            Angle = angle,
                             Name = name
                         });
                     }

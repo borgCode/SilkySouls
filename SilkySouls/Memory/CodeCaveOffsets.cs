@@ -27,29 +27,31 @@ namespace SilkySouls.Memory
             public enum WarpCoords
             {
                 Coords = 0x60,
-                CodeBlock = 0x70
+                Angle = 0x70,
+                CoordCode = 0x80,
+                AngleCode = 0xB0
             }
 
             public enum NoClip
             {
-                ZDirectionVariable = 0x90,
-                InAirTimer = 0xB0,
-                ZDirectionKbCheck = 0xF0,
-                ZDirectionL2Check = 0x150,
-                ZDirectionR2Check = 0x180,
-                UpdateCoords = 0x200,
+                ZDirectionVariable = 0xE0,
+                InAirTimer = 0x100,
+                ZDirectionKbCheck = 0x140,
+                ZDirectionL2Check = 0x1A0,
+                ZDirectionR2Check = 0x1D0,
+                UpdateCoords = 0x250,
             }
 
-            public const int RestoreCasts = 0x330;
+            public const int RestoreCasts = 0x380;
 
             public enum LevelUp
             {
-                SoulsPtr = 0x360,
-                StatsArray = 0x370,
-                CodeBlock = 0x3A0,
-                NewLevel = 0x5F4,
-                RequiredSouls = 0x5FC,
-                CurrentSouls = 0x600,
+                SoulsPtr = 0x3B0,
+                StatsArray = 0x3C0,
+                CodeBlock = 0x3F0,
+                NewLevel = 0x644,
+                RequiredSouls = 0x64C,
+                CurrentSouls = 0x650,
             }
         }
 

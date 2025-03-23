@@ -503,6 +503,23 @@ namespace SilkySouls.Properties {
         ///48 b9 00 00 00 00 00    movabs rcx,0x0
         ///00 00 00
         ///44 0f 10 39             movups xmm15,XMMWORD PTR [rcx]
+        ///44 0f 11 b8 90 0a 00    movups XMMWORD PTR [rax+0xa90],xmm15
+        ///00
+        ///45 0f 57 ff             xorps  xmm15,xmm15
+        ///59                      pop    rcx
+        ///e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;.
+        /// </summary>
+        internal static string WarpAngle {
+            get {
+                return ResourceManager.GetString("WarpAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 51                      push   rcx
+        ///48 b9 00 00 00 00 00    movabs rcx,0x0
+        ///00 00 00
+        ///44 0f 10 39             movups xmm15,XMMWORD PTR [rcx]
         ///44 0f 11 b8 80 0a 00    movups XMMWORD PTR [rax+0xa80],xmm15
         ///00
         ///45 0f 57 ff             xorps  xmm15,xmm15
@@ -517,19 +534,18 @@ namespace SilkySouls.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 1512960,0,Anor Londo (1st Bonfire)
-        ///1512961,440.43|132.00|226.83,Anor Londo (Archers)
+        ///1512961,440.74|132.00|227.13|1.24,Anor Londo (Archers)
         ///1512962,0,Anor Londo (Gwyndolin)
         ///1512961,0,Anor Londo (Interior)
-        ///1512961,532.78|142.60|255.11,Anor Londo (O&amp;S)
-        ///1512960,263.48|129.20|301.31,Anor Londo (Rafters)
+        ///1512961,532.77|142.60|254.83|-1.60,Anor Londo (O&amp;S)
+        ///1512960,265.49|129.20|301.03|-2.04,Anor Londo (Rafters)
         ///1322960,0,Ash Lake (Covenant)
         ///1322961,0,Ash Lake (Entrance)
-        ///1602951,-67.30|-138.94|19.06,Blighttown (Back Entrance)
+        ///1602951,-90.09|-138.74|17.78|2.11,Blighttown (Back Entrance)
         ///1402962,0,Blighttown (Bridge)
         ///1402963,0,Blighttown (Entrance)
         ///1402961,0,Blighttown (Swamp)
-        ///1602961,0,Darkroot Basin
-        ///1202961,183.24|5.77|2 [rest of string was truncated]&quot;;.
+        ///1602961,0,Darkroot Basin        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WarpLocations {
             get {
