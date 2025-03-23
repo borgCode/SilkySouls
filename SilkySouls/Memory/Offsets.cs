@@ -21,13 +21,15 @@ namespace SilkySouls.memory
                 CoordsPtr1 = 0x18,
                 PlayerCtrl = 0x68,
                 PadMan = 0x70,
+                InfinitePoise = 0x2A6,
                 Health = 0x3E8,
                 MaxHealth = 0x3EC,
                 NoDamage = 0x524,
                 ChrFlags = 0x525,
                 NoGoodsConsume = 0x527,
             }
-            
+
+            public const byte InfinitePoise = 1 << 0;
             public const byte NoDamage = 1 << 6;
 
             public enum ChrFlags : byte

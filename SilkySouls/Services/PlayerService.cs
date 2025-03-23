@@ -410,6 +410,18 @@ namespace SilkySouls.Services
             _memoryIo.WriteByte(noAmmoConsumePtr, value);
         }
 
+        public void ToggleInfinitePoise(bool setValue)
+        {
+            var infinitePoisePtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.InfinitePoise
+                }, false);
+            var flagMask = Offsets.WorldChrMan.InfinitePoise;
+            _memoryIo.SetBitValue(infinitePoisePtr, flagMask, setValue) ;
+        }
+
         public float GetSetPlayerSpeed(float? value)
         {
             var playerSpeedPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,

@@ -293,7 +293,6 @@ namespace SilkySouls.Memory
                 modifiedByte = (byte)(currentByte | flagMask);
             else
                 modifiedByte = (byte)(currentByte & ~flagMask);
-        
             WriteUInt8(addr, modifiedByte);
         }
         

@@ -24,6 +24,7 @@ namespace SilkySouls.ViewModels
         private bool _isInvisibleEnabled;
         private bool _isSilentEnabled;
         private bool _isNoAmmoConsumeEnabled;
+        private bool _isInfinitePoiseEnabled;
         
         private bool _areOptionsEnabled;
 
@@ -297,6 +298,18 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
+        
+        public bool IsInfinitePoiseEnabled
+        {
+            get => _isInfinitePoiseEnabled;
+            set
+            {
+                if (SetProperty(ref _isInfinitePoiseEnabled, value))
+                {
+                    _playerService.ToggleInfinitePoise(_isInfinitePoiseEnabled);
+                }
+            }
+        }
 
         public void RestoreSpellCasts()
         {
@@ -330,6 +343,8 @@ namespace SilkySouls.ViewModels
                 _playerService.ToggleSilent(1);
             if (IsNoAmmoConsumeEnabled)
                 _playerService.ToggleNoAmmoConsume(1);
+            if (IsInfinitePoiseEnabled)
+                _playerService.ToggleInfinitePoise(true);
 
             AreOptionsEnabled = true;
             LoadStats();

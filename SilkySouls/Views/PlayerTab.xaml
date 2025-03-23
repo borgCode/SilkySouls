@@ -133,10 +133,9 @@
                     <CheckBox Content="No Ammo Consume" 
                               IsChecked="{Binding IsNoAmmoConsumeEnabled}"
                               Margin="0,2"/>
-                    <Button Content="Restore spell casts" 
-                            Click="Restore_Spell_Click"
-                            IsEnabled="{Binding AreOptionsEnabled}" 
-                            Margin="0,2"/>
+                    <CheckBox Content="Infinite Poise" 
+                              IsChecked="{Binding IsInfinitePoiseEnabled}"
+                              Margin="0,2"/>
                 </StackPanel>
             </Grid>
             
@@ -341,46 +340,62 @@
             </Grid>
             <TextBlock Grid.Row="3" Text="{Binding SoulLevel, StringFormat='Soul Level: {0}'}" FontWeight="Bold" Margin="0,0,0,5" />
             <Border Grid.Row="4" VerticalAlignment="Bottom" Margin="0,140,0,0">
-                <StackPanel>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <wpfTool:DoubleUpDown x:Name="SpeedUpDown"
-                                              Value="{Binding PlayerSpeed}"
-                                              TextAlignment="Center"
-                                              Width="80"
-                                              Minimum="0"
-                                              Maximum="10"
-                                              Increment="0.50"
-                                              FormatString="F2"
-                                              Grid.Column="0"
-                                              PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
-                                              LostFocus="SpeedUpDown_LostFocus"
-                                              IsEnabled="{Binding AreOptionsEnabled}"
-                                              BorderBrush="#3F3F46"/>
-                        <TextBlock Text="Player Speed" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    </Grid>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <wpfTool:IntegerUpDown x:Name="NewGameUpDown"
-                                             Value="{Binding NewGame}"
-                                             TextAlignment="Center"
-                                             Width="80"
-                                             Minimum="0"
-                                             Maximum="7"
-                                             Grid.Column="0"
-                                             PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
-                                             LostFocus="AttributeUpDown_LostFocus"
-                                             IsEnabled="{Binding AreOptionsEnabled}"
-                                             BorderBrush="#3F3F46"/>
-                        <TextBlock Text="New Game" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    </Grid>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <wpfTool:DoubleUpDown x:Name="SpeedUpDown"
+                                                  Value="{Binding PlayerSpeed}"
+                                                  TextAlignment="Center"
+                                                  Width="80"
+                                                  Minimum="0"
+                                                  Maximum="10"
+                                                  Increment="0.50"
+                                                  FormatString="F2"
+                                                  Grid.Column="0"
+                                                  PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
+                                                  LostFocus="SpeedUpDown_LostFocus"
+                                                  IsEnabled="{Binding AreOptionsEnabled}"
+                                                  BorderBrush="#3F3F46"/>
+                            <TextBlock Text="Player Speed" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <wpfTool:IntegerUpDown x:Name="NewGameUpDown"
+                                                 Value="{Binding NewGame}"
+                                                 TextAlignment="Center"
+                                                 Width="80"
+                                                 Minimum="0"
+                                                 Maximum="7"
+                                                 Grid.Column="0"
+                                                 PreviewKeyDown="AttributeUpDown_PreviewKeyDown"
+                                                 LostFocus="AttributeUpDown_LostFocus"
+                                                 IsEnabled="{Binding AreOptionsEnabled}"
+                                                 BorderBrush="#3F3F46"/>
+                            <TextBlock Text="New Game" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                    
+                    <Button Grid.Column="1"
+                            Content="Restore spell casts" 
+                            Height="30" Width="150"
+                            Padding="5"
+                            Click="Restore_Spell_Click"
+                            IsEnabled="{Binding AreOptionsEnabled}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,15,0"/>
+                </Grid>
             </Border>
         </Grid>
     </ScrollViewer>
