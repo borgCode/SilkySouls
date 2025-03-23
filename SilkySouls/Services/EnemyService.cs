@@ -13,15 +13,12 @@ namespace SilkySouls.Services
 
         private readonly IntPtr _codeCave;
         private IntPtr _lastTargetBlock;
-        private IntPtr _repeatActionBlock;
         private IntPtr _lockedTargetPtr;
-        private IntPtr _repeatActionFlag;
 
         private bool _isHookInstalled;
 
         private long _lockedTargetOrigin;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
-        private long _repeatActionOrigin;
 
         public EnemyService(MemoryIo memoryIo, HookManager hookManager)
         {
@@ -30,7 +27,6 @@ namespace SilkySouls.Services
 
             _codeCave = CodeCaveOffsets.CodeCave1.Base;
             _lastTargetBlock = _codeCave + CodeCaveOffsets.CodeCave1.LockedTarget;
-            _repeatActionBlock = _codeCave + CodeCaveOffsets.CodeCave1.RepeatAction;
         }
 
         internal void TryInstallTargetHook()
@@ -64,7 +60,6 @@ namespace SilkySouls.Services
         internal void ResetHooks()
         {
             _isHookInstalled = false;
-            _isRepeatActionInstalled = false;
         }
 
         private bool IsHookInstalled()
@@ -215,50 +210,7 @@ namespace SilkySouls.Services
 
             return _memoryIo.ReadFloat(targetSpeedPtr);
         }
-
-        private bool _isRepeatActionInstalled;
-
-        internal void EnableRepeatAction()
-        {
-            _repeatActionOrigin = Offsets.Hooks.RepeatAction;
-            if (_isRepeatActionInstalled)
-            {
-                _memoryIo.WriteByte(_repeatActionFlag, 1);
-            }
-            else
-            {
-                _repeatActionFlag = _codeCave + CodeCaveOffsets.CodeCave1.RepeatActionFlag;
-                _memoryIo.WriteByte(_repeatActionFlag, 1);
-
-                byte[] asmBytes = AsmLoader.GetAsmBytes("RepeatAction");
-
-                byte[] bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
-                Array.Copy(bytes, 0, asmBytes, 5, 8);
-                bytes = BitConverter.GetBytes(36); //Skip repeat if not locked target
-                Array.Copy(bytes, 0, asmBytes, 33, bytes.Length);
-                bytes = BitConverter.GetBytes(_repeatActionFlag.ToInt64());
-                Array.Copy(bytes, 0, asmBytes, 39, 8);
-                bytes = BitConverter.GetBytes(17); //Skip repeat when disabled
-                Array.Copy(bytes, 0, asmBytes, 52, bytes.Length);
-                bytes = BitConverter.GetBytes(7);
-                Array.Copy(bytes, 0, asmBytes, 69, bytes.Length);
-                int originOffset = (int)(_repeatActionOrigin + 7 - (_repeatActionBlock.ToInt64() + 95));
-                byte[] originAddr = BitConverter.GetBytes(originOffset);
-                Array.Copy(originAddr, 0, asmBytes, asmBytes.Length - 4, originAddr.Length);
-
-                _memoryIo.WriteBytes(_repeatActionBlock, asmBytes);
-
-                _hookManager.InstallHook(_repeatActionBlock.ToInt64(), _repeatActionOrigin,
-                    new byte[] { 0x0F, 0xBE, 0x80, 0x60, 0x03, 0x00, 0x00 });
-                _isRepeatActionInstalled = true;
-            }
-        }
-
-        internal void DisableRepeatAction()
-        {
-            _memoryIo.WriteByte(_repeatActionFlag, 0);
-        }
-
+        
         public void ToggleTargetAi(bool setValue)
         {
             var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +

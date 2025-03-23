@@ -250,7 +250,6 @@ namespace SilkySouls.memory
         public static class Hooks
         {
             public static long LastLockedTarget;
-            public static long RepeatAction;
             public static long AllNoDamage;
             public static long ItemSpawn;
             public static long Draw;

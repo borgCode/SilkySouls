@@ -12,8 +12,6 @@ namespace SilkySouls.Memory
             public const int TargetView = 0x200;
             public const int LockedTarget = 0x220;
             public const int LockedTargetPtr = 0x270;
-            public const int RepeatActionFlag = 0x280;
-            public const int RepeatAction = 0x290;
             public const int AllNoDamage = 0x300;
         }
 

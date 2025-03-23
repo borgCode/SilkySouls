@@ -388,27 +388,6 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 53                      push   rbx
-        ///51                      push   rcx
-        ///52                      push   rdx
-        ///48 bb 00 00 00 00 00    movabs rbx,0x0
-        ///00 00 00
-        ///48 8b 1b                mov    rbx,QWORD PTR [rbx]
-        ///8b 9b c8 00 00 00       mov    ebx,DWORD PTR [rbx+0xc8]
-        ///8b 88 a8 00 00 00       mov    ecx,DWORD PTR [rax+0xa8]
-        ///48 39 cb                cmp    rbx,rcx
-        ///0f 85 00 00 00 00       jne    25 &lt;_main+0x25&gt;
-        ///48 bb 00 00 00 00 00    movabs rbx,0x0
-        ///00 00 00
-        ///80 3b 01                cmp    BYTE PTR [rbx],0x1        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string RepeatAction {
-            get {
-                return ResourceManager.GetString("RepeatAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 48 b9 00 00 00 00 00    movabs rcx,0x0
         ///00 00 00
         ///48 83 ec 28             sub    rsp,0x28

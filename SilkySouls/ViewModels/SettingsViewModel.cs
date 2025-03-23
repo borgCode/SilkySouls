@@ -95,14 +95,6 @@ namespace SilkySouls.ViewModels
             get => _decreaseSpeedHotkeyText;
             set => SetProperty(ref _decreaseSpeedHotkeyText, value);
         }
-        
-        
-        private string _repeatActionHotkeyText;
-        public string RepeatActionHotkeyText
-        {
-            get => _repeatActionHotkeyText;
-            set => SetProperty(ref _repeatActionHotkeyText, value);
-        }
 
         private string _disableTargetAiHotkeyText;
 
@@ -199,7 +191,6 @@ namespace SilkySouls.ViewModels
                 { "IncreaseSpeed", text => IncreaseSpeedHotkeyText = text },
                 { "DecreaseSpeed", text => DecreaseSpeedHotkeyText = text },
                 { "NoClip", text => NoClipHotkeyText = text},
-                { "RepeatAction", text => RepeatActionHotkeyText = text },
                 {"DisableTargetAi", text => DisableTargetAiHotkeyText = text},
                 { "FreezeHp", text => FreezeHpHotkeyText = text },
                 { "Quitout", text => QuitoutHotkeyText = text },

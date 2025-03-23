@@ -16,10 +16,8 @@ namespace SilkySouls.ViewModels
         private int _targetMaxHealth;
         private ulong _currentTargetId;
         private float _targetSpeed;
-        private bool _isRepeatActionEnabled;
         private bool _isFreezeHealthEnabled;
         private bool _isDisableTargetAiEnabled;
-        private bool _shouldEnableRepeatAction;
 
         private float _targetCurrentPoise;
         private float _targetMaxPoise;
@@ -74,7 +72,6 @@ namespace SilkySouls.ViewModels
                 _showAllResistances = !_showAllResistances;
                 UpdateResistancesDisplay();
             });
-            _hotkeyManager.RegisterAction("RepeatAction", () => { IsRepeatActionEnabled = !IsRepeatActionEnabled; });
             _hotkeyManager.RegisterAction("FreezeHp", () => { IsFreezeHealthEnabled = !IsFreezeHealthEnabled; });
             _hotkeyManager.RegisterAction("DisableTargetAi",
                 () => { IsDisableTargetAiEnabled = !IsDisableTargetAiEnabled; });
@@ -84,19 +81,11 @@ namespace SilkySouls.ViewModels
             _hotkeyManager.RegisterAction("AllNoDeath", () => { IsAllNoDeathEnabled = !IsAllNoDeathEnabled; });
             _hotkeyManager.RegisterAction("AllNoDamage", () => { IsAllNoDamageEnabled = !IsAllNoDamageEnabled; });
         }
-
         
-
-
         private void TargetOptionsTimerTick(object sender, EventArgs e)
         {
             if (!IsTargetValid()) return;
-            if (_shouldEnableRepeatAction && IsRepeatActionEnabled)
-            {
-                _enemyService.EnableRepeatAction();
-                _shouldEnableRepeatAction = false;
-            }
-
+            
             TargetCurrentHealth = _enemyService.GetTargetHp();
             TargetMaxHealth = _enemyService.GetTargetMaxHp();
 
@@ -166,7 +155,6 @@ namespace SilkySouls.ViewModels
         private void ResetTargetOptions()
         {
             IsFreezeHealthEnabled = false;
-            IsRepeatActionEnabled = false;
             IsDisableTargetAiEnabled = _enemyService.IsTargetAiDisabled();
         }
 
@@ -402,23 +390,7 @@ namespace SilkySouls.ViewModels
                 _frozenHealth = _targetCurrentHealth;
             }
         }
-
-
-        public bool IsRepeatActionEnabled
-        {
-            get => _isRepeatActionEnabled;
-            set
-            {
-                if (!SetProperty(ref _isRepeatActionEnabled, value)) return;
-                if (value && IsTargetValid()) _enemyService.EnableRepeatAction();
-                else if (value) _shouldEnableRepeatAction = true;
-                else
-                {
-                    _enemyService.DisableRepeatAction();
-                }
-            }
-        }
-
+        
         public bool IsDisableTargetAiEnabled
         {
             get => _isDisableTargetAiEnabled;
@@ -472,7 +444,6 @@ namespace SilkySouls.ViewModels
         {
             _targetOptionsTimer.Stop();
             IsFreezeHealthEnabled = false;
-            IsRepeatActionEnabled = false;
             AreOptionsEnabled = false;
         }
 

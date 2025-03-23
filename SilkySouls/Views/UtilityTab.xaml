@@ -194,7 +194,7 @@
                                 Click="UnlockKalameet_Click"
                                 IsEnabled="{Binding AreButtonsEnabled}"
                                 Height="25"
-                                Margin="0,2"/>
+                                Margin="0,5"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

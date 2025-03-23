@@ -269,17 +269,7 @@
                             <ColumnDefinition Width="125" />
                             <ColumnDefinition Width="85" />
                         </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Repeat Action:" VerticalAlignment="Center"
-                                   HorizontalAlignment="Left" />
-                        <TextBox Grid.Column="1"
-                                 Text="{Binding RepeatActionHotkeyText}"
-                                 Style="{StaticResource HotkeyTextBoxStyle}"
-                                 GotFocus="HotkeyTextBox_GotFocus"
-                                 LostFocus="HotkeyTextBox_LostFocus"
-                                 Tag="RepeatAction"
-                                 KeyDown="HotkeyTextBox_KeyDown" />
-
+                        
                         <TextBlock Grid.Column="3" Text="Disable Target AI:" VerticalAlignment="Center"
                                    HorizontalAlignment="Left" />
                         <TextBox Grid.Column="4"

@@ -290,17 +290,6 @@
                                               HorizontalAlignment="Left" />
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <CheckBox Content="Enable Repeat Action">
-                            <CheckBox.IsEnabled>
-                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
-                                    <Binding Path="AreOptionsEnabled" />
-                                    <Binding Path="IsTargetOptionsEnabled" />
-                                </MultiBinding>
-                            </CheckBox.IsEnabled>
-                            <CheckBox.IsChecked>
-                                <Binding Path="IsRepeatActionEnabled" />
-                            </CheckBox.IsChecked>
-                        </CheckBox>
                         <CheckBox Content="Disable Target AI" Margin="10,0,0,0">
                             <CheckBox.IsEnabled>
                                 <MultiBinding Converter="{StaticResource BooleanAndConverter}">

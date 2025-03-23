@@ -180,13 +180,7 @@
             "xxxxxxxxx",
             0,
             RipType.None);
-
-        public static readonly Pattern RepeatAction = new Pattern(
-            new byte[] { 0x48, 0x8B, 0x41, 0x08, 0x0F, 0xBE },
-            "xxxxxx",
-            4,
-            RipType.None);
-
+        
         public static readonly Pattern AllNoDamage = new Pattern(
             new byte[] { 0xF6, 0x81, 0x24, 0x05, 0x00, 0x00, 0x40, 0x48 },
             "xxxxxxxx",

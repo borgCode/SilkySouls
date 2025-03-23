@@ -37,7 +37,6 @@ namespace SilkySouls.Memory
             Offsets.SoloParamMan.Base = FindAddressByPattern(Patterns.SoloParamMan);
 
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
-            Offsets.Hooks.RepeatAction = FindAddressByPattern(Patterns.RepeatAction).ToInt64();
             Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();
             Offsets.Hooks.ItemSpawn = FindAddressByPattern(Patterns.ItemSpawnHook).ToInt64();
             Offsets.Hooks.Draw = FindAddressByPattern(Patterns.DrawHook).ToInt64();
@@ -71,7 +70,6 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
             //
             // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
-            // Console.WriteLine($"Hooks.RepeatAction: 0x{Offsets.Hooks.RepeatAction:X}");
             // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
             // Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
             // Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");

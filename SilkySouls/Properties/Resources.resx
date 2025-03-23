@@ -117,31 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RepeatAction" xml:space="preserve">
-    <value>53                      push   rbx
-51                      push   rcx
-52                      push   rdx
-48 bb 00 00 00 00 00    movabs rbx,0x0
-00 00 00
-48 8b 1b                mov    rbx,QWORD PTR [rbx]
-8b 9b c8 00 00 00       mov    ebx,DWORD PTR [rbx+0xc8]
-8b 88 a8 00 00 00       mov    ecx,DWORD PTR [rax+0xa8]
-48 39 cb                cmp    rbx,rcx
-0f 85 00 00 00 00       jne    25 &lt;_main+0x25&gt;
-48 bb 00 00 00 00 00    movabs rbx,0x0
-00 00 00
-80 3b 01                cmp    BYTE PTR [rbx],0x1
-0f 85 00 00 00 00       jne    38 &lt;_main+0x38&gt;
-8a 90 61 03 00 00       mov    dl,BYTE PTR [rax+0x361]
-88 90 60 03 00 00       mov    BYTE PTR [rax+0x360],dl
-e9 00 00 00 00          jmp    49 &lt;_main+0x49&gt;
-c6 80 60 03 00 00 00    mov    BYTE PTR [rax+0x360],0x0
-5a                      pop    rdx
-59                      pop    rcx
-5b                      pop    rbx
-0f be 80 60 03 00 00    movsx  eax,BYTE PTR [rax+0x360]
-e9 00 00 00 00          jmp    5f &lt;_main+0x5f&gt;</value>
-  </data>
   <data name="EnableDraw" xml:space="preserve">
     <value>48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
