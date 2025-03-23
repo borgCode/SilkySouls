@@ -126,7 +126,7 @@
             8,
             RipType.None);
 
-        public static readonly Pattern ProgressionFlagMan = new Pattern(
+        public static readonly Pattern EventFlagMan = new Pattern(
             new byte[] { 0x8B, 0x13, 0x85, 0xD2, 0x7E, 0x15, 0x48 },
             "xxxxxxx",
             6,

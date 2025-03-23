@@ -389,5 +389,38 @@ namespace SilkySouls.Services
             var menuPtr = _memoryIo.FollowPointers(Offsets.MenuMan.Base, new[] {(int)menuType }, false);
             _memoryIo.WriteByte(menuPtr, 1);
         }
+
+        public void UnlockBonfireWarps()
+        {
+            var bonfireFlagBase = _memoryIo.FollowPointers(Offsets.EventFlagMan.Base,
+                new[] { Offsets.EventFlagMan.BonfireOffset}, true);
+
+            var bonfireWarpFlagAddr = bonfireFlagBase + Offsets.EventFlagMan.WarpFlag;
+            _memoryIo.SetBit32(bonfireWarpFlagAddr, Offsets.EventFlagMan.WarpFlagBit1, true);
+            _memoryIo.SetBit32(bonfireWarpFlagAddr, Offsets.EventFlagMan.WarpFlagBit2, true);
+            
+            var bonfireFlagAddr = bonfireFlagBase + Offsets.EventFlagMan.BonfireFlags;
+            foreach (Offsets.EventFlagMan.BonfireBitFlag flag in Enum.GetValues(
+                         typeof(Offsets.EventFlagMan.BonfireBitFlag)))
+            {
+                int bitPosition = (int)flag;
+                _memoryIo.SetBit32(bonfireFlagAddr, bitPosition, true);
+            }
+        }
+
+        public void UnlockKalameet()
+        {
+            var kalameetBase =  _memoryIo.FollowPointers(Offsets.EventFlagMan.Base,
+                new[] { Offsets.EventFlagMan.KalameetPtr1, Offsets.EventFlagMan.KalameetPtr2}, true);
+
+            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetOffset,
+                Offsets.EventFlagMan.KalameetVisitedBit, true);
+            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetGoughOffset,
+                Offsets.EventFlagMan.KalameetGoughBit, true);
+            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetMoreFlags,
+                Offsets.EventFlagMan.KalameetBit1, true);
+            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetMoreFlags,
+                Offsets.EventFlagMan.KalameetBit2, true);
+        }
     }
 }

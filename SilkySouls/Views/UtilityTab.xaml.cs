@@ -55,5 +55,15 @@ namespace SilkySouls.Views
         {
             _utilityViewModel.ShowAttunementMenu();
         }
+
+        private void UnlockBonfires_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.UnlockBonfires();
+        }
+
+        private void UnlockKalameet_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.UnlockKalameet();
+        }
     }
 }

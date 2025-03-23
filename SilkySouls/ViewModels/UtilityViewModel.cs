@@ -37,6 +37,12 @@ namespace SilkySouls.ViewModels
             _playerService = playerService;
             _warpLocations = DataLoader.GetLocationDict();
             _hotkeyManager = hotkeyManager;
+            
+            if (_warpLocations.Any())
+            {
+                var firstLocation = _warpLocations.First();
+                _selectedLocation = new KeyValuePair<string, string>(firstLocation.Key, firstLocation.Value.Name);
+            }
             RegisterHotkeys();
         }
 
@@ -247,6 +253,16 @@ namespace SilkySouls.ViewModels
         public void ShowAttunementMenu()
         {
             _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.AttunementMenu);
+        }
+
+        public void UnlockBonfires()
+        {
+            _utilityService.UnlockBonfireWarps();
+        }
+
+        public void UnlockKalameet()
+        {
+            _utilityService.UnlockKalameet();
         }
     }
 }

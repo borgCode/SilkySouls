@@ -174,31 +174,52 @@ namespace SilkySouls.memory
         public const int SpEffectOffset = 0x50;
         
              
-        public static class ProgressionFlagMan
+        public static class EventFlagMan
         {
             public static IntPtr Base;
-            public static int Offset = 0x0;
-            public static int BonfireFlags = 0x18;
-
+            public const int BonfireOffset = 0x0;
+            public const int WarpFlag = 0x5B;
+            public const int WarpFlagBit1 = 1;
+            public const int WarpFlagBit2 = 5;
+            
+            public const int BonfireFlags = 0x18;
+            
             public enum BonfireBitFlag
             {
-                OolaSanc = 1 << 13,
-                Anorlondo1 = 1 << 29,
-                Gwyndolin = 1 << 15,
-                Parish = 1 << 8,
-                sunlight = 1 << 18,
-                depths = 1 << 9,
-                Quelana = 1 << 19,
-                ashlake = 1 << 22,
-                OS = 1 << 16,
-                paintedWorld = 1 << 7,
-                Dukearchives = 1 << 5,
-                vamos = 1 << 3,
-                oolatown = 1 << 12,
-                ooladung = 1 << 10,
-                tomb = 1 << 6,
-                
+                OolaSanc = 13,
+                Anorlondo1 = 20,
+                Gwyndolin = 15,
+                Parish = 8,
+                SunlightAltar = 18,
+                Depths = 9,
+                Quelana = 21,
+                AshLake = 22,
+                OS = 16,
+                PaintedWorld = 7,
+                DukesArchives = 5,
+                Vamos = 3,
+                OolaTown = 12,
+                OolaDungeon = 10,
+                TombOfTheGiants = 6,
+                Nito = 17,
+                Seath = 4,
+                FourKings = 19,
+                Firelink = 23,
+                SancGarden = 14,
+                Manus = 11
             }
+
+            public const int KalameetPtr1 = 0x40;
+            public const int KalameetPtr2 = 0x3F0;
+            public const int KalameetOffset = 0x4;
+            public const int KalameetVisitedBit = 12; 
+    
+            public const int KalameetGoughOffset = 0x48;
+            public const int KalameetGoughBit = 15; 
+    
+            public const int KalameetMoreFlags = 0x40;
+            public const int KalameetBit1 = 4; 
+            public const int KalameetBit2 = 8;     
         }
 
         public static class HgDraw

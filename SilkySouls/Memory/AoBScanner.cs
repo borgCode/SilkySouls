@@ -27,7 +27,7 @@ namespace SilkySouls.Memory
             Offsets.DrawEventPatch = FindAddressByPattern(Patterns.DrawEventPatch);
             Offsets.DrawSoundViewPatch = FindAddressByPattern(Patterns.DrawSoundViewPatch);
             Offsets.MenuMan.Base = FindAddressByPattern(Patterns.MenuMan);
-            Offsets.ProgressionFlagMan.Base = FindAddressByPattern(Patterns.ProgressionFlagMan);
+            Offsets.EventFlagMan.Base = FindAddressByPattern(Patterns.EventFlagMan);
             Offsets.LevelUpFunc = FindAddressByPattern(Patterns.LevelUpFunc).ToInt64();
             Offsets.RestoreCastsFunc = FindAddressByPattern(Patterns.RestoreCastsFunc).ToInt64();
             Offsets.HgDraw.Base = FindAddressByPattern(Patterns.HgDraw);
@@ -62,7 +62,7 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"DrawEventPatch: 0x{Offsets.DrawEventPatch.ToInt64():X}");
             // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.DrawSoundViewPatch.ToInt64():X}");
             // Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
-            // Console.WriteLine($"ProgressionFlagMan.Base: 0x{Offsets.ProgressionFlagMan.Base.ToInt64():X}");
+            Console.WriteLine($"EventFlagMan.Base: 0x{Offsets.EventFlagMan.Base.ToInt64():X}");
             // Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
             // Console.WriteLine($"RestoreCastsFunc: 0x{Offsets.RestoreCastsFunc:X}");
             // Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
