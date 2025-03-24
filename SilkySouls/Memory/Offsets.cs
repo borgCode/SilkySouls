@@ -159,6 +159,7 @@ namespace SilkySouls.memory
         {
             EnemyCtrl = 0x68,
             NpcSpEffectEquipCtrl = 0x2D8,
+            Coords = 0x2C0,
             TargetHp = 0x3E8,
             TargetMaxHp = 0x3EC,
             CurrentPoise = 0x250,

@@ -121,6 +121,15 @@ namespace SilkySouls.ViewModels
                 return false;
 
             if (health > maxHealth * 1.5) return false;
+
+            var position = _enemyService.GetTargetPos();
+            
+            if (float.IsNaN(position[0]) || float.IsNaN(position[1]) || float.IsNaN(position[2]))
+                return false;
+            
+            if (Math.Abs(position[0]) > 10000 || Math.Abs(position[1]) > 10000 || Math.Abs(position[2]) > 10000)
+                return false;
+            
             return true;
         }
         

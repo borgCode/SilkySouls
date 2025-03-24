@@ -185,6 +185,24 @@ namespace SilkySouls.Services
                                         CodeCaveOffsets.CodeCave1.LockedTargetPtr);
         }
 
+        public float[] GetTargetPos()
+        {
+            var targetPosPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int) Offsets.LockedTarget.Coords
+                }, false);
+    
+            float[] position = new float[3];
+            
+            position[0] = _memoryIo.ReadFloat(targetPosPtr);     
+            position[1] = _memoryIo.ReadFloat(targetPosPtr + 0x4);  
+            position[2] = _memoryIo.ReadFloat(targetPosPtr + 0x8); 
+    
+            return position;
+        }
+
         public void SetTargetSpeed(float value)
         {
             var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
@@ -246,7 +264,7 @@ namespace SilkySouls.Services
             var flagMask = Offsets.WorldChrMan.NoDamage;
             _memoryIo.SetBitValue(disableTargetDamagePtr, flagMask, setValue);
         }
-        
+
         public bool IsTargetNoDamageEnabled()
         {
             var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
