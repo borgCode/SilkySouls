@@ -3,18 +3,18 @@ This tool is strictly for offline practice only, it directly manipulates game me
 Compatible with patches 1.03 and 1.03.1.
 
 Includes:
-Hitbox View, Event view, Sound view
-Item Spawn
-Target Controls
-Stats and New Game change
-Warps
-Save and Restore position
-No Clip
-BKH 100% drop
-Disable Ai
-Character cheats such as No Death/No Damage
-Skip Kalameet setup
-Unlock bonfire warps
+* Hitbox View, Event view, Sound view
+* Item Spawn
+* Target Controls
+* Stats and New Game change
+* Warps
+* Save and Restore position
+* No Clip
+* BKH 100% drop
+* Disable Ai
+* Character cheats such as No Death/No Damage
+* Skip Kalameet setup
+* Unlock bonfire warps
 
 Usage:
 Unzip the download and run the exe, it does not matter if you open the app before the game or after.
