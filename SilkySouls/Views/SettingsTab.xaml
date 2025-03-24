@@ -270,6 +270,15 @@
                             <ColumnDefinition Width="85" />
                         </Grid.ColumnDefinitions>
                         
+                        <TextBlock Grid.Column="0" Text="Freeze HP:" VerticalAlignment="Center"
+                                   HorizontalAlignment="Left" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding FreezeHpHotkeyText}"
+                                 Style="{StaticResource HotkeyTextBoxStyle}"
+                                 GotFocus="HotkeyTextBox_GotFocus"
+                                 LostFocus="HotkeyTextBox_LostFocus"
+                                 Tag="FreezeHp"
+                                 KeyDown="HotkeyTextBox_KeyDown" />
                         <TextBlock Grid.Column="3" Text="Disable Target AI:" VerticalAlignment="Center"
                                    HorizontalAlignment="Left" />
                         <TextBox Grid.Column="4"
@@ -321,15 +330,15 @@
                             <ColumnDefinition Width="125" />
                             <ColumnDefinition Width="85" />
                         </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Freeze HP:" VerticalAlignment="Center"
+                        
+                        <TextBlock Grid.Column="0" Text="All No Damage:" VerticalAlignment="Center"
                                    HorizontalAlignment="Left" />
                         <TextBox Grid.Column="1"
-                                 Text="{Binding FreezeHpHotkeyText}"
+                                 Text="{Binding AllNoDamageHotkeyText}"
                                  Style="{StaticResource HotkeyTextBoxStyle}"
                                  GotFocus="HotkeyTextBox_GotFocus"
                                  LostFocus="HotkeyTextBox_LostFocus"
-                                 Tag="FreezeHp"
+                                 Tag="AllNoDamage"
                                  KeyDown="HotkeyTextBox_KeyDown" />
                         
                         <TextBlock Grid.Column="3" Text="Disable All AI:" VerticalAlignment="Center"
@@ -362,17 +371,6 @@
                                  GotFocus="HotkeyTextBox_GotFocus"
                                  LostFocus="HotkeyTextBox_LostFocus"
                                  Tag="AllNoDeath"
-                                 KeyDown="HotkeyTextBox_KeyDown" />
-                        
-                        <TextBlock Grid.Column="3" Text="All No Damage:" VerticalAlignment="Center"
-                                   HorizontalAlignment="Left" />
-                        <TextBox Grid.Column="4"
-                                 Margin="5,0,-10,0"
-                                 Text="{Binding AllNoDamageHotkeyText}"
-                                 Style="{StaticResource HotkeyTextBoxStyle}"
-                                 GotFocus="HotkeyTextBox_GotFocus"
-                                 LostFocus="HotkeyTextBox_LostFocus"
-                                 Tag="AllNoDamage"
                                  KeyDown="HotkeyTextBox_KeyDown" />
                     </Grid>
                 </StackPanel>
