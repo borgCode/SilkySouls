@@ -1,4 +1,5 @@
 An offline practice tool for challenge running in Dark Souls Remastered.
+
 This tool is strictly for offline practice only, it directly manipulates game memory which violates Terms of Service and will most likely lead to a ban if you use this online.
 Compatible with patches 1.03 and 1.03.1.
 
