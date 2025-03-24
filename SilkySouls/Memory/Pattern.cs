@@ -113,6 +113,12 @@
             RipType.None
         );
 
+        public static readonly Pattern InfiniteDurabilityPatch = new Pattern(
+            new byte[] { 0x0F, 0x88, 0xA5, 0x00, 0x00, 0x00, 0x8B },
+            "xxxxxxx",
+            0,
+            RipType.None);
+
         public static readonly Pattern MenuMan = new Pattern(
             new byte[] { 0x81, 0xF9, 0xF3, 0x01 },
             "xxxx",
@@ -180,7 +186,7 @@
             "xxxxxxxxx",
             0,
             RipType.None);
-        
+
         public static readonly Pattern AllNoDamage = new Pattern(
             new byte[] { 0xF6, 0x81, 0x24, 0x05, 0x00, 0x00, 0x40, 0x48 },
             "xxxxxxxx",

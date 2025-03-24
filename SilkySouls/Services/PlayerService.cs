@@ -447,5 +447,11 @@ namespace SilkySouls.Services
             var noDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.NoDeath;
             return _memoryIo.ReadBytes(noDeathPtr, 1)[0] == 1;
         }
+
+        public void ToggleInfiniteDurability(bool isInfiniteDurabilityEnabled)
+        {
+            if(isInfiniteDurabilityEnabled) _memoryIo.WriteByte(Offsets.InfiniteDurabilityPatch + 0x1, 0x89);
+            else _memoryIo.WriteByte(Offsets.InfiniteDurabilityPatch + 0x1, 0x88);
+        }
     }
 }

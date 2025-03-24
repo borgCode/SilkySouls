@@ -118,6 +118,9 @@
                     <CheckBox Content="Infinite Casts" 
                               IsChecked="{Binding IsInfiniteCastsEnabled}"
                               Margin="0,2"/>
+                    <CheckBox Content="Infinite Durability" 
+                              IsChecked="{Binding IsInfiniteDurabilityEnabled}"
+                              Margin="0,2"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
@@ -385,6 +388,9 @@
                                                  BorderBrush="#3F3F46"/>
                             <TextBlock Text="New Game" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
+                        <CheckBox Content="Auto set NG+6" 
+                                  IsChecked="{Binding IsAutoSetNewGameSixEnabled}"
+                                  Margin="0,3"/>
                     </StackPanel>
                     
                     <Button Grid.Column="1"

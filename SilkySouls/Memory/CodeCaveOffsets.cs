@@ -51,7 +51,7 @@ namespace SilkySouls.Memory
                 CodeBlock = 0x3F0,
                 NewLevel = 0x644,
                 RequiredSouls = 0x64C,
-                CurrentSouls = 0x650,
+                CurrentSouls = 0x650
             }
         }
 

@@ -210,7 +210,7 @@ namespace SilkySouls.Services
 
             return _memoryIo.ReadFloat(targetSpeedPtr);
         }
-        
+
         public void ToggleTargetAi(bool setValue)
         {
             var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
@@ -235,6 +235,30 @@ namespace SilkySouls.Services
             return _memoryIo.IsBitSet(disableTargetAiPtr, flagMask);
         }
 
+        public void ToggleTargetNoDamage(bool setValue)
+        {
+            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
+                }, false);
+            var flagMask = Offsets.WorldChrMan.NoDamage;
+            _memoryIo.SetBitValue(disableTargetDamagePtr, flagMask, setValue);
+        }
+        
+        public bool IsTargetNoDamageEnabled()
+        {
+            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
+                                                                  CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+                new[]
+                {
+                    (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
+                }, false);
+            var flagMask = Offsets.WorldChrMan.NoDamage;
+            return _memoryIo.IsBitSet(disableTargetDamagePtr, flagMask);
+        }
+
         public void ToggleAi(int value)
         {
             var disableAiPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.DisableAi;
@@ -243,12 +267,14 @@ namespace SilkySouls.Services
 
         public void ToggleAllNoDamage(int value)
         {
+            var allNoDamagePtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDamage;
+            _memoryIo.WriteInt32(allNoDamagePtr, value);
+            
             var codeBlock = _codeCave + CodeCaveOffsets.CodeCave1.AllNoDamage;
             if (value == 1)
             {
                 long origin = Offsets.Hooks.AllNoDamage;
-
-
+                
                 byte[] restoreHealthBytes = AsmLoader.GetAsmBytes("AllNoDamage");
                 byte[] jumpBytes = BitConverter.GetBytes(origin + 7 - (codeBlock.ToInt64() + 26));
                 Array.Copy(jumpBytes, 0, restoreHealthBytes, 22, 4);

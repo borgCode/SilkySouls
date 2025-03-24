@@ -20,11 +20,13 @@ namespace SilkySouls.ViewModels
         private bool _isInfiniteStaminaEnabled;
         private bool _isNoGoodsConsumeEnabled;
         private bool _isInfiniteCastsEnabled;
+        private bool _isInfiniteDurabilityEnabled;
         private bool _isOneShotEnabled;
         private bool _isInvisibleEnabled;
         private bool _isSilentEnabled;
         private bool _isNoAmmoConsumeEnabled;
         private bool _isInfinitePoiseEnabled;
+        private bool _isAutoSetNewGameSixEnabled;
         
         private bool _areOptionsEnabled;
 
@@ -239,6 +241,18 @@ namespace SilkySouls.ViewModels
             }
         }
 
+        public bool IsInfiniteDurabilityEnabled
+        {
+            get => _isInfiniteDurabilityEnabled;
+            set
+            {
+                if (SetProperty(ref _isInfiniteDurabilityEnabled, value))
+                {
+                    _playerService.ToggleInfiniteDurability(_isInfiniteDurabilityEnabled);
+                }
+            }
+        }
+        
         public bool IsInfiniteCastsEnabled
         {
             get => _isInfiniteCastsEnabled;
@@ -310,6 +324,21 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
+        
+        public bool IsAutoSetNewGameSixEnabled
+        {
+            get => _isAutoSetNewGameSixEnabled;
+            set
+            {
+                if (SetProperty(ref _isAutoSetNewGameSixEnabled, value))
+                {
+                    if (_isAutoSetNewGameSixEnabled)
+                    {
+                        NewGame = _playerService.GetSetNewGame(7);
+                    }
+                }
+            }
+        }
 
         public void RestoreSpellCasts()
         {
@@ -345,7 +374,11 @@ namespace SilkySouls.ViewModels
                 _playerService.ToggleNoAmmoConsume(1);
             if (IsInfinitePoiseEnabled)
                 _playerService.ToggleInfinitePoise(true);
-
+            if (IsInfiniteDurabilityEnabled)
+                _playerService.ToggleInfiniteDurability(true);
+            if (IsAutoSetNewGameSixEnabled)
+                NewGame = _playerService.GetSetNewGame(7);
+            
             AreOptionsEnabled = true;
             LoadStats();
             _timer.Start();

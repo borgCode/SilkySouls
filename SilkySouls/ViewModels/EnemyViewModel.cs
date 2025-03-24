@@ -43,9 +43,7 @@ namespace SilkySouls.ViewModels
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
         private bool _isAllNoDeathEnabled;
-
-        private int _frozenHealth;
-
+        
         private readonly EnemyService _enemyService;
         private readonly HotkeyManager _hotkeyManager;
 
@@ -93,7 +91,8 @@ namespace SilkySouls.ViewModels
 
             if (targetId != _currentTargetId)
             {
-                ResetTargetOptions();
+                IsDisableTargetAiEnabled = _enemyService.IsTargetAiDisabled();
+                IsFreezeHealthEnabled = _enemyService.IsTargetNoDamageEnabled();
                 _currentTargetId = targetId;
                 TargetMaxPoise = _enemyService.GetTargetMaxPoise();
                 SetResistances();
@@ -101,12 +100,7 @@ namespace SilkySouls.ViewModels
                 TargetMaxPoison = IsPoisonImmune ? 0 : _enemyService.GetTargetMaxPoison();
                 TargetMaxToxic = IsToxicImmune ? 0 : _enemyService.GetTargetMaxToxic();
             }
-
-            if (IsFreezeHealthEnabled)
-            {
-                _enemyService.SetTargetHp(_frozenHealth);
-            }
-
+            
             TargetSpeed = _enemyService.GetTargetSpeed();
             TargetCurrentPoise = _enemyService.GetTargetPoise();
             TargetPoiseTimer = _enemyService.GetTargetPoiseTimer();
@@ -126,10 +120,7 @@ namespace SilkySouls.ViewModels
             if (health < 0 || maxHealth <= 0 || health > 10000000 || maxHealth > 10000000)
                 return false;
 
-            if (health > maxHealth * 1.5)
-                return false;
-
-
+            if (health > maxHealth * 1.5) return false;
             return true;
         }
         
@@ -152,12 +143,6 @@ namespace SilkySouls.ViewModels
             }
         }
         
-        private void ResetTargetOptions()
-        {
-            IsFreezeHealthEnabled = false;
-            IsDisableTargetAiEnabled = _enemyService.IsTargetAiDisabled();
-        }
-
         private void SetResistances()
         {
             IsToxicImmune = false;
@@ -259,11 +244,6 @@ namespace SilkySouls.ViewModels
         public void SetTargetHealth(int value)
         {
             int health = TargetMaxHealth * value / 100;
-            if (IsFreezeHealthEnabled)
-            {
-                _frozenHealth = health;
-            }
-
             _enemyService.SetTargetHp(health);
         }
 
@@ -290,8 +270,7 @@ namespace SilkySouls.ViewModels
             get => _showPoise;
             set => SetProperty(ref _showPoise, value);
         }
-
-
+        
         public int TargetCurrentBleed
         {
             get => _targetCurrentBleed;
@@ -387,7 +366,7 @@ namespace SilkySouls.ViewModels
             set
             {
                 SetProperty(ref _isFreezeHealthEnabled, value);
-                _frozenHealth = _targetCurrentHealth;
+                _enemyService.ToggleTargetNoDamage(_isFreezeHealthEnabled);
             }
         }
         
@@ -426,8 +405,7 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
-
-
+        
         public bool IsAllNoDeathEnabled
         {
             get => _isAllNoDeathEnabled;

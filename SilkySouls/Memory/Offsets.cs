@@ -138,6 +138,8 @@ namespace SilkySouls.memory
         public static IntPtr DrawEventPatch;
         public static IntPtr DrawSoundViewPatch;
 
+        public static IntPtr InfiniteDurabilityPatch;
+
         public static class MenuMan
         {
             public static IntPtr Base;
