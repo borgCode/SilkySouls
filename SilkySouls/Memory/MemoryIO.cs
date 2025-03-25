@@ -159,6 +159,30 @@ namespace SilkySouls.Memory
             return waitResult == 0;
         }
 
+        public void AllocateAndExecute(byte[] shellcode)
+        {
+            IntPtr allocatedMemory = Kernel32.VirtualAllocEx(
+                ProcessHandle,
+                IntPtr.Zero, 
+                (uint)shellcode.Length,
+                0x1000,
+                0x40);
+            
+            if (allocatedMemory == IntPtr.Zero)
+            {
+                return;
+            }
+            
+            WriteBytes(allocatedMemory, shellcode);
+            bool executionSuccess = RunThreadAndWaitForCompletion(allocatedMemory);
+            if (!executionSuccess)
+            {
+                return;
+            }
+            
+            Kernel32.VirtualFreeEx(ProcessHandle, allocatedMemory, 0, 0x8000);
+        }
+        
         public int ReadInt32(IntPtr addr)
         {
             var bytes = ReadBytes(addr, 4);

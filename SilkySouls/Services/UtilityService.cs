@@ -412,6 +412,18 @@ namespace SilkySouls.Services
             _memoryIo.WriteByte(menuPtr, 1);
         }
 
+        public void ShowUpgradeMenu(bool isWeapon)
+        {
+            byte[] upgradeBytes = AsmLoader.GetAsmBytes("OpenEnhanceShop");
+            var playerGameData = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,
+                new[] { (int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData }, true);
+            byte[] bytes = BitConverter.GetBytes(playerGameData.ToInt64());
+            Array.Copy(bytes, 0, upgradeBytes, 2, bytes.Length);
+            bytes = BitConverter.GetBytes(isWeapon ? Offsets.OpenEnhanceShopWeapon : Offsets.OpenEnhanceShopArmor);
+            Array.Copy(bytes, 0, upgradeBytes, 16, bytes.Length);
+            _memoryIo.AllocateAndExecute(upgradeBytes);
+        }
+
         public void UnlockBonfireWarps()
         {
             var bonfireFlagBase = _memoryIo.FollowPointers(Offsets.EventFlagMan.Base,

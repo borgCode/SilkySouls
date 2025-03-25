@@ -56,6 +56,16 @@ namespace SilkySouls.Views
             _utilityViewModel.ShowAttunementMenu();
         }
 
+        private void UpgradeWeapon_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.ShowUpgradeMenu(isWeapon: true);
+        }
+
+        private void UpgradeArmor_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.ShowUpgradeMenu(isWeapon: false);
+        }
+
         private void UnlockBonfires_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.UnlockBonfires();

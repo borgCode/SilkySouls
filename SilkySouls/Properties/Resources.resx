@@ -1229,4 +1229,14 @@ e9 00 00 00 00          jmp    32 &lt;_main+0x32&gt;</value>
 59                      pop    rcx
 e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
   </data>
+  <data name="OpenEnhanceShop" xml:space="preserve">
+    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+48 83 ec 28             sub    rsp,0x28
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 28             add    rsp,0x28
+c3                      ret</value>
+  </data>
 </root>

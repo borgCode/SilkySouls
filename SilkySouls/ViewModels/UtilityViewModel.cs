@@ -255,6 +255,8 @@ namespace SilkySouls.ViewModels
             _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.AttunementMenu);
         }
 
+        
+
         public void UnlockBonfires()
         {
             _utilityService.UnlockBonfireWarps();
@@ -263,6 +265,11 @@ namespace SilkySouls.ViewModels
         public void UnlockKalameet()
         {
             _utilityService.UnlockKalameet();
+        }
+
+        public void ShowUpgradeMenu(bool isWeapon)
+        {
+            _utilityService.ShowUpgradeMenu(isWeapon);
         }
     }
 }

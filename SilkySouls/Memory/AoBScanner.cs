@@ -36,7 +36,9 @@ namespace SilkySouls.Memory
             Offsets.QuitoutPatch = FindAddressByPattern(Patterns.QuitoutPatch);
             Offsets.SoloParamMan.Base = FindAddressByPattern(Patterns.SoloParamMan);
             Offsets.InfiniteDurabilityPatch = FindAddressByPattern(Patterns.InfiniteDurabilityPatch);
-
+            Offsets.OpenEnhanceShopWeapon = FindAddressByPattern(Patterns.OpenEnhanceShop).ToInt64();
+            Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
+            
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();
             Offsets.Hooks.ItemSpawn = FindAddressByPattern(Patterns.ItemSpawnHook).ToInt64();
@@ -69,6 +71,9 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             // Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
+            
+            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
+            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
             //
             // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
@@ -105,6 +110,9 @@ namespace SilkySouls.Memory
                     // e.g. 80 3D - cmp byte ptr [rip+offset],imm
                     int cmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 2));
                     return IntPtr.Add(instructionAddress, cmpOffset + 7);
+                case RipType.Call:
+                    int callOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 1));
+                    return IntPtr.Add(instructionAddress, callOffset + 5);
 
                 default:
                     return IntPtr.Zero;

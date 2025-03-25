@@ -125,6 +125,13 @@
             8,
             RipType.Standard
         );
+        
+        public static readonly Pattern OpenEnhanceShop = new Pattern(
+            new byte[] { 0xE8, 0x00, 0x00, 0x00, 0x00, 0xE9, 0xA1, 0xED  },
+            "x????xxx",
+            0,
+            RipType.Call
+        );
 
         public static readonly Pattern QuitoutPatch = new Pattern(
             new byte[] { 0x74, 0x35, 0x83, 0xBB },

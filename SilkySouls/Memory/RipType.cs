@@ -4,6 +4,7 @@
     {
         None,       
         Standard,    
-        Comparison  
+        Comparison,
+        Call
     }
 }

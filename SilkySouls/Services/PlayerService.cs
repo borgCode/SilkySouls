@@ -35,14 +35,14 @@ namespace SilkySouls.Services
         public int? GetSoulLevel()
         {
             var soulLevelPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[]
-                {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)Offsets.GameDataMan.PlayerGameData.SoulLevel }, false);
+                {(int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData, (int)Offsets.GameDataMan.PlayerGameData.SoulLevel }, false);
             return _memoryIo.ReadInt32(soulLevelPtr);
         }
 
         public int GetSetPlayerStat(Offsets.GameDataMan.PlayerGameData statType, int? newValue = null)
         {
             var statPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[]
-                {(int)Offsets.GameDataMan.GameData.PlayerGameData, (int)statType }, false);
+                {(int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData, (int)statType }, false);
 
             
             int currentValue = _memoryIo.ReadInt32(statPtr);
@@ -97,7 +97,7 @@ namespace SilkySouls.Services
             int difference = newValue - oldValue;
             var totalSoulsPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,new[]
                 {
-                   (int)Offsets.GameDataMan.GameData.PlayerGameData, (int) Offsets.GameDataMan.PlayerGameData.TotalSouls
+                   (int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData, (int) Offsets.GameDataMan.PlayerGameData.TotalSouls
                 },
                 false);
             int currentTotalSouls = _memoryIo.ReadInt32(totalSoulsPtr);
@@ -110,7 +110,7 @@ namespace SilkySouls.Services
         private void UpdatePlayerStats(int difference)
         {
             var allStatsPtr =
-                _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[] {(int)Offsets.GameDataMan.GameData.PlayerGameData }, true);
+                _memoryIo.FollowPointers(Offsets.GameDataMan.Base, new[] {(int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData }, true);
 
             int originalSouls = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls);
 
@@ -301,7 +301,7 @@ namespace SilkySouls.Services
         public int GetSetNewGame(int? value)
         {
             var newGamePtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,new[]
-                { (int)Offsets.GameDataMan.GameData.Ng }, false);
+                { (int)Offsets.GameDataMan.GameDataOffsets.Ng }, false);
 
             int currentValue = _memoryIo.ReadInt32(newGamePtr);
 
@@ -324,7 +324,7 @@ namespace SilkySouls.Services
             var magicDataPtr = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,
                 new[]
                 {
-                    (int)Offsets.GameDataMan.GameData.PlayerGameData,
+                    (int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData,
                     (int)Offsets.GameDataMan.PlayerGameData.EquipMagicData
                 }, true);
             byte[] restoreBytes = AsmLoader.GetAsmBytes("RestoreSpellCasts");

@@ -155,7 +155,7 @@
                 <StackPanel Margin="10">
                     <TextBlock Text="Menu" 
                                FontWeight="Bold" 
-                               Margin="0,0,0,10"/>
+                               Margin="0,0,0,5"/>
                     
                     <StackPanel>
                         <Button Content="Level Up"
@@ -169,6 +169,22 @@
                                 IsEnabled="{Binding AreButtonsEnabled}"
                                 Height="25"
                                 Margin="0,2"/>
+                        <Button Content="Upgrade Weapon"
+                                Click="UpgradeWeapon_Click"
+                                IsEnabled="{Binding AreButtonsEnabled}"
+                                Height="25"
+                                Margin="0,2"/>
+                        
+                        <Button Content="Upgrade Armor"
+                                Click="UpgradeArmor_Click"
+                                IsEnabled="{Binding AreButtonsEnabled}"
+                                Height="25"
+                                Margin="0,2"/>
+                        <!-- <Button Content="Upgrade Armor" -->
+                        <!--         Click="UpgradeArmor_Click" -->
+                        <!--         IsEnabled="{Binding AreButtonsEnabled}" -->
+                        <!--         Height="25" -->
+                        <!--         Margin="0,2"/> -->
                     </StackPanel>
                 </StackPanel>
             </Border>

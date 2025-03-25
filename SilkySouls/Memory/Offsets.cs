@@ -82,7 +82,7 @@ namespace SilkySouls.memory
         {
             public static IntPtr Base;
             
-            public enum GameData
+            public enum GameDataOffsets
             {
                 PlayerGameData = 0x10,
                 Ng = 0x78,
@@ -153,6 +153,10 @@ namespace SilkySouls.memory
             }
         }
 
+        public static long OpenEnhanceShopWeapon;
+        public static long OpenEnhanceShopArmor;
+        
+        public static int ShowEnhancedShopArmorOffset = -0x40;
         public static IntPtr QuitoutPatch;
 
         public enum LockedTarget
