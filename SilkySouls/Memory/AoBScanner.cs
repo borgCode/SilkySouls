@@ -71,9 +71,9 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             // Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
-            
-            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
-            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
+            //
+            // Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
+            // Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
             //
             // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");

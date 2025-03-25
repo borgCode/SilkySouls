@@ -119,7 +119,6 @@
     <Compile Include="Utilities\AsmLoader.cs" />
     <Compile Include="Utilities\HotkeyManager.cs" />
     <Compile Include="Utilities\DataLoader.cs" />
-    <Compile Include="Utilities\VersionChecker.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />

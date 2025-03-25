@@ -161,24 +161,14 @@ namespace SilkySouls.Memory
 
         public void AllocateAndExecute(byte[] shellcode)
         {
-            IntPtr allocatedMemory = Kernel32.VirtualAllocEx(
-                ProcessHandle,
-                IntPtr.Zero, 
-                (uint)shellcode.Length,
-                0x1000,
-                0x40);
+            IntPtr allocatedMemory = Kernel32.VirtualAllocEx(ProcessHandle, IntPtr.Zero, (uint)shellcode.Length);
             
-            if (allocatedMemory == IntPtr.Zero)
-            {
-                return;
-            }
+            if (allocatedMemory == IntPtr.Zero) return;
             
             WriteBytes(allocatedMemory, shellcode);
             bool executionSuccess = RunThreadAndWaitForCompletion(allocatedMemory);
-            if (!executionSuccess)
-            {
-                return;
-            }
+            
+            if (!executionSuccess) return;
             
             Kernel32.VirtualFreeEx(ProcessHandle, allocatedMemory, 0, 0x8000);
         }
@@ -350,6 +340,24 @@ namespace SilkySouls.Memory
             return ReadInt32(loadingCheckPtr) == 1;
             
         }
-        
+
+        public void AllocCodeCave()
+        {
+            IntPtr searchRangeStart = BaseAddress - 0x40000000;
+            IntPtr searchRangeEnd = BaseAddress - 0x30000;
+            uint codeCaveSize = 0x2000;
+            IntPtr allocatedMemory;
+
+            for (IntPtr addr = searchRangeEnd; addr.ToInt64() > searchRangeStart.ToInt64(); addr -= 0x10000)
+            {
+                allocatedMemory = Kernel32.VirtualAllocEx(ProcessHandle, addr, codeCaveSize);
+
+                if (allocatedMemory != IntPtr.Zero)
+                {
+                    CodeCaveOffsets.Base = allocatedMemory;
+                    break;
+                }
+            }
+        }
     }
 }

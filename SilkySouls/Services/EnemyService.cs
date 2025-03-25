@@ -10,10 +10,9 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-
-        private readonly IntPtr _codeCave;
-        private IntPtr _lastTargetBlock;
+        
         private IntPtr _lockedTargetPtr;
+        private IntPtr _lastTargetBlock;
 
         private bool _isHookInstalled;
 
@@ -24,9 +23,6 @@ namespace SilkySouls.Services
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-
-            _codeCave = CodeCaveOffsets.CodeCave1.Base;
-            _lastTargetBlock = _codeCave + CodeCaveOffsets.CodeCave1.LockedTarget;
         }
 
         internal void TryInstallTargetHook()
@@ -35,7 +31,8 @@ namespace SilkySouls.Services
             if (IsHookInstalled()) return;
             if (!IsTargetOriginInitialized()) return;
             
-            _lockedTargetPtr = _codeCave + CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+            _lockedTargetPtr = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr;
+            _lastTargetBlock = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTarget;
 
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
 
@@ -84,50 +81,50 @@ namespace SilkySouls.Services
 
         public int GetTargetHp()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetHp);
         }
 
         public int GetTargetMaxHp()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetMaxHp);
         }
 
         public void SetTargetHp(int value)
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             _memoryIo.WriteInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.TargetHp, value);
         }
 
         public float GetTargetPoise()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.CurrentPoise);
         }
 
         public float GetTargetMaxPoise()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.MaxPoise);
         }
 
         public float GetTargetPoiseTimer()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadFloat((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoiseTimer);
         }
 
         public int GetImmunitySpEffect()
         {
-            var spEffectPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var spEffectPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.LockedTarget.NpcSpEffectEquipCtrl, Offsets.SpEffectPtr1, Offsets.SpEffectPtr2,
@@ -139,56 +136,56 @@ namespace SilkySouls.Services
 
         public int GetTargetBleed()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.BleedCurrent);
         }
 
         public int GetTargetMaxBleed()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.BleedMax);
         }
 
         public int GetTargetPoison()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoisonCurrent);
         }
 
         public int GetTargetMaxPoison()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.PoisonMax);
         }
 
         public int GetTargetToxic()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.ToxicCurrent);
         }
 
         public int GetTargetMaxToxic()
         {
-            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                                       CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                                       CodeCaveOffsets.LockedTargetPtr);
             return _memoryIo.ReadInt32((IntPtr)lockedTargetPtr + (int)Offsets.LockedTarget.ToxicMax);
         }
 
         public ulong GetTargetId()
         {
-            return _memoryIo.ReadUInt64(CodeCaveOffsets.CodeCave1.Base +
-                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr);
+            return _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
+                                        CodeCaveOffsets.LockedTargetPtr);
         }
 
         public float[] GetTargetPos()
         {
-            var targetPosPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                        CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var targetPosPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                        CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int) Offsets.LockedTarget.Coords
@@ -205,8 +202,8 @@ namespace SilkySouls.Services
 
         public void SetTargetSpeed(float value)
         {
-            var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
-                                   CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+            var lockedTargetBase = CodeCaveOffsets.Base +
+                                   CodeCaveOffsets.LockedTargetPtr;
             var targetSpeedPtr = _memoryIo.FollowPointers(lockedTargetBase,
                 new[]
                 {
@@ -218,8 +215,8 @@ namespace SilkySouls.Services
 
         public float GetTargetSpeed()
         {
-            var lockedTargetBase = CodeCaveOffsets.CodeCave1.Base +
-                                   CodeCaveOffsets.CodeCave1.LockedTargetPtr;
+            var lockedTargetBase = CodeCaveOffsets.Base +
+                                   CodeCaveOffsets.LockedTargetPtr;
             var targetSpeedPtr = _memoryIo.FollowPointers(lockedTargetBase,
                 new[]
                 {
@@ -231,8 +228,8 @@ namespace SilkySouls.Services
 
         public void ToggleTargetAi(bool setValue)
         {
-            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                              CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.ChrFlags
@@ -243,8 +240,8 @@ namespace SilkySouls.Services
 
         public bool IsTargetAiDisabled()
         {
-            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var disableTargetAiPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                              CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.ChrFlags
@@ -255,8 +252,8 @@ namespace SilkySouls.Services
 
         public void ToggleTargetNoDamage(bool setValue)
         {
-            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                              CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                              CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
@@ -267,8 +264,8 @@ namespace SilkySouls.Services
 
         public bool IsTargetNoDamageEnabled()
         {
-            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.CodeCave1.Base +
-                                                                  CodeCaveOffsets.CodeCave1.LockedTargetPtr,
+            var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
+                                                                  CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
@@ -288,7 +285,7 @@ namespace SilkySouls.Services
             var allNoDamagePtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDamage;
             _memoryIo.WriteInt32(allNoDamagePtr, value);
             
-            var codeBlock = _codeCave + CodeCaveOffsets.CodeCave1.AllNoDamage;
+            var codeBlock = CodeCaveOffsets.Base + CodeCaveOffsets.AllNoDamage;
             if (value == 1)
             {
                 long origin = Offsets.Hooks.AllNoDamage;

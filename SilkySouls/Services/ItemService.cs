@@ -9,8 +9,9 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-        private readonly IntPtr _itemSpawnBlock;
-        private readonly IntPtr _flagLoc;
+        private IntPtr _itemSpawnBlock;
+        private IntPtr _codeCavebase;
+        private IntPtr _flagLoc;
         private long _origin;
         private bool _hasSetupCave;
         private bool _isHookInstalled;
@@ -19,16 +20,13 @@ namespace SilkySouls.Services
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-
-            var codeCaveBase = CodeCaveOffsets.CodeCave3.Base;
-            _flagLoc = codeCaveBase;
-
-            _itemSpawnBlock = codeCaveBase + CodeCaveOffsets.CodeCave3.ItemSpawn;
-            
         }
 
         public void ItemSpawn(int itemId, int category, int quantity)
         {
+            _flagLoc = CodeCaveOffsets.Base + CodeCaveOffsets.ItemSpawnFlagLoc;
+            _itemSpawnBlock = CodeCaveOffsets.Base + CodeCaveOffsets.ItemSpawn;
+            
             _origin = Offsets.Hooks.ItemSpawn;
             if (!_hasSetupCave)
             {

@@ -32,7 +32,6 @@ namespace SilkySouls
         public MainWindow()
         {
             _memoryIo = new MemoryIo();
-            var patch = VersionChecker.GetPatch();
             _memoryIo.StartAutoAttach();
 
             InitializeComponent();
@@ -40,21 +39,6 @@ namespace SilkySouls
             _hookManager = new HookManager(_memoryIo);
             var hotkeyManager = new HotkeyManager(_memoryIo);
             _aobScanner = new AoBScanner(_memoryIo);
-            
-            switch (patch)
-            {
-                case "1.3.0.0":
-                    CodeCaveOffsets.CodeCave1.Base = _memoryIo.BaseAddress + 0x1298A60;
-                    CodeCaveOffsets.CodeCave2.Base = _memoryIo.BaseAddress + 0x1D0DF10;
-                    CodeCaveOffsets.CodeCave3.Base = _memoryIo.BaseAddress + 0x1C70350;
-                    break;
-                case "1.3.0.1":
-                    CodeCaveOffsets.CodeCave1.Base = _memoryIo.BaseAddress + 0x1B90B58;
-                    CodeCaveOffsets.CodeCave2.Base = _memoryIo.BaseAddress + 0x1BD4320;
-                    CodeCaveOffsets.CodeCave3.Base = _memoryIo.BaseAddress + 0x1BE1A30;
-                    break;
-            }
-            PatchText.Text = "Patch: " + patch;
             var playerService = new PlayerService(_memoryIo);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
             _enemyService = new EnemyService(_memoryIo, _hookManager);
@@ -97,9 +81,12 @@ namespace SilkySouls
             if (_memoryIo.IsAttached)
             {
                 IsAttachedText.Text = "Attached to game";
+                
+                
                 if (!_hasScanned)
                 {
                     _aobScanner.Scan();
+                    _memoryIo.AllocCodeCave();
                     _hasScanned = true;
                 }
                 

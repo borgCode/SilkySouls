@@ -11,9 +11,7 @@ namespace SilkySouls.Services
 
     {
         private readonly MemoryIo _memoryIo;
-
-        private readonly IntPtr _codeCave2;
-
+        
         private readonly int[] _hpOffsets =
             { (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns, (int)Offsets.WorldChrMan.PlayerInsOffsets.Health };
 
@@ -29,7 +27,6 @@ namespace SilkySouls.Services
         public PlayerService(MemoryIo memoryIo)
         {
             _memoryIo = memoryIo;
-            _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
         }
 
         public int? GetSoulLevel()
@@ -136,7 +133,7 @@ namespace SilkySouls.Services
                     _memoryIo.WriteInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.Souls, originalSouls);
                     return;
                 }
-
+            
                 int totalSoulsRequired = CalculateTotalSoulsRequired(currentLevel, newLevel);
                 int currentTotalSouls = _memoryIo.ReadInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.TotalSouls);
                 _memoryIo.WriteInt32(allStatsPtr + (int) Offsets.GameDataMan.PlayerGameData.TotalSouls,
@@ -147,17 +144,17 @@ namespace SilkySouls.Services
 
         private bool CallLevelUpFunction(int newLevel, int[] stats)
         {
-            var statArrayAddress = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.StatsArray;
+            var statArrayAddress = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.StatsArray;
             var tempStatArray = statArrayAddress;
             for (int i = 0; i < 9; i++)
             {
                 _memoryIo.WriteInt32(tempStatArray, stats[i]);
                 tempStatArray += 0x4;
             }
-
-            var codeStart = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.CodeBlock;
-            var soulsPtr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.SoulsPtr;
-
+        
+            var codeStart = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.CodeBlock;
+            var soulsPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.SoulsPtr;
+        
             byte[] codeBytes = AsmLoader.GetAsmBytes("LevelUp");
             byte[] bytes = BitConverter.GetBytes(statArrayAddress.ToInt64());
             Array.Copy(bytes, 0, codeBytes, 2, 8);
@@ -166,15 +163,15 @@ namespace SilkySouls.Services
             bytes = BitConverter.GetBytes(Offsets.LevelUpFunc);
             Array.Copy(bytes, 0, codeBytes, 32, 8);
             _memoryIo.WriteBytes(codeStart, codeBytes);
-
-            var newLevelAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.NewLevel;
+        
+            var newLevelAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.NewLevel;
             _memoryIo.WriteInt32(newLevelAddr, newLevel);
-            var requiredSoulsAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.RequiredSouls;
+            var requiredSoulsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.RequiredSouls;
             _memoryIo.WriteInt32(requiredSoulsAddr, 0);
-
-            var currSoulsAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.LevelUp.CurrentSouls;
+        
+            var currSoulsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.CurrentSouls;
             _memoryIo.WriteInt32(currSoulsAddr, 9999999);
-
+        
             return _memoryIo.RunThreadAndWaitForCompletion(codeStart);
         }
 
@@ -241,11 +238,11 @@ namespace SilkySouls.Services
 
             if (index == 0)
             {
-                _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos1, positionBytes);
+                _memoryIo.WriteBytes(CodeCaveOffsets.Base + CodeCaveOffsets.SavePos1, positionBytes);
             }
             else
             {
-                _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos2, positionBytes);
+                _memoryIo.WriteBytes(CodeCaveOffsets.Base + CodeCaveOffsets.SavePos2, positionBytes);
             }
         }
 
@@ -275,11 +272,11 @@ namespace SilkySouls.Services
             byte[] positionBytes;
             if (index == 0)
             {
-                positionBytes = _memoryIo.ReadBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos1, 12);
+                positionBytes = _memoryIo.ReadBytes(CodeCaveOffsets.Base + CodeCaveOffsets.SavePos1, 12);
             }
             else
             {
-                positionBytes = _memoryIo.ReadBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.SavePos2, 12);
+                positionBytes = _memoryIo.ReadBytes(CodeCaveOffsets.Base + CodeCaveOffsets.SavePos2, 12);
             }
 
             var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base, new[]
@@ -332,9 +329,7 @@ namespace SilkySouls.Services
             Array.Copy(bytes, 0, restoreBytes, 2, 8);
             bytes = BitConverter.GetBytes(Offsets.RestoreCastsFunc);
             Array.Copy(bytes, 0, restoreBytes, 16, 8);
-            _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.RestoreCasts, restoreBytes);
-
-            _memoryIo.RunThread(_codeCave2 + CodeCaveOffsets.CodeCave2.RestoreCasts);
+            _memoryIo.AllocateAndExecute(restoreBytes);
         }
 
         public void ToggleNoDeath(int value)

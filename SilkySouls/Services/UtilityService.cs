@@ -13,9 +13,7 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-
-        private readonly IntPtr _codeCave1;
-        private readonly IntPtr _codeCave2;
+        
         private IntPtr _targetView;
         private IntPtr _draw;
         private long _drawOrigin;
@@ -29,14 +27,12 @@ namespace SilkySouls.Services
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
-            _codeCave1 = CodeCaveOffsets.CodeCave1.Base;
-            _codeCave2 = CodeCaveOffsets.CodeCave2.Base;
         }
 
         internal bool EnableDraw()
         {
             if (!IsDrawOriginInitialized()) return false;
-            _draw = _codeCave1 + CodeCaveOffsets.CodeCave1.EnableDraw;
+            _draw = CodeCaveOffsets.Base + CodeCaveOffsets.EnableDraw;
 
             var ezDraw = _memoryIo.FollowPointers(Offsets.HgDraw.Base, new[] { Offsets.HgDraw.EzDraw }, true);
             long drawFunc1 = _drawOrigin + 11 + 5 + _memoryIo.ReadInt32((IntPtr)(_drawOrigin + 11) + 1);
@@ -53,7 +49,7 @@ namespace SilkySouls.Services
             Array.Copy(bytes, 0, drawBytes, 108, 8);
             bytes = BitConverter.GetBytes(drawFunc2);
             Array.Copy(bytes, 0, drawBytes, 147, 8);
-            byte[] jumpBytes = BitConverter.GetBytes((int)(_drawOrigin + 8 -  ( _codeCave1.ToInt64() + 170)));
+            byte[] jumpBytes = BitConverter.GetBytes((int)(_drawOrigin + 8 -  ( _draw.ToInt64() + 170)));
             Array.Copy(jumpBytes, 0, drawBytes, 166, 4);
             _memoryIo.WriteBytes(_draw, drawBytes);
             
@@ -114,7 +110,7 @@ namespace SilkySouls.Services
             if (!_targetViewIsInstalled)
             {
                 long targetViewOrigin = Offsets.Hooks.TargetingView;
-                _targetView = _codeCave1 + CodeCaveOffsets.CodeCave1.TargetView;
+                _targetView = CodeCaveOffsets.Base + CodeCaveOffsets.TargetView;
                 
                 byte[] targetViewBytes =
                 {
@@ -154,7 +150,7 @@ namespace SilkySouls.Services
 
         public void EnableNoClip()
         {
-            var zDirectionAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable;
+            var zDirectionAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionVariable;
 
             var playerCoordsBase = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
                 new[]
@@ -164,7 +160,7 @@ namespace SilkySouls.Services
                 true);
 
             var inAirTimerOrigin = Offsets.Hooks.InAirTimer;
-            IntPtr inAirTimerBlock = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.InAirTimer;
+            IntPtr inAirTimerBlock = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.InAirTimer;
             byte[] inAirTimerCodeBytes = AsmLoader.GetAsmBytes("NoClip_InAirTimer");
 
             byte[] bytes = BitConverter.GetBytes(playerCoordsBase.ToInt64());
@@ -176,7 +172,7 @@ namespace SilkySouls.Services
 
             _memoryIo.WriteBytes(inAirTimerBlock, inAirTimerCodeBytes);
 
-            IntPtr zDirectionKbCheck = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionKbCheck;
+            IntPtr zDirectionKbCheck = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionKbCheck;
             var keyOrigin = Offsets.Hooks.Keyboard;
 
             byte[] zDirectKbBytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_KB");
@@ -200,7 +196,7 @@ namespace SilkySouls.Services
 
             _memoryIo.WriteBytes(zDirectionKbCheck, zDirectKbBytes);
 
-            IntPtr zDirectionR2Check = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionR2Check;
+            IntPtr zDirectionR2Check = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionR2Check;
             var r2Origin = Offsets.Hooks.ControllerR2;
 
             byte[] r2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_R2");
@@ -215,7 +211,7 @@ namespace SilkySouls.Services
 
             _memoryIo.WriteBytes(zDirectionR2Check, r2Bytes);
 
-            IntPtr zDirectionL2Check = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionL2Check;
+            IntPtr zDirectionL2Check = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionL2Check;
             var l2Origin = Offsets.Hooks.ControllerL2;
 
             byte[] l2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_L2");
@@ -230,7 +226,7 @@ namespace SilkySouls.Services
 
             _memoryIo.WriteBytes(zDirectionL2Check, l2Bytes);
 
-            IntPtr updateCoordsBlock = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.UpdateCoords;
+            IntPtr updateCoordsBlock = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.UpdateCoords;
 
             var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,new[]
             {
@@ -302,7 +298,7 @@ namespace SilkySouls.Services
                 _hookManager.UninstallHook(_noClipHooks[i]);
             }
             _noClipHooks.Clear();
-            _memoryIo.WriteBytes(_codeCave2 + (int)CodeCaveOffsets.CodeCave2.NoClip.ZDirectionVariable, new byte[641]);
+            _memoryIo.WriteBytes(CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionVariable, new byte[641]);
         }
 
 
@@ -318,14 +314,14 @@ namespace SilkySouls.Services
             Array.Copy(bytes, 0, warpBytes, 2, 8);
             bytes = BitConverter.GetBytes(Offsets.WarpFunc);
             Array.Copy(bytes, 0, warpBytes, 24, 8);
-            _memoryIo.WriteBytes(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp, warpBytes);
-            _memoryIo.RunThread(_codeCave2 + CodeCaveOffsets.CodeCave2.Warp);
-
+            
+            _memoryIo.AllocateAndExecute(warpBytes);
+            
             if (location.HasCoordinates)
             {
-                var coordsAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.Coords;
+                var coordsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.Coords;
                 var coordsOrigin = Offsets.Hooks.WarpCoords;
-                var coordCodeBlockAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.CoordCode;
+                var coordCodeBlockAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.CoordCode;
 
                 byte[] coords = new byte[4 * sizeof(float)];
                 Buffer.BlockCopy(location.Coords, 0, coords, 0, Math.Min(location.Coords.Length, 3) * sizeof(float));
@@ -342,9 +338,9 @@ namespace SilkySouls.Services
 
                 _memoryIo.WriteBytes(coordCodeBlockAddr, coordWarpBytes);
 
-                var angleAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.Angle;
+                var angleAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.Angle;
                 var angleOrigin = coordsOrigin + 0x40;
-                var angleCodeBlockAddr = _codeCave2 + (int)CodeCaveOffsets.CodeCave2.WarpCoords.AngleCode;
+                var angleCodeBlockAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.AngleCode;
 
                 byte[] angle = new byte[16];
                 bytes = BitConverter.GetBytes(location.Angle);

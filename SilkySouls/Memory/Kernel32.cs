@@ -5,6 +5,11 @@ namespace SilkySouls.memory
 {
     internal static class Kernel32
     {
+        
+        public const uint MemCommit = 0x1000;
+        public const uint MemReserve = 0x2000;
+        public const uint PageExecuteReadwrite = 0x40;
+        
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(uint dwDesiredAcess, bool bInheritHandle, int dwProcessId);
 
@@ -27,8 +32,11 @@ namespace SilkySouls.memory
         public static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
-
+        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, 
+            uint flAllocationType = MemCommit | MemReserve, 
+            uint flProtect = PageExecuteReadwrite
+        );
+        
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint dwFreeType);
     }

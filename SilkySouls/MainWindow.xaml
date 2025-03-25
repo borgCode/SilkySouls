@@ -98,12 +98,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
-            <TextBlock x:Name="PatchText" Text=""
-                       HorizontalAlignment="Left" VerticalAlignment="Center"
-                       Margin="10,0,0,0" />
-
-
+            
             <TextBlock x:Name="IsAttachedText" Text=""
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0,0,10,0" />
