@@ -254,9 +254,7 @@ namespace SilkySouls.ViewModels
         {
             _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.AttunementMenu);
         }
-
         
-
         public void UnlockBonfires()
         {
             _utilityService.UnlockBonfireWarps();
