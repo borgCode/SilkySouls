@@ -328,7 +328,16 @@ namespace SilkySouls.ViewModels
         public bool IsAutoSetNewGameSixEnabled
         {
             get => _isAutoSetNewGameSixEnabled;
-            set => SetProperty(ref _isAutoSetNewGameSixEnabled, value);
+            set
+            {
+                if (SetProperty(ref _isAutoSetNewGameSixEnabled, value))
+                {
+                    if (_isAutoSetNewGameSixEnabled && AreOptionsEnabled)
+                    {
+                        NewGame = _playerService.GetSetNewGame(7);
+                    }
+                }
+            }
         }
 
         public void RestoreSpellCasts()
