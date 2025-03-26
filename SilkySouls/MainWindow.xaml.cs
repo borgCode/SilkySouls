@@ -75,6 +75,7 @@ namespace SilkySouls
 
         private bool _loaded;
         private bool _hasScanned;
+        private bool _hasAllocatedMemory;
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -86,8 +87,13 @@ namespace SilkySouls
                 if (!_hasScanned)
                 {
                     _aobScanner.Scan();
-                    _memoryIo.AllocCodeCave();
                     _hasScanned = true;
+                }
+
+                if (!_hasAllocatedMemory)
+                {
+                    _memoryIo.AllocCodeCave();
+                    _hasAllocatedMemory = true;
                 }
                 
                 _utilityViewModel.TryRestoreAttachedFeatures();
@@ -113,6 +119,7 @@ namespace SilkySouls
                 DisableButtons();
                 _utilityViewModel.ResetAttached();
                 _settingsViewModel.ResetAttached();
+                _hasAllocatedMemory = false;
                 _loaded = false;
                 IsAttachedText.Text = "Not attached";
             }
