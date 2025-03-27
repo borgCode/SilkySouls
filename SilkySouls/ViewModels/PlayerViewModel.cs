@@ -45,6 +45,10 @@ namespace SilkySouls.ViewModels
         private float? _playerSpeed;
         private int? _currentSoulLevel;
         
+        private float? _playerDesiredSpeed;
+        private const float DefaultSpeed = 1f;
+        private const float Epsilon = 0.0001f;
+        
         private bool _pauseUpdates;
         private readonly PlayerService _playerService;
         private readonly HotkeyManager _hotkeyManager;
@@ -93,6 +97,7 @@ namespace SilkySouls.ViewModels
             _hotkeyManager.RegisterAction("NoDeath", () => { IsNoDeathEnabled = !IsNoDeathEnabled; });
             _hotkeyManager.RegisterAction("OneShot", () => { IsOneShotEnabled = !IsOneShotEnabled; });
             _hotkeyManager.RegisterAction("RestoreSpellCasts", RestoreSpellCasts);
+            _hotkeyManager.RegisterAction("ToggleSpeed", ToggleSpeed);
             _hotkeyManager.RegisterAction("IncreaseSpeed", () => SetSpeed(PlayerSpeed.HasValue ? Math.Min(10, PlayerSpeed.Value + 0.25f) : 0.25f));
             _hotkeyManager.RegisterAction("DecreaseSpeed", () =>
             {
@@ -124,7 +129,7 @@ namespace SilkySouls.ViewModels
             get => _areOptionsEnabled;
             set => SetProperty(ref _areOptionsEnabled, value);
         }
-        
+
         public int? CurrentHp
         {
             get => _currentHp;
@@ -252,7 +257,7 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
-        
+
         public bool IsInfiniteCastsEnabled
         {
             get => _isInfiniteCastsEnabled;
@@ -312,7 +317,7 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
-        
+
         public bool IsInfinitePoiseEnabled
         {
             get => _isInfinitePoiseEnabled;
@@ -324,7 +329,7 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
-        
+
         public bool IsAutoSetNewGameSixEnabled
         {
             get => _isAutoSetNewGameSixEnabled;
@@ -577,6 +582,28 @@ namespace SilkySouls.ViewModels
         {
             NewGame = value;
         }
+
+        private void ToggleSpeed()
+        {
+            if (!AreOptionsEnabled) return;
+
+            if (!IsApproximately(PlayerSpeed, DefaultSpeed))
+            {
+                _playerDesiredSpeed = PlayerSpeed; 
+                SetSpeed(DefaultSpeed);
+            }
+            else if (_playerDesiredSpeed.HasValue)
+            {
+                SetSpeed(_playerDesiredSpeed.Value);
+            }
+        }
+
+        private bool IsApproximately(float? a, float? b)
+        {
+            if (!a.HasValue || !b.HasValue) return false;
+            return Math.Abs(a.Value - b.Value) < Epsilon;
+        }
+
 
         public float? PlayerSpeed 
         { 

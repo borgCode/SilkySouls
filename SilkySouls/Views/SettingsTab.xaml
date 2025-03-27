@@ -125,15 +125,15 @@
                                  Tag="RestorePos1"
                                  KeyDown="HotkeyTextBox_KeyDown" />
 
-                        <TextBlock Grid.Column="3" Text="Restore Spells:" VerticalAlignment="Center"
+                        <TextBlock Grid.Column="3" Text="Toggle Player Speed:" VerticalAlignment="Center"
                                    HorizontalAlignment="Left" />
                         <TextBox Grid.Column="4"
                                  Margin="5,0,-10,0"
-                                 Text="{Binding RestoreSpellCastsHotkeyText}"
+                                 Text="{Binding ToggleSpeedHotkeyText}"
                                  Style="{StaticResource HotkeyTextBoxStyle}"
                                  GotFocus="HotkeyTextBox_GotFocus"
                                  LostFocus="HotkeyTextBox_LostFocus"
-                                 Tag="RestoreSpellCasts"
+                                 Tag="ToggleSpeed"
                                  KeyDown="HotkeyTextBox_KeyDown" />
                     </Grid>
 
@@ -371,6 +371,17 @@
                                  GotFocus="HotkeyTextBox_GotFocus"
                                  LostFocus="HotkeyTextBox_LostFocus"
                                  Tag="AllNoDeath"
+                                 KeyDown="HotkeyTextBox_KeyDown" />
+                        
+                        <TextBlock Grid.Column="3" Text="Restore Spells:" VerticalAlignment="Center"
+                                   HorizontalAlignment="Left" />
+                        <TextBox Grid.Column="4"
+                                 Margin="5,0,-10,0"
+                                 Text="{Binding RestoreSpellCastsHotkeyText}"
+                                 Style="{StaticResource HotkeyTextBoxStyle}"
+                                 GotFocus="HotkeyTextBox_GotFocus"
+                                 LostFocus="HotkeyTextBox_LostFocus"
+                                 Tag="RestoreSpellCasts"
                                  KeyDown="HotkeyTextBox_KeyDown" />
                     </Grid>
                 </StackPanel>

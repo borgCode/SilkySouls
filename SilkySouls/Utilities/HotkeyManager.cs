@@ -94,6 +94,11 @@ namespace SilkySouls.Utilities
             return _hotkeyMappings.TryGetValue(actionId, out var keys) ? keys : null;
         }
 
+        public string GetActionIdByKeys(Keys keys)
+        {
+            return _hotkeyMappings.FirstOrDefault(x => x.Value == keys).Key;
+        }
+
 
         public void SaveHotkeys()
         {
