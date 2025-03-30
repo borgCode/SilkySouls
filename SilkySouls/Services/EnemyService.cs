@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using SilkySouls.memory;
 using SilkySouls.Memory;
 using SilkySouls.Utilities;
@@ -10,19 +13,22 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-        
+        private readonly AoBScanner _aoBScanner;
+
         private IntPtr _lockedTargetPtr;
         private IntPtr _lastTargetBlock;
+        private IntPtr _luaModule;
 
         private bool _isHookInstalled;
 
         private long _lockedTargetOrigin;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
 
-        public EnemyService(MemoryIo memoryIo, HookManager hookManager)
+        public EnemyService(MemoryIo memoryIo, HookManager hookManager, AoBScanner aobScanner)
         {
             _memoryIo = memoryIo;
             _hookManager = hookManager;
+            _aoBScanner = aobScanner;
         }
 
         internal void TryInstallTargetHook()
@@ -30,13 +36,13 @@ namespace SilkySouls.Services
             if (_isHookInstalled) return;
             if (IsHookInstalled()) return;
             if (!IsTargetOriginInitialized()) return;
-            
+
             _lockedTargetPtr = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr;
             _lastTargetBlock = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTarget;
 
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
 
-           
+
             byte[] bytes = BitConverter.GetBytes(Offsets.WorldChrMan.Base.ToInt64());
             Array.Copy(bytes, 0, lockedTargetBytes, 4, bytes.Length);
 
@@ -68,7 +74,7 @@ namespace SilkySouls.Services
                 _isHookInstalled = true;
                 return true;
             }
-            
+
             return false;
         }
 
@@ -130,7 +136,7 @@ namespace SilkySouls.Services
                     (int)Offsets.LockedTarget.NpcSpEffectEquipCtrl, Offsets.SpEffectPtr1, Offsets.SpEffectPtr2,
                     Offsets.SpEffectOffset
                 }, false);
-            
+
             return _memoryIo.ReadInt32(spEffectPtr);
         }
 
@@ -188,15 +194,15 @@ namespace SilkySouls.Services
                                                         CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
-                    (int) Offsets.LockedTarget.Coords
+                    (int)Offsets.LockedTarget.Coords
                 }, false);
-    
+
             float[] position = new float[3];
-            
-            position[0] = _memoryIo.ReadFloat(targetPosPtr);     
-            position[1] = _memoryIo.ReadFloat(targetPosPtr + 0x4);  
-            position[2] = _memoryIo.ReadFloat(targetPosPtr + 0x8); 
-    
+
+            position[0] = _memoryIo.ReadFloat(targetPosPtr);
+            position[1] = _memoryIo.ReadFloat(targetPosPtr + 0x4);
+            position[2] = _memoryIo.ReadFloat(targetPosPtr + 0x8);
+
             return position;
         }
 
@@ -253,7 +259,7 @@ namespace SilkySouls.Services
         public void ToggleTargetNoDamage(bool setValue)
         {
             var disableTargetDamagePtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base +
-                                                              CodeCaveOffsets.LockedTargetPtr,
+                                                                  CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
                     (int)Offsets.WorldChrMan.PlayerInsOffsets.NoDamage
@@ -280,16 +286,55 @@ namespace SilkySouls.Services
             _memoryIo.WriteInt32(disableAiPtr, value);
         }
 
+        public int[] RepeatAct(int actNum)
+        {
+            if (_luaModule == IntPtr.Zero)
+            {
+                var luaPtrLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaModulePtr;
+                var hookOrigin = Offsets.Hooks.LuaInterpreter;
+                var codeLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.GetLuaModuleHook;
+                byte[] luaHookBytes = AsmLoader.GetAsmBytes("LuaHook");
+                byte[] bytes = BitConverter.GetBytes((int)(luaPtrLoc.ToInt64() - (codeLoc.ToInt64() + 0xB)));
+                Array.Copy(bytes, 0, luaHookBytes, 0x7, bytes.Length);
+                bytes = BitConverter.GetBytes((int)(hookOrigin + 7 - (codeLoc.ToInt64() + 0x18)));
+                Array.Copy(bytes, 0, luaHookBytes, 0x14, bytes.Length);
+                _memoryIo.WriteBytes(codeLoc, luaHookBytes);
+
+                _hookManager.InstallHook(codeLoc.ToInt64(), hookOrigin, new byte[]
+                {
+                    0x48, 0x81, 0xEC, 0xE8, 0x00, 0x00, 0x00
+                });
+
+                while (_memoryIo.ReadInt64(luaPtrLoc) == 0) Thread.Sleep(50);
+                _hookManager.UninstallHook(codeLoc.ToInt64());
+
+
+                _luaModule = _memoryIo.GetModuleStart((IntPtr)_memoryIo.ReadInt64(luaPtrLoc));
+            }
+
+            var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
+                new[]
+                {
+                    Offsets.BattleGoalIdPtr1,
+                    Offsets.BattleGoalIdPtr2,
+                    Offsets.BattleGoalIdOffset
+                }, false);
+
+            string enemyId = _memoryIo.ReadInt32(enemyBattleIdPtr).ToString();
+            
+            return _aoBScanner.DoActScan(_luaModule, enemyId);
+        }
+
         public void ToggleAllNoDamage(int value)
         {
             var allNoDamagePtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDamage;
             _memoryIo.WriteInt32(allNoDamagePtr, value);
-            
+
             var codeBlock = CodeCaveOffsets.Base + CodeCaveOffsets.AllNoDamage;
             if (value == 1)
             {
                 long origin = Offsets.Hooks.AllNoDamage;
-                
+
                 byte[] restoreHealthBytes = AsmLoader.GetAsmBytes("AllNoDamage");
                 byte[] jumpBytes = BitConverter.GetBytes(origin + 7 - (codeBlock.ToInt64() + 26));
                 Array.Copy(jumpBytes, 0, restoreHealthBytes, 22, 4);
@@ -305,6 +350,7 @@ namespace SilkySouls.Services
 
         public void ToggleAllNoDeath(int value)
         {
+            Console.WriteLine(string.Join(", ", RepeatAct(1)));
             var allNoDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDeath;
             _memoryIo.WriteInt32(allNoDeathPtr, value);
         }

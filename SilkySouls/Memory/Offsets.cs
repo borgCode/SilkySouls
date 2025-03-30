@@ -169,7 +169,6 @@ namespace SilkySouls.memory
             CurrentPoise = 0x250,
             MaxPoise = 0x254,
             PoiseTimer = 0x25C,
-           
             PoisonCurrent = 0x418,
             ToxicCurrent = 0x41C,
             BleedCurrent = 0x420,
@@ -178,6 +177,10 @@ namespace SilkySouls.memory
             BleedMax = 0x430,
         }
 
+        public const int BattleGoalIdPtr1 = 0xAD0;
+        public const int BattleGoalIdPtr2 = 0xC0;
+        public const int BattleGoalIdOffset = 0x4;
+        
         public const int SpEffectPtr1 = 0x28;
         public const int SpEffectPtr2 = 0x8;
         public const int SpEffectOffset = 0x50;
@@ -267,6 +270,7 @@ namespace SilkySouls.memory
             public static long ControllerL2;
             public static long UpdateCoords;
             public static long WarpCoords;
+            public static long LuaInterpreter;
         }
     }
 }

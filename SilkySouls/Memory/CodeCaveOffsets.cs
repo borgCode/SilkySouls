@@ -45,5 +45,11 @@ namespace SilkySouls.Memory
                 RequiredSouls = 0xA8C,
                 CurrentSouls = 0xA90,
             }
+
+            public enum RepeatAct
+            {
+                LuaModulePtr = 0xAC0,
+                GetLuaModuleHook = 0xAD0
+            }
     }
 }

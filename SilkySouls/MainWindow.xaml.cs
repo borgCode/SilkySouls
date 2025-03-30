@@ -41,7 +41,7 @@ namespace SilkySouls
             _aobScanner = new AoBScanner(_memoryIo);
             var playerService = new PlayerService(_memoryIo);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
-            _enemyService = new EnemyService(_memoryIo, _hookManager);
+            _enemyService = new EnemyService(_memoryIo, _hookManager, _aobScanner);
             var itemService = new ItemService(_memoryIo, _hookManager);
             var settingsService = new SettingsService(_memoryIo);
 
@@ -93,6 +93,7 @@ namespace SilkySouls
                 if (!_hasAllocatedMemory)
                 {
                     _memoryIo.AllocCodeCave();
+                    Console.WriteLine($"Code cave: 0x{CodeCaveOffsets.Base.ToInt64():X}");
                     _hasAllocatedMemory = true;
                 }
                 

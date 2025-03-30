@@ -16,6 +16,7 @@ namespace SilkySouls.Memory
         private const int ProcessVmRead = 0x0010;
         private const int ProcessVmWrite = 0x0020;
         private const int ProcessVmOperation = 0x0008;
+        public const int ProcessQueryInformation = 0x0400;
 
         private const string ProcessName = "darksoulsremastered";
         private bool _disposed;
@@ -52,7 +53,7 @@ namespace SilkySouls.Memory
             {
                 TargetProcess = processes[0];
                 ProcessHandle = Kernel32.OpenProcess(
-                    ProcessVmRead | ProcessVmWrite | ProcessVmOperation,
+                    ProcessVmRead | ProcessVmWrite | ProcessVmOperation | ProcessQueryInformation,
                     false,
                     TargetProcess.Id);
     
@@ -358,6 +359,11 @@ namespace SilkySouls.Memory
                     break;
                 }
             }
+        }
+
+        public IntPtr GetModuleStart(IntPtr address)
+        {
+            return Kernel32.QueryMemory(ProcessHandle, address).BaseAddress;
         }
     }
 }

@@ -39,7 +39,13 @@
             RipType.Standard
         );
 
-
+        public static readonly Pattern LuaInterpreter = new Pattern(
+            new byte[] { 0x48, 0x81, 0xEC, 0xE8, 0x00, 0x00, 0x00, 0x0F, 0x29, 0x70, 0xA8, 0x48 },
+            "xxxxxxxxxxxx",
+            0,
+            RipType.None
+        );
+        
         public static readonly Pattern GameDataMan = new Pattern(
             new byte[] { 0x8B, 0x70, 0x4C, 0x89 },
             "xxxx",

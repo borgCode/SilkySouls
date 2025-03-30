@@ -291,6 +291,20 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 50                      push   rax
+        ///48 89 c8                mov    rax,rcx
+        ///48 89 05 00 00 00 00    mov    QWORD PTR [rip+0x0],rax        # 0xb
+        ///58                      pop    rax
+        ///48 81 ec e8 00 00 00    sub    rsp,0xe8
+        ///e9 00 00 00 00          jmp    0x18.
+        /// </summary>
+        internal static string LuaHook {
+            get {
+                return ResourceManager.GetString("LuaHook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to f3 0f 58 9b b0 01 00    addss  xmm3,DWORD PTR [rbx+0x1b0]
         ///00
         ///50                      push   rax

@@ -1239,4 +1239,12 @@ ff d0                   call   rax
 48 83 c4 28             add    rsp,0x28
 c3                      ret</value>
   </data>
+  <data name="LuaHook" xml:space="preserve">
+    <value>50                      push   rax
+48 89 c8                mov    rax,rcx
+48 89 05 00 00 00 00    mov    QWORD PTR [rip+0x0],rax        # 0xb
+58                      pop    rax
+48 81 ec e8 00 00 00    sub    rsp,0xe8
+e9 00 00 00 00          jmp    0x18</value>
+  </data>
 </root>

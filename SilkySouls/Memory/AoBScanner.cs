@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using SilkySouls.memory;
 
 namespace SilkySouls.Memory
@@ -38,7 +41,7 @@ namespace SilkySouls.Memory
             Offsets.InfiniteDurabilityPatch = FindAddressByPattern(Patterns.InfiniteDurabilityPatch);
             Offsets.OpenEnhanceShopWeapon = FindAddressByPattern(Patterns.OpenEnhanceShop).ToInt64();
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
-            
+
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();
             Offsets.Hooks.ItemSpawn = FindAddressByPattern(Patterns.ItemSpawnHook).ToInt64();
@@ -50,9 +53,10 @@ namespace SilkySouls.Memory
             Offsets.Hooks.ControllerL2 = FindAddressByPattern(Patterns.ControllerL2).ToInt64();
             Offsets.Hooks.UpdateCoords = FindAddressByPattern(Patterns.UpdateCoords).ToInt64();
             Offsets.Hooks.WarpCoords = FindAddressByPattern(Patterns.WarpCoords).ToInt64();
+            Offsets.Hooks.LuaInterpreter = FindAddressByPattern(Patterns.LuaInterpreter).ToInt64();
 
             Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
-            Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}"); 
+            Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
             Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
             Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
             Console.WriteLine($"ItemGet: 0x{Offsets.ItemGet:X}");
@@ -71,10 +75,10 @@ namespace SilkySouls.Memory
             Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
-            
+
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
-            
+
             Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
             Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
@@ -86,6 +90,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Hooks.ControllerL2: 0x{Offsets.Hooks.ControllerL2:X}");
             Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
             Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
+            Console.WriteLine($"Hooks.LuaInterpreter: 0x{Offsets.Hooks.LuaInterpreter:X}");
         }
 
         public IntPtr FindAddressByPattern(Pattern pattern)
@@ -161,6 +166,123 @@ namespace SilkySouls.Memory
             }
 
             return IntPtr.Zero;
+        }
+
+        public int[] DoActScan(IntPtr luaModule, string enemyId)
+        {
+            const int chunkSize = 4096 * 16;
+            byte[] buffer = new byte[chunkSize];
+
+            IntPtr currentAddress = luaModule;
+            IntPtr endAddress = IntPtr.Add(currentAddress, 0x400000);
+
+            byte[] battleActivateBytes = Encoding.ASCII.GetBytes("_Act");
+
+            byte[] actAobScan = Encoding.ASCII.GetBytes(enemyId)
+                .Concat(battleActivateBytes)
+                .ToArray();
+            
+            Console.WriteLine($"address start: 0x{currentAddress.ToInt64():X}");
+            Console.WriteLine($"address end: 0x{endAddress.ToInt64():X}");
+            
+            for (int i = 0; i < Math.Min(actAobScan.Length, 16); i++)
+            {
+                Console.Write($"{actAobScan[i]:X2} ");
+            }
+
+            if (actAobScan.Length > 16) Console.Write("...");
+            Console.WriteLine();
+
+            // Add a counter for debugging
+            int iterations = 0;
+
+            while (currentAddress.ToInt64() < endAddress.ToInt64())
+            {
+                iterations++;
+                // Print debug info less frequently
+                if (iterations % 100 == 0)
+                    Console.WriteLine($"Scan iteration {iterations}, address: 0x{currentAddress.ToInt64():X}, " +
+                                      $"progress: {((double)(currentAddress.ToInt64() - luaModule.ToInt64()) / 0x400000) * 100:F2}%");
+
+                int bytesRemaining = (int)(endAddress.ToInt64() - currentAddress.ToInt64());
+                int bytesToRead = Math.Min(bytesRemaining, buffer.Length);
+
+                if (bytesToRead < actAobScan.Length)
+                {
+                    Console.WriteLine(
+                        $"Breaking scan: remaining bytes ({bytesRemaining}) less than pattern length ({actAobScan.Length})");
+                    break;
+                }
+
+                try
+                {
+                    buffer = _memoryIo.ReadBytes(currentAddress, bytesToRead);
+
+                    // Optional: print first few bytes of each buffer occasionally
+                    if (iterations % 1000 == 0)
+                    {
+                        Console.Write($"Sample data at 0x{currentAddress.ToInt64():X}: ");
+                        for (int i = 0; i < Math.Min(16, buffer.Length); i++)
+                        {
+                            Console.Write($"{buffer[i]:X2} ");
+                        }
+
+                        Console.WriteLine();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error reading memory at 0x{currentAddress.ToInt64():X}: {ex.Message}");
+                 
+                }
+
+                for (int i = 0; i <= bytesToRead - actAobScan.Length; i++)
+                {
+                    bool found = true;
+
+                    for (int j = 0; j < actAobScan.Length; j++)
+                    {
+                        if (buffer[i + j] != actAobScan[j])
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        IntPtr foundAddress = IntPtr.Add(currentAddress, i);
+                        Console.WriteLine($"Pattern found at address: 0x{foundAddress.ToInt64():X}");
+                        Console.WriteLine($"Offset from module base: 0x{(foundAddress.ToInt64() - luaModule.ToInt64()):X}");
+
+                        try
+                        {
+                            
+                            string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(foundAddress, 2000 + 2));
+                            var pattern = $@"{enemyId}_Act(\d+)";
+                            var matches = Regex.Matches(result, pattern);
+
+                            if (matches.Count > 0)
+                            {
+                                return matches.Cast<Match>()
+                                    .Select(m => int.Parse(m.Groups[1].Value))
+                                    .ToArray();
+                            }
+
+                            Console.WriteLine("Memory match found, but regex had no matches — continuing scan...");
+                            // Don’t return — just keep scanning
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error reading result data: {ex.Message}");
+                        }
+                    }
+                }
+                
+                currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
+            }
+
+            return Array.Empty<int>();
         }
     }
 }
