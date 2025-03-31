@@ -255,6 +255,11 @@ namespace SilkySouls.Memory
         {
             WriteBytes(addr, BitConverter.GetBytes(val));
         }
+        
+        public void WriteDouble(IntPtr addr, double val)
+        {
+            WriteBytes(addr, BitConverter.GetBytes(val));
+        }
 
         public void WriteUInt8(IntPtr addr, byte val)
         {

@@ -271,6 +271,9 @@ namespace SilkySouls.memory
             public static long UpdateCoords;
             public static long WarpCoords;
             public static long LuaInterpreter;
+            public static long LuaIfElse;
+            public static int LuaNestedFuncOffset = 0x906;
+
         }
     }
 }

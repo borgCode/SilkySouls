@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Threading;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
@@ -18,6 +20,8 @@ namespace SilkySouls.ViewModels
         private float _targetSpeed;
         private bool _isFreezeHealthEnabled;
         private bool _isDisableTargetAiEnabled;
+        private bool _isRepeatActEnabled;
+        private ObservableCollection<string> _repeatActOptions;
 
         private float _targetCurrentPoise;
         private float _targetMaxPoise;
@@ -53,6 +57,8 @@ namespace SilkySouls.ViewModels
             _hotkeyManager = hotkeyManager;
 
             RegisterHotkeys();
+
+            _repeatActOptions = new ObservableCollection<string>();
 
             _targetOptionsTimer = new DispatcherTimer
             {
@@ -387,6 +393,33 @@ namespace SilkySouls.ViewModels
                 if (SetProperty(ref _isDisableTargetAiEnabled, value))
                 {
                     _enemyService.ToggleTargetAi(_isDisableTargetAiEnabled);
+                }
+            }
+        }
+        
+        public ObservableCollection<string> RepeatActOptions
+        {
+            get => _repeatActOptions;
+            set => SetProperty(ref _repeatActOptions, value);
+        }
+        
+        public bool IsRepeatActEnabled
+        {
+            get => _isRepeatActEnabled;
+            set
+            {
+                if (SetProperty(ref _isRepeatActEnabled, value))
+                {
+                    if (_isRepeatActEnabled)
+                    {
+                        //TODO target validation
+                        RepeatActOptions.Clear();
+                        int[] acts = _enemyService.GetActs();
+                        foreach (int act in acts)
+                        {
+                            RepeatActOptions.Add($"Act {act}");
+                        }
+                    }
                 }
             }
         }

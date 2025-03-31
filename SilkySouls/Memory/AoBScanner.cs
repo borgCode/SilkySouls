@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,6 +55,7 @@ namespace SilkySouls.Memory
             Offsets.Hooks.UpdateCoords = FindAddressByPattern(Patterns.UpdateCoords).ToInt64();
             Offsets.Hooks.WarpCoords = FindAddressByPattern(Patterns.WarpCoords).ToInt64();
             Offsets.Hooks.LuaInterpreter = FindAddressByPattern(Patterns.LuaInterpreter).ToInt64();
+            Offsets.Hooks.LuaIfElse = FindAddressByPattern(Patterns.LuaIfElseHook).ToInt64();
 
             Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
             Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
@@ -91,6 +93,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
             Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
             Console.WriteLine($"Hooks.LuaInterpreter: 0x{Offsets.Hooks.LuaInterpreter:X}");
+            Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfElse:X}");
         }
 
         public IntPtr FindAddressByPattern(Pattern pattern)
@@ -176,7 +179,7 @@ namespace SilkySouls.Memory
             IntPtr currentAddress = luaModule;
             IntPtr endAddress = IntPtr.Add(currentAddress, 0x400000);
 
-            byte[] battleActivateBytes = Encoding.ASCII.GetBytes("_Act");
+            byte[] battleActivateBytes = Encoding.ASCII.GetBytes("Battle_Activate");
 
             byte[] actAobScan = Encoding.ASCII.GetBytes(enemyId)
                 .Concat(battleActivateBytes)
@@ -184,6 +187,9 @@ namespace SilkySouls.Memory
             
             Console.WriteLine($"address start: 0x{currentAddress.ToInt64():X}");
             Console.WriteLine($"address end: 0x{endAddress.ToInt64():X}");
+            
+            List<int> bestActs = new List<int>();
+            bool bestIsOrdered = false;
             
             for (int i = 0; i < Math.Min(actAobScan.Length, 16); i++)
             {
@@ -195,7 +201,9 @@ namespace SilkySouls.Memory
 
             // Add a counter for debugging
             int iterations = 0;
-
+            int maxMatches = 2;
+            int matchCount = 0;
+            
             while (currentAddress.ToInt64() < endAddress.ToInt64())
             {
                 iterations++;
@@ -258,19 +266,36 @@ namespace SilkySouls.Memory
                         try
                         {
                             
-                            string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(foundAddress, 2000 + 2));
+                            string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(foundAddress, 50000 + 2));
                             var pattern = $@"{enemyId}_Act(\d+)";
                             var matches = Regex.Matches(result, pattern);
 
                             if (matches.Count > 0)
                             {
-                                return matches.Cast<Match>()
+                                var acts = matches.Cast<Match>()
                                     .Select(m => int.Parse(m.Groups[1].Value))
-                                    .ToArray();
+                                    .Distinct()
+                                    .ToList();
+                                bool isOrdered = IsOrdered(acts);
+                                
+                                if (acts.Count > bestActs.Count || (acts.Count == bestActs.Count && isOrdered && !bestIsOrdered))
+                                {
+                                    bestActs = acts;
+                                    bestIsOrdered = isOrdered;
+                                }
+                                
+                                Console.WriteLine($"Found {acts.Count} acts at 0x{foundAddress.ToInt64():X}, ordered: {isOrdered}");
                             }
-
-                            Console.WriteLine("Memory match found, but regex had no matches — continuing scan...");
-                            // Don’t return — just keep scanning
+                            
+                            matchCount++;
+                            if (matchCount >= maxMatches)
+                            {
+                                Console.WriteLine("Reached max match limit. Stopping scan.");
+                                currentAddress = endAddress; 
+                                break;
+                            }
+                            
+                        
                         }
                         catch (Exception ex)
                         {
@@ -282,7 +307,14 @@ namespace SilkySouls.Memory
                 currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
             }
 
-            return Array.Empty<int>();
+            return bestActs.ToArray();
+        }
+        
+        bool IsOrdered(List<int> list)
+        {
+            for (int i = 1; i < list.Count; i++)
+                if (list[i] < list[i - 1]) return false;
+            return true;
         }
     }
 }

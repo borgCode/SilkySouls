@@ -46,6 +46,13 @@
             RipType.None
         );
         
+        public static readonly Pattern LuaIfElseHook = new Pattern(
+            new byte[] { 0xE8, 0x00, 0x00, 0x00, 0x00, 0x41, 0x3B, 0xC7, 0x0F, 0x84 },
+            "x????xxxxx",
+            0,
+            RipType.None
+        );
+        
         public static readonly Pattern GameDataMan = new Pattern(
             new byte[] { 0x8B, 0x70, 0x4C, 0x89 },
             "xxxx",

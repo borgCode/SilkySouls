@@ -301,6 +301,24 @@
                                 <Binding Path="IsDisableTargetAiEnabled" />
                             </CheckBox.IsChecked>
                         </CheckBox>
+    
+                        <CheckBox x:Name="RepeatActCheckbox" Content="Repeat Act" Margin="20,0,0,0">
+                            <CheckBox.IsChecked>
+                                <Binding Path="IsRepeatActEnabled" />
+                            </CheckBox.IsChecked>
+                        </CheckBox>
+    
+                        <ComboBox Margin="10,0,0,0" Width="120">
+                            <ComboBox.Visibility>
+                                <Binding Path="IsChecked" ElementName="RepeatActCheckbox" Converter="{StaticResource BoolToVis}" />
+                            </ComboBox.Visibility>
+                            <ComboBox.ItemsSource>
+                                <Binding Path="RepeatActOptions" />
+                            </ComboBox.ItemsSource>
+                            <ComboBox.SelectedItem>
+                                <Binding Path="SelectedRepeatActOption" />
+                            </ComboBox.SelectedItem>
+                        </ComboBox>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

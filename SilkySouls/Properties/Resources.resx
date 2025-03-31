@@ -1247,4 +1247,56 @@ c3                      ret</value>
 48 81 ec e8 00 00 00    sub    rsp,0xe8
 e9 00 00 00 00          jmp    0x18</value>
   </data>
+  <data name="RepeatAct" xml:space="preserve">
+    <value>50                      push   rax
+48 83 ec 20             sub    rsp,0x20
+f3 0f 7f 04 24          movdqu XMMWORD PTR [rsp],xmm0
+f3 0f 7f 4c 24 10       movdqu XMMWORD PTR [rsp+0x10],xmm1
+f3 41 0f 7e 86 98 01    movq   xmm0,QWORD PTR [r14+0x198]
+00 00
+66 48 0f 7e c0          movq   rax,xmm0
+48 25 00 fc ff ff       and    rax,0xfffffffffffffc00
+66 48 0f 6e c0          movq   xmm0,rax
+f3 0f 7e 0d 00 00 00    movq   xmm1,QWORD PTR [rip+0x0]        # 31 &lt;_main+0x31&gt;
+00
+66 48 0f 7e c8          movq   rax,xmm1
+48 25 00 fc ff ff       and    rax,0xfffffffffffffc00
+66 48 0f 6e c8          movq   xmm1,rax
+66 0f 2f c1             comisd xmm0,xmm1
+0f 85 00 00 00 00       jne    4b &lt;_main+0x4b&gt;
+f3 0f 6f 4c 24 10       movdqu xmm1,XMMWORD PTR [rsp+0x10]
+f3 0f 6f 04 24          movdqu xmm0,XMMWORD PTR [rsp]
+48 83 c4 20             add    rsp,0x20
+58                      pop    rax
+e8 00 00 00 00          call   60 &lt;_main+0x60&gt;
+51                      push   rcx
+53                      push   rbx
+8b 0d 00 00 00 00       mov    ecx,DWORD PTR [rip+0x0]        # 68 &lt;_main+0x68&gt;
+8b 1d 00 00 00 00       mov    ebx,DWORD PTR [rip+0x0]        # 6e &lt;_main+0x6e&gt;
+39 d9                   cmp    ecx,ebx
+0f 85 00 00 00 00       jne    76 &lt;_main+0x76&gt;
+c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 7d &lt;_main+0x7d&gt;
+31 c9                   xor    ecx,ecx
+89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # 85 &lt;_main+0x85&gt;
+8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # 8b &lt;_main+0x8b&gt;
+84 c9                   test   cl,cl
+c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 94 &lt;_main+0x94&gt;
+5b                      pop    rbx
+59                      pop    rcx
+e9 00 00 00 00          jmp    9b &lt;_main+0x9b&gt;
+ff c1                   inc    ecx
+89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # a3 &lt;_main+0xa3&gt;
+8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # a9 &lt;_main+0xa9&gt;
+84 c9                   test   cl,cl
+5b                      pop    rbx
+59                      pop    rcx
+e9 00 00 00 00          jmp    b2 &lt;_main+0xb2&gt;
+f3 0f 6f 4c 24 10       movdqu xmm1,XMMWORD PTR [rsp+0x10]
+f3 0f 6f 04 24          movdqu xmm0,XMMWORD PTR [rsp]
+48 83 c4 20             add    rsp,0x20
+58                      pop    rax
+e8 00 00 00 00          call   c7 &lt;_main+0xc7&gt;
+44 39 f8                cmp    eax,r15d
+e9 00 00 00 00          jmp    cf &lt;_main+0xcf&gt;</value>
+  </data>
 </root>
