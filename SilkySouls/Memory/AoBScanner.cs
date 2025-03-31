@@ -171,6 +171,8 @@ namespace SilkySouls.Memory
             return IntPtr.Zero;
         }
 
+        
+        //TODO CLEAN UP
         public int[] DoActScan(IntPtr luaModule, string enemyId)
         {
             const int chunkSize = 4096 * 16;

@@ -22,7 +22,8 @@ namespace SilkySouls.ViewModels
         private bool _isDisableTargetAiEnabled;
         private bool _isRepeatActEnabled;
         private ObservableCollection<string> _repeatActOptions;
-
+        private string _selectedRepeatActOption;
+   
         private float _targetCurrentPoise;
         private float _targetMaxPoise;
         private float _targetPoiseTimer;
@@ -58,8 +59,8 @@ namespace SilkySouls.ViewModels
 
             RegisterHotkeys();
 
-            _repeatActOptions = new ObservableCollection<string>();
-
+            _repeatActOptions = new ObservableCollection<string> { "None" };
+            SelectedRepeatActOption = "None";
             _targetOptionsTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(64)
@@ -403,6 +404,18 @@ namespace SilkySouls.ViewModels
             set => SetProperty(ref _repeatActOptions, value);
         }
         
+        
+        public string SelectedRepeatActOption
+        {
+            get => _selectedRepeatActOption;
+            set
+            {
+                SetProperty(ref _selectedRepeatActOption, value);
+                int index = RepeatActOptions.IndexOf(value);
+                _enemyService.RepeatAct(index);
+            } 
+        }
+        
         public bool IsRepeatActEnabled
         {
             get => _isRepeatActEnabled;
@@ -413,11 +426,18 @@ namespace SilkySouls.ViewModels
                     if (_isRepeatActEnabled)
                     {
                         //TODO target validation
-                        RepeatActOptions.Clear();
+                        for (int i = RepeatActOptions.Count - 1; i >= 0; i--)
+                        {
+                            if (RepeatActOptions[i] != "None")
+                                RepeatActOptions.RemoveAt(i);
+                        }
+
                         int[] acts = _enemyService.GetActs();
                         foreach (int act in acts)
                         {
-                            RepeatActOptions.Add($"Act {act}");
+                            string actLabel = $"Act {act}";
+                            if (!RepeatActOptions.Contains(actLabel))
+                                RepeatActOptions.Add(actLabel);
                         }
                     }
                 }

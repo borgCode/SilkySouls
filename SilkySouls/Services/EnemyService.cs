@@ -23,7 +23,9 @@ namespace SilkySouls.Services
 
         private long _lockedTargetOrigin;
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
-        private bool _isRepeatActInstalled;
+        private bool _isRepeatActCodeWritten;
+        private bool _hasWrittenEnemyId;
+        private bool _isRepeatActHookInstalled;
 
         public EnemyService(MemoryIo memoryIo, HookManager hookManager, AoBScanner aobScanner)
         {
@@ -320,29 +322,43 @@ namespace SilkySouls.Services
             return _aoBScanner.DoActScan(_luaModule, enemyId);
         }
 
-        public void RepeatAct(int actNum)
+        public void RepeatAct(int actLabelIndex)
         {
-            var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
-                new[]
-                {
-                    Offsets.BattleGoalIdPtr1,
-                    Offsets.BattleGoalIdPtr2,
-                    Offsets.BattleGoalIdOffset
-                }, false);
+            var codeLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Code;
+            
+            if (actLabelIndex == 0)
+            {
+                _hookManager.UninstallHook(codeLoc.ToInt64());
+                _hasWrittenEnemyId = false;
+                _isRepeatActHookInstalled = false;
+                return;
+            }
             
             var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId;
-            _memoryIo.WriteDouble(enemyIdLoc, _memoryIo.ReadInt32(enemyBattleIdPtr));
+            if (!_hasWrittenEnemyId)
+            {
+                var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
+                    new[]
+                    {
+                        Offsets.BattleGoalIdPtr1,
+                        Offsets.BattleGoalIdPtr2,
+                        Offsets.BattleGoalIdOffset
+                    }, false);
+                
+                _memoryIo.WriteDouble(enemyIdLoc, _memoryIo.ReadInt32(enemyBattleIdPtr));
+                _hasWrittenEnemyId = true;
+            }
             
             var desiredActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.DesiredAct;
-            _memoryIo.WriteInt32(desiredActLoc, actNum);
+            _memoryIo.WriteInt32(desiredActLoc, actLabelIndex - 1);
             
-            if (!_isRepeatActInstalled)
+            var hookLoc = Offsets.Hooks.LuaIfElse;
+            if (!_isRepeatActCodeWritten)
             {
-                var hookLoc = Offsets.Hooks.LuaIfElse;
                 var originalCallOffset = Offsets.Hooks.LuaIfElse + 0x906;
                 var count = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Count;
                 var flag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Flag;
-                var codeLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Code;
+                
                 
                 byte[] repeatActBytes = AsmLoader.GetAsmBytes("RepeatAct");
                 byte[] bytes = BitConverter.GetBytes((int)(enemyIdLoc.ToInt64() - (codeLoc.ToInt64() + 0x31)));
@@ -379,10 +395,14 @@ namespace SilkySouls.Services
                 Array.Copy(bytes, 0, repeatActBytes, 0xCB, 4);
                 
                 _memoryIo.WriteBytes(codeLoc, repeatActBytes);
-
-                _hookManager.InstallHook(codeLoc.ToInt64(), hookLoc,
-                    new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 });
+                _isRepeatActCodeWritten = true;
             }
+
+            if (_isRepeatActHookInstalled) return;
+            _hookManager.InstallHook(codeLoc.ToInt64(), hookLoc,
+                new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 });
+            _isRepeatActHookInstalled = true;
+
         }
 
         public void ToggleAllNoDamage(int value)
