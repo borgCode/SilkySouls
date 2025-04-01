@@ -318,22 +318,22 @@ namespace SilkySouls.Services
                 }, false);
 
             string enemyId = _memoryIo.ReadInt32(enemyBattleIdPtr).ToString();
-            
+
             return _aoBScanner.DoActScan(_luaModule, enemyId);
         }
 
         public void RepeatAct(int actLabelIndex)
         {
-            var codeLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Code;
-            
+            var actManipCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.ActManipCode;
+            var opcodeCheckCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.OpcodeCheckCode;
             if (actLabelIndex == 0)
             {
-                _hookManager.UninstallHook(codeLoc.ToInt64());
+                _hookManager.UninstallHook(actManipCode.ToInt64());
                 _hasWrittenEnemyId = false;
                 _isRepeatActHookInstalled = false;
                 return;
             }
-            
+
             var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId;
             if (!_hasWrittenEnemyId)
             {
@@ -344,65 +344,117 @@ namespace SilkySouls.Services
                         Offsets.BattleGoalIdPtr2,
                         Offsets.BattleGoalIdOffset
                     }, false);
-                
+
                 _memoryIo.WriteDouble(enemyIdLoc, _memoryIo.ReadInt32(enemyBattleIdPtr));
                 _hasWrittenEnemyId = true;
             }
-            
+
             var desiredActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.DesiredAct;
             _memoryIo.WriteInt32(desiredActLoc, actLabelIndex - 1);
-            
+
+            var repeatActFlagLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.RepeatActFlagLoc;
+
             var hookLoc = Offsets.Hooks.LuaIfElse;
+            var opcodeHookLoc = 0x140DD358F;
+            //TODO Pattern scan
+
+
+            // Pattern 44 8B F8 4F
             if (!_isRepeatActCodeWritten)
             {
+                var opcodeHistoryLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.OpcodeHistory;
+
+                byte[] opcodeCheckBytes = AsmLoader.GetAsmBytes("RepeatActFlagSet");
+                byte[] bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode, repeatActFlagLoc, 7);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0xE, repeatActFlagLoc, 7);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0xE + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x16, opcodeHistoryLoc + 0x4, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x16 + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x1C, opcodeHistoryLoc, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x1C + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x22, opcodeHistoryLoc + 0x8, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x22 + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x28, opcodeHistoryLoc + 0x4, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x28 + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x2E, opcodeHistoryLoc + 0x1C, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x2E + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x34, opcodeHistoryLoc + 0x8, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x34 + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x3A, opcodeHistoryLoc + 0x1C, 6);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x3A + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x40, opcodeHistoryLoc, 6); // history[1]
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x40 + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x4B, opcodeHistoryLoc + 0x4, 6); // history[2]
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x4B + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x56, opcodeHistoryLoc + 0x8, 6); // history[3]
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x56 + 2, 4);
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x61, opcodeHistoryLoc + 0x1C, 6); // history[4]
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x61 + 2, 4);
+
+                bytes = AsmHelper.GetRelOffsetBytes(opcodeCheckCode + 0x6C, repeatActFlagLoc, 7);
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x6C + 2, 4);
+
+                bytes = BitConverter.GetBytes((int)opcodeHookLoc + 7 - (opcodeCheckCode.ToInt64() + 0x80));
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0x7B + 1, 4);
+
+                _memoryIo.WriteBytes(opcodeCheckCode, opcodeCheckBytes);
+
+
                 var originalCallOffset = Offsets.Hooks.LuaIfElse + 0x906;
                 var count = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Count;
                 var flag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Flag;
-                
-                
+
                 byte[] repeatActBytes = AsmLoader.GetAsmBytes("RepeatAct");
-                byte[] bytes = BitConverter.GetBytes((int)(enemyIdLoc.ToInt64() - (codeLoc.ToInt64() + 0x31)));
+                bytes = BitConverter.GetBytes((int)(enemyIdLoc.ToInt64() - (actManipCode.ToInt64() + 0x31)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x2D, 4);
                 bytes = BitConverter.GetBytes(0x67); // Not matching enemy Id, skip repeat
                 Array.Copy(bytes, 0, repeatActBytes, 0x47, 4);
-                bytes = BitConverter.GetBytes((int) (originalCallOffset - (codeLoc.ToInt64() + 0x60)));
+                bytes = BitConverter.GetBytes((int)(originalCallOffset - (actManipCode.ToInt64() + 0x60)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x5C, 4);
-                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (codeLoc.ToInt64() + 0x68)));
+                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (actManipCode.ToInt64() + 0x68)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x64, 4);
-                bytes = BitConverter.GetBytes((int)(desiredActLoc.ToInt64() - (codeLoc.ToInt64() + 0x6E)));
+                bytes = BitConverter.GetBytes((int)(desiredActLoc.ToInt64() - (actManipCode.ToInt64() + 0x6E)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x6A, 4);
                 bytes = BitConverter.GetBytes(0x25); // Desired act not reached, inc count
                 Array.Copy(bytes, 0, repeatActBytes, 0x72, 4);
-                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (codeLoc.ToInt64() + 0x7D)));
+                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (actManipCode.ToInt64() + 0x7D)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x78, 4);
-                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (codeLoc.ToInt64() + 0x85)));
+                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (actManipCode.ToInt64() + 0x85)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x81, 4);
-                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (codeLoc.ToInt64() + 0x8B)));
+                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (actManipCode.ToInt64() + 0x8B)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x87, 4);
-                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (codeLoc.ToInt64() + 0x94)));
+                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (actManipCode.ToInt64() + 0x94)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x8F, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (codeLoc.ToInt64() + 0x9B));
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0x9B));
                 Array.Copy(bytes, 0, repeatActBytes, 0x97, 4);
-                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (codeLoc.ToInt64() + 0xA3)));
+                bytes = BitConverter.GetBytes((int)(count.ToInt64() - (actManipCode.ToInt64() + 0xA3)));
                 Array.Copy(bytes, 0, repeatActBytes, 0x9F, 4);
-                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (codeLoc.ToInt64() + 0xA9)));
+                bytes = BitConverter.GetBytes((int)(flag.ToInt64() - (actManipCode.ToInt64() + 0xA9)));
                 Array.Copy(bytes, 0, repeatActBytes, 0xA5, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (codeLoc.ToInt64() + 0xB2));
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xB2));
                 Array.Copy(bytes, 0, repeatActBytes, 0xAE, 4);
-                bytes = BitConverter.GetBytes((int) (originalCallOffset - (codeLoc.ToInt64() + 0xC7)));
+                bytes = BitConverter.GetBytes((int)(originalCallOffset - (actManipCode.ToInt64() + 0xC7)));
                 Array.Copy(bytes, 0, repeatActBytes, 0xC3, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (codeLoc.ToInt64() + 0xCF));
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xCF));
                 Array.Copy(bytes, 0, repeatActBytes, 0xCB, 4);
-                
-                _memoryIo.WriteBytes(codeLoc, repeatActBytes);
+
+                _memoryIo.WriteBytes(actManipCode, repeatActBytes);
                 _isRepeatActCodeWritten = true;
             }
 
             if (_isRepeatActHookInstalled) return;
-            _hookManager.InstallHook(codeLoc.ToInt64(), hookLoc,
+            _hookManager.InstallHook(opcodeCheckCode.ToInt64(), opcodeHookLoc,
+                new byte[] { 0x44, 0x8B, 0xF8, 0x4F, 0x8D, 0x34, 0xEC });
+
+            _hookManager.InstallHook(actManipCode.ToInt64(), hookLoc,
                 new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 });
             _isRepeatActHookInstalled = true;
-
         }
 
         public void ToggleAllNoDamage(int value)

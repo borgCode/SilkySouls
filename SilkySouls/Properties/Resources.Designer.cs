@@ -438,6 +438,22 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
+        ///75 0c                   jne    15 &lt;skip_clear_flag&gt;
+        ///83 fa 05                cmp    edx,0x5
+        ///75 07                   jne    15 &lt;skip_clear_flag&gt;
+        ///c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 15 &lt;skip_clear_flag&gt;
+        ///50                      push   rax
+        ///8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 1c &lt;skip_clear_flag+0x7&gt;
+        ///89 05 00 00 00 00       mov    DWORD PTR [rip+0x0],eax        # 22 &lt;skip_clea [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RepeatActFlagSet {
+            get {
+                return ResourceManager.GetString("RepeatActFlagSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 48 b9 00 00 00 00 00    movabs rcx,0x0
         ///00 00 00
         ///48 83 ec 28             sub    rsp,0x28
