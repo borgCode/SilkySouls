@@ -322,7 +322,7 @@ namespace SilkySouls.Services
             return _aoBScanner.DoActScan(_luaModule, enemyId);
         }
 
-        public void RepeatAct(int actLabelIndex)
+        public void RepeatAct(int actLabelIndex, int lastAct)
         {
             var actManipCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.ActManipCode;
             var opcodeCheckCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.OpcodeCheckCode;
@@ -351,6 +351,8 @@ namespace SilkySouls.Services
 
             var desiredActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.DesiredAct;
             _memoryIo.WriteInt32(desiredActLoc, actLabelIndex - 1);
+            var lastActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LastAct;
+            _memoryIo.WriteInt32(lastActLoc, lastAct - 1);
 
             var repeatActFlagLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.RepeatActFlagLoc;
 
@@ -413,38 +415,51 @@ namespace SilkySouls.Services
                 byte[] repeatActBytes = AsmLoader.GetAsmBytes("RepeatAct");
                 bytes = AsmHelper.GetRelOffsetBytes(actManipCode, repeatActFlagLoc, 7);
                 Array.Copy(bytes, 0, repeatActBytes, 0x2, 4);
+                
                 bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x36, enemyIdLoc, 8);
                 Array.Copy(bytes, 0, repeatActBytes, 0x36 + 4, 4);
-                bytes = BitConverter.GetBytes(0x67); // Not matching enemy Id, skip repeat
-                Array.Copy(bytes, 0, repeatActBytes, 0x52 + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode.ToInt64() + 0x68, originalCallOffset, 5);
-                Array.Copy(bytes, 0, repeatActBytes, 0x68 + 1, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x6F, count, 6);
-                Array.Copy(bytes, 0, repeatActBytes, 0x6F + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x75, desiredActLoc, 6);
-                Array.Copy(bytes, 0, repeatActBytes, 0x75 + 2, 4);
-                bytes = BitConverter.GetBytes(0x25); // Desired act not reached, inc count
-                Array.Copy(bytes, 0, repeatActBytes, 0x7D + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x83, flag, 7);
-                Array.Copy(bytes, 0, repeatActBytes, 0x83 + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x8C, count, 6);
-                Array.Copy(bytes, 0, repeatActBytes, 0x8C + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x92, flag, 6);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode.ToInt64() + 0x64, originalCallOffset, 5);
+                Array.Copy(bytes, 0, repeatActBytes, 0x64 + 1, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x6B, count, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0x6B + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x71, desiredActLoc, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0x71 + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x7B, flag, 7);
+                Array.Copy(bytes, 0, repeatActBytes, 0x7B + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x84, count, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0x84 + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x8A, flag, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0x8A + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x92, flag, 7);
                 Array.Copy(bytes, 0, repeatActBytes, 0x92 + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0x9A, flag, 7);
-                Array.Copy(bytes, 0, repeatActBytes, 0x9A + 2, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xA8));
-                Array.Copy(bytes, 0, repeatActBytes, 0xA3 + 1, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0xAA, count, 6);
-                Array.Copy(bytes, 0, repeatActBytes, 0xAA + 2, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0xB0, flag, 6);
-                Array.Copy(bytes, 0, repeatActBytes, 0xB0 + 2, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xBF));
-                Array.Copy(bytes, 0, repeatActBytes, 0xBA + 1, 4);
-                bytes = AsmHelper.GetRelOffsetBytes(actManipCode.ToInt64() + 0xCF, originalCallOffset, 5);
-                Array.Copy(bytes, 0, repeatActBytes, 0xCF + 1, 4);
-                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xDC));
-                Array.Copy(bytes, 0, repeatActBytes, 0xD7 + 1, 4);
+                
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xA0));
+                Array.Copy(bytes, 0, repeatActBytes, 0x9B + 1, 4);
+               
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0xA2, lastActLoc, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0xA2 + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0xAC, count, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0xAC + 2, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode + 0xB2, flag, 6);
+                Array.Copy(bytes, 0, repeatActBytes, 0xB2 + 2, 4);
+                
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xC1));
+                Array.Copy(bytes, 0, repeatActBytes, 0xBC + 1, 4);
+                
+                bytes = AsmHelper.GetRelOffsetBytes(actManipCode.ToInt64() + 0xD1, originalCallOffset, 5);
+                Array.Copy(bytes, 0, repeatActBytes, 0xD1 + 1, 4);
+                
+                bytes = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + 0xDE));
+                Array.Copy(bytes, 0, repeatActBytes, 0xD9 + 1, 4);
 
                 _memoryIo.WriteBytes(actManipCode, repeatActBytes);
                 _isRepeatActCodeWritten = true;

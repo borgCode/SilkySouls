@@ -412,7 +412,8 @@ namespace SilkySouls.ViewModels
             {
                 SetProperty(ref _selectedRepeatActOption, value);
                 int index = RepeatActOptions.IndexOf(value);
-                _enemyService.RepeatAct(index);
+                int maxAct = RepeatActOptions.Count - 1;
+                _enemyService.RepeatAct(index, maxAct);
             } 
         }
         
