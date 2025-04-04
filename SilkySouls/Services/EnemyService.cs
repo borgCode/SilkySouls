@@ -17,7 +17,6 @@ namespace SilkySouls.Services
 
         private IntPtr _lockedTargetPtr;
         private IntPtr _lastTargetBlock;
-        private IntPtr _luaModule;
 
         private bool _isHookInstalled;
 
@@ -285,30 +284,14 @@ namespace SilkySouls.Services
 
         public int[] GetActs()
         {
-            if (_luaModule == IntPtr.Zero)
-            {
-                var luaPtrLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaModulePtr;
-                var hookOrigin = Offsets.Hooks.LuaInterpreter;
-                var codeLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.GetLuaModuleHook;
-                byte[] luaHookBytes = AsmLoader.GetAsmBytes("LuaHook");
-                byte[] bytes = BitConverter.GetBytes((int)(luaPtrLoc.ToInt64() - (codeLoc.ToInt64() + 0xB)));
-                Array.Copy(bytes, 0, luaHookBytes, 0x7, bytes.Length);
-                bytes = BitConverter.GetBytes((int)(hookOrigin + 7 - (codeLoc.ToInt64() + 0x18)));
-                Array.Copy(bytes, 0, luaHookBytes, 0x14, bytes.Length);
-                _memoryIo.WriteBytes(codeLoc, luaHookBytes);
-
-                _hookManager.InstallHook(codeLoc.ToInt64(), hookOrigin, new byte[]
+            var luaModulePtr = _memoryIo.FollowPointers(Offsets.WorldAiMan.Base,
+                new[]
                 {
-                    0x48, 0x81, 0xEC, 0xE8, 0x00, 0x00, 0x00
-                });
-
-                while (_memoryIo.ReadInt64(luaPtrLoc) == 0) Thread.Sleep(50);
-                _hookManager.UninstallHook(codeLoc.ToInt64());
-
-
-                _luaModule = _memoryIo.GetModuleStart((IntPtr)_memoryIo.ReadInt64(luaPtrLoc));
-            }
-
+                    Offsets.WorldAiMan.DLLuaPtr,
+                    Offsets.WorldAiMan.DLLua,
+                    Offsets.WorldAiMan.LuaModule
+                }, true);
+            
             var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
@@ -319,7 +302,7 @@ namespace SilkySouls.Services
 
             string enemyId = _memoryIo.ReadInt32(enemyBattleIdPtr).ToString();
 
-            return _aoBScanner.DoActScan(_luaModule, enemyId);
+            return _aoBScanner.DoActScan(luaModulePtr, enemyId);
         }
 
         public void RepeatAct(int actLabelIndex, int lastAct)

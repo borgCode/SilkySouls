@@ -257,8 +257,14 @@ namespace SilkySouls.memory
                 Bks = 0x44,
             }
         }
-        
-        
+
+        public static class WorldAiMan
+        {
+            public static IntPtr Base;
+            public const int DLLuaPtr = 0x17E8;
+            public const int DLLua = 0x8;
+            public const int LuaModule = 0x28;
+        }
         
         public static class Hooks
         {
@@ -273,7 +279,6 @@ namespace SilkySouls.memory
             public static long ControllerL2;
             public static long UpdateCoords;
             public static long WarpCoords;
-            public static long LuaInterpreter;
             public static long LuaIfElse;
             public static long BattleActivate;
         }

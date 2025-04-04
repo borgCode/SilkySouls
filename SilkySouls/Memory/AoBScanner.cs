@@ -42,6 +42,7 @@ namespace SilkySouls.Memory
             Offsets.InfiniteDurabilityPatch = FindAddressByPattern(Patterns.InfiniteDurabilityPatch);
             Offsets.OpenEnhanceShopWeapon = FindAddressByPattern(Patterns.OpenEnhanceShop).ToInt64();
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
+            Offsets.WorldAiMan.Base = FindAddressByPattern(Patterns.WorldAiMan);
 
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();
@@ -54,7 +55,6 @@ namespace SilkySouls.Memory
             Offsets.Hooks.ControllerL2 = FindAddressByPattern(Patterns.ControllerL2).ToInt64();
             Offsets.Hooks.UpdateCoords = FindAddressByPattern(Patterns.UpdateCoords).ToInt64();
             Offsets.Hooks.WarpCoords = FindAddressByPattern(Patterns.WarpCoords).ToInt64();
-            Offsets.Hooks.LuaInterpreter = FindAddressByPattern(Patterns.LuaInterpreter).ToInt64();
             Offsets.Hooks.LuaIfElse = FindAddressByPattern(Patterns.LuaIfElseHook).ToInt64();
             Offsets.Hooks.BattleActivate = FindAddressByPattern(Patterns.BattleActivateHook).ToInt64();
 
@@ -93,7 +93,6 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Hooks.ControllerL2: 0x{Offsets.Hooks.ControllerL2:X}");
             Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
             Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
-            Console.WriteLine($"Hooks.LuaInterpreter: 0x{Offsets.Hooks.LuaInterpreter:X}");
             Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfElse:X}");
         }
 
@@ -171,152 +170,105 @@ namespace SilkySouls.Memory
 
             return IntPtr.Zero;
         }
-
         
-        //TODO CLEAN UP
         public int[] DoActScan(IntPtr luaModule, string enemyId)
         {
             const int chunkSize = 4096 * 16;
-            byte[] buffer = new byte[chunkSize];
-
-            IntPtr currentAddress = luaModule;
-            IntPtr endAddress = IntPtr.Add(currentAddress, 0x400000);
-
-            byte[] battleActivateBytes = Encoding.ASCII.GetBytes("Battle_Activate");
+            const int maxMatches = 2;
+            const int maxReadSize = 50002;
 
             byte[] actAobScan = Encoding.ASCII.GetBytes(enemyId)
-                .Concat(battleActivateBytes)
+                .Concat(Encoding.ASCII.GetBytes("Battle_Activate"))
                 .ToArray();
             
-            Console.WriteLine($"address start: 0x{currentAddress.ToInt64():X}");
-            Console.WriteLine($"address end: 0x{endAddress.ToInt64():X}");
+            IntPtr currentAddress = luaModule;
+            IntPtr endAddress = IntPtr.Add(currentAddress, 0x400000);
             
             List<int> bestActs = new List<int>();
             bool bestIsOrdered = false;
-            
-            for (int i = 0; i < Math.Min(actAobScan.Length, 16); i++)
-            {
-                Console.Write($"{actAobScan[i]:X2} ");
-            }
-
-            if (actAobScan.Length > 16) Console.Write("...");
-            Console.WriteLine();
-
-            // Add a counter for debugging
-            int iterations = 0;
-            int maxMatches = 2;
             int matchCount = 0;
-            
-            while (currentAddress.ToInt64() < endAddress.ToInt64())
+
+            while (currentAddress.ToInt64() < endAddress.ToInt64() && matchCount < maxMatches)
             {
-                iterations++;
-                // Print debug info less frequently
-                if (iterations % 100 == 0)
-                    Console.WriteLine($"Scan iteration {iterations}, address: 0x{currentAddress.ToInt64():X}, " +
-                                      $"progress: {((double)(currentAddress.ToInt64() - luaModule.ToInt64()) / 0x400000) * 100:F2}%");
-
                 int bytesRemaining = (int)(endAddress.ToInt64() - currentAddress.ToInt64());
-                int bytesToRead = Math.Min(bytesRemaining, buffer.Length);
+                int bytesToRead = Math.Min(bytesRemaining, chunkSize);
 
-                if (bytesToRead < actAobScan.Length)
-                {
-                    Console.WriteLine(
-                        $"Breaking scan: remaining bytes ({bytesRemaining}) less than pattern length ({actAobScan.Length})");
-                    break;
-                }
+                if (bytesToRead < actAobScan.Length) break;
 
+                byte[] buffer;
                 try
                 {
                     buffer = _memoryIo.ReadBytes(currentAddress, bytesToRead);
-
-                    // Optional: print first few bytes of each buffer occasionally
-                    if (iterations % 1000 == 0)
-                    {
-                        Console.Write($"Sample data at 0x{currentAddress.ToInt64():X}: ");
-                        for (int i = 0; i < Math.Min(16, buffer.Length); i++)
-                        {
-                            Console.Write($"{buffer[i]:X2} ");
-                        }
-
-                        Console.WriteLine();
-                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error reading memory at 0x{currentAddress.ToInt64():X}: {ex.Message}");
-                 
+                    currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
+                    continue;
                 }
 
                 for (int i = 0; i <= bytesToRead - actAobScan.Length; i++)
                 {
-                    bool found = true;
+                    if (!IsPatternMatch(buffer, i, actAobScan)) continue;
 
-                    for (int j = 0; j < actAobScan.Length; j++)
+
+                    IntPtr foundAddress = IntPtr.Add(currentAddress, i);
+
+                    try
                     {
-                        if (buffer[i + j] != actAobScan[j])
-                        {
-                            found = false;
-                            break;
-                        }
-                    }
-
-                    if (found)
-                    {
-                        IntPtr foundAddress = IntPtr.Add(currentAddress, i);
-                        Console.WriteLine($"Pattern found at address: 0x{foundAddress.ToInt64():X}");
-                        Console.WriteLine($"Offset from module base: 0x{(foundAddress.ToInt64() - luaModule.ToInt64()):X}");
-
-                        try
-                        {
-                            
-                            string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(foundAddress, 50000 + 2));
-                            var pattern = $@"{enemyId}_Act(\d+)";
-                            var matches = Regex.Matches(result, pattern);
-
-                            if (matches.Count > 0)
-                            {
-                                var acts = matches.Cast<Match>()
-                                    .Select(m => int.Parse(m.Groups[1].Value))
-                                    .Distinct()
-                                    .ToList();
-                                bool isOrdered = IsOrdered(acts);
-                                
-                                if (acts.Count > bestActs.Count || (acts.Count == bestActs.Count && isOrdered && !bestIsOrdered))
-                                {
-                                    bestActs = acts;
-                                    bestIsOrdered = isOrdered;
-                                }
-                                
-                                Console.WriteLine($"Found {acts.Count} acts at 0x{foundAddress.ToInt64():X}, ordered: {isOrdered}");
-                            }
-                            
-                            matchCount++;
-                            if (matchCount >= maxMatches)
-                            {
-                                Console.WriteLine("Reached max match limit. Stopping scan.");
-                                currentAddress = endAddress; 
-                                break;
-                            }
-                            
+                        var acts = ParseActsFromMemory(foundAddress, enemyId, maxReadSize);
                         
-                        }
-                        catch (Exception ex)
+                        if (acts.Count > 0)
                         {
-                            Console.WriteLine($"Error reading result data: {ex.Message}");
+                            bool isOrdered = IsOrdered(acts);
+
+                            if (acts.Count > bestActs.Count ||
+                                (acts.Count == bestActs.Count && isOrdered && !bestIsOrdered))
+                            {
+                                bestActs = acts;
+                                bestIsOrdered = isOrdered;
+                            }
+                            
                         }
+
+                        if (++matchCount >= maxMatches) break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error reading result data: {ex.Message}");
                     }
                 }
-                
                 currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
             }
 
             return bestActs.ToArray();
         }
+
+        private bool IsPatternMatch(byte[] buffer, int startIndex, byte[] pattern)
+        {
+            for (int j = 0; j < pattern.Length; j++)
+            {
+                if (buffer[startIndex + j] != pattern[j]) return false;
+            }
+
+            return true;
+        }
         
+        private List<int> ParseActsFromMemory(IntPtr address, string enemyId, int readSize)
+        {
+            string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(address, readSize));
+            var pattern = $@"{enemyId}_Act(\d+)";
+            return Regex.Matches(result, pattern)
+                .Cast<Match>()
+                .Select(m => int.Parse(m.Groups[1].Value))
+                .Distinct()
+                .ToList();
+        }
+
         bool IsOrdered(List<int> list)
         {
             for (int i = 1; i < list.Count; i++)
-                if (list[i] < list[i - 1]) return false;
+                if (list[i] < list[i - 1])
+                    return false;
             return true;
         }
     }

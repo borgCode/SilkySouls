@@ -9,18 +9,6 @@ namespace SilkySouls.memory
         public const uint MemCommit = 0x1000;
         public const uint MemReserve = 0x2000;
         public const uint PageExecuteReadwrite = 0x40;
- 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MemoryBasicInformation
-        {
-            public IntPtr BaseAddress;
-            public IntPtr AllocationBase;
-            public uint AllocationProtect;
-            public IntPtr RegionSize;
-            public uint State;
-            public uint Protect;
-            public uint Type;
-        }
         
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(uint dwDesiredAcess, bool bInheritHandle, int dwProcessId);
@@ -52,14 +40,5 @@ namespace SilkySouls.memory
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint dwFreeType);
         
-        [DllImport("kernel32.dll")]
-        public static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress,
-            out MemoryBasicInformation lpBuffer, uint dwLength);
-        
-        public static MemoryBasicInformation QueryMemory(IntPtr hProcess, IntPtr address)
-        {
-            VirtualQueryEx(hProcess, address, out var info, (uint)Marshal.SizeOf(typeof(MemoryBasicInformation)));
-            return info;
-        }
     }
 }
