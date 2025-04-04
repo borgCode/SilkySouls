@@ -419,16 +419,16 @@ namespace SilkySouls.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
-        ///0f 85 c4 00 00 00       jne    d1 &lt;skip_custom&gt;
+        ///75 6c                   jne    75 &lt;original&gt;
         ///50                      push   rax
-        ///48 83 ec 20             sub    rsp,0x20
-        ///f3 0f 7f 04 24          movdqu XMMWORD PTR [rsp],xmm0
-        ///f3 0f 7f 4c 24 10       movdqu XMMWORD PTR [rsp+0x10],xmm1
-        ///f3 41 0f 7e 86 98 01    movq   xmm0,QWORD PTR [r14+0x198]
-        ///00 00
-        ///66 48 0f 7e c0          movq   rax,xmm0
-        ///48 25 00 fc ff ff       and    rax,0xfffffffffffffc00
-        ///66 48 0f 6e c0          movq    [rest of string was truncated]&quot;;.
+        ///48 8b 05 00 00 00 00    mov    rax,QWORD PTR [rip+0x0]        # 11 &lt;_main+0x11&gt;
+        ///4c 39 c8                cmp    rax,r9
+        ///75 5e                   jne    74 &lt;original_pop_rax&gt;
+        ///58                      pop    rax
+        ///e8 00 00 00 00          call   1c &lt;_main+0x1c&gt;
+        ///51                      push   rcx
+        ///53                      push   rbx
+        ///8b 0d 00 00 00 00      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RepeatAct {
             get {
@@ -449,6 +449,27 @@ namespace SilkySouls.Properties {
         internal static string RepeatActFlagSet {
             get {
                 return ResourceManager.GetString("RepeatActFlagSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 51                      push   rcx
+        ///53                      push   rbx
+        ///52                      push   rdx
+        ///41 55                   push   r13
+        ///56                      push   rsi
+        ///57                      push   rdi
+        ///48 31 db                xor    rbx,rbx
+        ///41 80 3c 1c 00          cmp    BYTE PTR [r12+rbx*1],0x0
+        ///74 05                   je     16 &lt;len_found&gt;
+        ///48 ff c3                inc    rbx
+        ///eb f4                   jmp    a &lt;find_len&gt;
+        ///49 8b 4c 1c f8          mov    rcx,QWORD PTR [r12+rbx*1-0x8]
+        ///48 ba 41  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RepeatActIdCheck {
+            get {
+                return ResourceManager.GetString("RepeatActIdCheck", resourceCulture);
             }
         }
         

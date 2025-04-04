@@ -1249,60 +1249,42 @@ e9 00 00 00 00          jmp    0x18</value>
   </data>
   <data name="RepeatAct" xml:space="preserve">
     <value>80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
-0f 85 c4 00 00 00       jne    d1 &lt;skip_custom&gt;
+75 6c                   jne    75 &lt;original&gt;
 50                      push   rax
-48 83 ec 20             sub    rsp,0x20
-f3 0f 7f 04 24          movdqu XMMWORD PTR [rsp],xmm0
-f3 0f 7f 4c 24 10       movdqu XMMWORD PTR [rsp+0x10],xmm1
-f3 41 0f 7e 86 98 01    movq   xmm0,QWORD PTR [r14+0x198]
-00 00
-66 48 0f 7e c0          movq   rax,xmm0
-48 25 00 fc ff ff       and    rax,0xfffffffffffffc00
-66 48 0f 6e c0          movq   xmm0,rax
-f3 0f 7e 0d 00 00 00    movq   xmm1,QWORD PTR [rip+0x0]        # 3e &lt;_main+0x3e&gt;
-00
-66 48 0f 7e c8          movq   rax,xmm1
-48 25 00 fc ff ff       and    rax,0xfffffffffffffc00
-66 48 0f 6e c8          movq   xmm1,rax
-66 0f 2f c1             comisd xmm0,xmm1
-75 6d                   jne    c1 &lt;different_id&gt;
-f3 0f 6f 4c 24 10       movdqu xmm1,XMMWORD PTR [rsp+0x10]
-f3 0f 6f 04 24          movdqu xmm0,XMMWORD PTR [rsp]
-48 83 c4 20             add    rsp,0x20
+48 8b 05 00 00 00 00    mov    rax,QWORD PTR [rip+0x0]        # 11 &lt;_main+0x11&gt;
+4c 39 c8                cmp    rax,r9
+75 5e                   jne    74 &lt;original_pop_rax&gt;
 58                      pop    rax
-e8 00 00 00 00          call   69 &lt;_main+0x69&gt;
+e8 00 00 00 00          call   1c &lt;_main+0x1c&gt;
 51                      push   rcx
 53                      push   rbx
-8b 0d 00 00 00 00       mov    ecx,DWORD PTR [rip+0x0]        # 71 &lt;_main+0x71&gt;
-8b 1d 00 00 00 00       mov    ebx,DWORD PTR [rip+0x0]        # 77 &lt;_main+0x77&gt;
+8b 0d 00 00 00 00       mov    ecx,DWORD PTR [rip+0x0]        # 24 &lt;_main+0x24&gt;
+8b 1d 00 00 00 00       mov    ebx,DWORD PTR [rip+0x0]        # 2a &lt;_main+0x2a&gt;
 39 d9                   cmp    ecx,ebx
-75 25                   jne    a0 &lt;inc_count&gt;
-c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 82 &lt;_main+0x82&gt;
+75 25                   jne    53 &lt;inc_count&gt;
+c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 35 &lt;_main+0x35&gt;
 31 c9                   xor    ecx,ecx
-89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # 8a &lt;_main+0x8a&gt;
-8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # 90 &lt;_main+0x90&gt;
+89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # 3d &lt;_main+0x3d&gt;
+8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # 43 &lt;_main+0x43&gt;
 84 c9                   test   cl,cl
-c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 99 &lt;_main+0x99&gt;
+c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 4c &lt;_main+0x4c&gt;
 5b                      pop    rbx
 59                      pop    rcx
-e9 00 00 00 00          jmp    a0 &lt;inc_count&gt;
+e9 00 00 00 00          jmp    53 &lt;inc_count&gt;
 ff c1                   inc    ecx
-3b 0d 00 00 00 00       cmp    ecx,DWORD PTR [rip+0x0]        # a8 &lt;inc_count+0x8&gt;
-75 02                   jne    ac &lt;skip_xor&gt;
+3b 0d 00 00 00 00       cmp    ecx,DWORD PTR [rip+0x0]        # 5b &lt;inc_count+0x8&gt;
+75 02                   jne    5f &lt;skip_xor&gt;
 31 c9                   xor    ecx,ecx
-89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # b2 &lt;skip_xor+0x6&gt;
-8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # b8 &lt;skip_xor+0xc&gt;
+89 0d 00 00 00 00       mov    DWORD PTR [rip+0x0],ecx        # 65 &lt;skip_xor+0x6&gt;
+8a 0d 00 00 00 00       mov    cl,BYTE PTR [rip+0x0]        # 6b &lt;skip_xor+0xc&gt;
 84 c9                   test   cl,cl
 5b                      pop    rbx
 59                      pop    rcx
-e9 00 00 00 00          jmp    c1 &lt;different_id&gt;
-f3 0f 6f 4c 24 10       movdqu xmm1,XMMWORD PTR [rsp+0x10]
-f3 0f 6f 04 24          movdqu xmm0,XMMWORD PTR [rsp]
-48 83 c4 20             add    rsp,0x20
+e9 00 00 00 00          jmp    74 &lt;original_pop_rax&gt;
 58                      pop    rax
-e8 00 00 00 00          call   d6 &lt;skip_custom+0x5&gt;
+e8 00 00 00 00          call   7a &lt;original+0x5&gt;
 44 39 f8                cmp    eax,r15d
-e9 00 00 00 00          jmp    de &lt;skip_custom+0xd&gt;</value>
+e9 00 00 00 00          jmp    82 &lt;original+0xd&gt;</value>
   </data>
   <data name="RepeatActFlagSet" xml:space="preserve">
     <value>80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
@@ -1335,5 +1317,51 @@ c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 73 &lt;skip_set_f
 41 89 c7                mov    r15d,eax
 4f 8d 34 ec             lea    r14,[r12+r13*8]
 e9 00 00 00 00          jmp    80 &lt;skip_set_flag+0xd&gt;</value>
+  </data>
+  <data name="RepeatActIdCheck" xml:space="preserve">
+    <value>51                      push   rcx
+53                      push   rbx
+52                      push   rdx
+41 55                   push   r13
+56                      push   rsi
+57                      push   rdi
+48 31 db                xor    rbx,rbx
+41 80 3c 1c 00          cmp    BYTE PTR [r12+rbx*1],0x0
+74 05                   je     16 &lt;len_found&gt;
+48 ff c3                inc    rbx
+eb f4                   jmp    a &lt;find_len&gt;
+49 8b 4c 1c f8          mov    rcx,QWORD PTR [r12+rbx*1-0x8]
+48 ba 41 63 74 69 76    movabs rdx,0x6574617669746341
+61 74 65
+48 39 d1                cmp    rcx,rdx
+75 4d                   jne    77 &lt;not_match&gt;
+49 8b 4c 1c f1          mov    rcx,QWORD PTR [r12+rbx*1-0xf]
+48 be ff ff ff ff ff    movabs rsi,0xffffffffffffff
+ff ff 00
+48 ba 42 61 74 74 6c    movabs rdx,0x5f656c74746142
+65 5f 00
+48 21 f1                and    rcx,rsi
+48 39 d1                cmp    rcx,rdx
+75 2c                   jne    77 &lt;not_match&gt;
+4c 8d 2d 00 00 00 00    lea    r13,[rip+0x0]        # 52 &lt;len_found+0x3c&gt;
+48 8b 15 00 00 00 00    mov    rdx,QWORD PTR [rip+0x0]        # 59 &lt;len_found+0x43&gt;
+48 89 de                mov    rsi,rbx
+48 83 ee 0f             sub    rsi,0xf
+48 29 d6                sub    rsi,rdx
+4c 01 e6                add    rsi,r12
+4c 89 ef                mov    rdi,r13
+48 89 d1                mov    rcx,rdx
+f3 a6                   repz cmps BYTE PTR ds:[rsi],BYTE PTR es:[rdi]
+75 07                   jne    77 &lt;not_match&gt;
+48 89 05 00 00 00 00    mov    QWORD PTR [rip+0x0],rax        # 77 &lt;not_match&gt;
+5f                      pop    rdi
+5e                      pop    rsi
+41 5d                   pop    r13
+5a                      pop    rdx
+5b                      pop    rbx
+59                      pop    rcx
+48 8b 45 18             mov    rax,QWORD PTR [rbp+0x18]
+48 2b 45 10             sub    rax,QWORD PTR [rbp+0x10]
+e9 00 00 00 00          jmp    8b &lt;not_match+0x14&gt;</value>
   </data>
 </root>

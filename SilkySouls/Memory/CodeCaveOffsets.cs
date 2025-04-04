@@ -53,12 +53,17 @@ namespace SilkySouls.Memory
                 DesiredAct = 0xAF0,
                 Count = 0xAF4,
                 EnemyId = 0xB08,
-                Flag = 0xB10,
-                LastAct = 0xB14,
+                Flag = 0xB14,
+                LastAct = 0xB18,
                 ActManipCode = 0xB20,
                 OpcodeHistory = 0xC00,
                 RepeatActFlagLoc = 0xC10,
                 OpcodeCheckCode = 0xC20,
+                EnemyIdV2 = 0xD10,
+                EnemyIdLen = 0xD20,
+                EnemySavedPtr = 0xD30,
+                EnemyIdCheckCode = 0xD40,
+                
             }
     }
 }

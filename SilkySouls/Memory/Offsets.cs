@@ -175,6 +175,7 @@ namespace SilkySouls.memory
             PoisonMax = 0x428,
             ToxicMax = 0x42C,
             BleedMax = 0x430,
+            ForceActPtr = 0xAD0,
         }
 
         public const int BattleGoalIdPtr1 = 0xAD0;
@@ -184,6 +185,8 @@ namespace SilkySouls.memory
         public const int SpEffectPtr1 = 0x28;
         public const int SpEffectPtr2 = 0x8;
         public const int SpEffectOffset = 0x50;
+
+        public const int ForceActOffset = 0x360;
         
              
         public static class EventFlagMan
@@ -272,6 +275,7 @@ namespace SilkySouls.memory
             public static long WarpCoords;
             public static long LuaInterpreter;
             public static long LuaIfElse;
+            public static long BattleActivate;
         }
     }
 }

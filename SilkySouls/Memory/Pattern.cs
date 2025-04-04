@@ -52,6 +52,15 @@
             0,
             RipType.None
         );
+
+        public static readonly Pattern BattleActivateHook = new Pattern(
+            new byte[]
+            {
+                0x48, 0x8B, 0x45, 0x18, 0x48, 0x2B, 0x45, 0x10, 0x48, 0xC1, 0xF8, 0x03, 0x85, 0xC0, 0x0F, 0x8E
+            },
+            "xxxxxxxxxxxxxxxx",
+            0,
+            RipType.None);
         
         public static readonly Pattern GameDataMan = new Pattern(
             new byte[] { 0x8B, 0x70, 0x4C, 0x89 },
