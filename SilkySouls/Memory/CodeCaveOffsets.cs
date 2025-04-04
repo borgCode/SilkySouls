@@ -48,8 +48,6 @@ namespace SilkySouls.Memory
 
             public enum RepeatAct
             {
-                LuaModulePtr = 0xAC0,
-                GetLuaModuleHook = 0xAD0,
                 DesiredAct = 0xAF0,
                 Count = 0xAF4,
                 EnemyId = 0xB08,

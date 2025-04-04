@@ -15,5 +15,14 @@ namespace SilkySouls.Memory
 
         public static byte[] GetRelOffsetBytes(long srcInstrAddr, long targetAddr, int instrLength = 0)
             => BitConverter.GetBytes(GetRelOffset(srcInstrAddr, targetAddr, instrLength));
+
+        public static void WriteRelativeOffsets(byte[] bytes, (long baseAddr, long targetAddr, int size, int offset)[] offsets)
+        {
+            foreach (var (baseAddr, targetAddr, size, offset) in offsets)
+            {
+                var relativeBytes = GetRelOffsetBytes(baseAddr, targetAddr, size);
+                Array.Copy(relativeBytes, 0, bytes, offset, 4);
+            }
+        }
     }
 }

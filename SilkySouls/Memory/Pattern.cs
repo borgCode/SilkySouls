@@ -46,6 +46,12 @@
             RipType.None
         );
 
+        public static readonly Pattern LuaOpCodeSwitch = new Pattern(
+            new byte[] { 0x44, 0x8B, 0xF8, 0x4F },
+            "xxxx",
+            0,
+            RipType.None);
+
         public static readonly Pattern BattleActivateHook = new Pattern(
             new byte[]
             {
