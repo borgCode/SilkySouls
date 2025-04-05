@@ -79,6 +79,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
             Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
+            Console.WriteLine($"WorldAiMan: 0x{Offsets.WorldAiMan.Base.ToInt64():X}");
 
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
@@ -171,7 +172,7 @@ namespace SilkySouls.Memory
 
             return IntPtr.Zero;
         }
-        
+
         public int[] DoActScan(IntPtr luaModule, string enemyId)
         {
             const int chunkSize = 4096 * 16;
@@ -181,10 +182,10 @@ namespace SilkySouls.Memory
             byte[] actAobScan = Encoding.ASCII.GetBytes(enemyId)
                 .Concat(Encoding.ASCII.GetBytes("Battle_Activate"))
                 .ToArray();
-            
+
             IntPtr currentAddress = luaModule;
             IntPtr endAddress = IntPtr.Add(currentAddress, 0x400000);
-            
+
             List<int> bestActs = new List<int>();
             bool bestIsOrdered = false;
             int matchCount = 0;
@@ -217,7 +218,7 @@ namespace SilkySouls.Memory
                     try
                     {
                         var acts = ParseActsFromMemory(foundAddress, enemyId, maxReadSize);
-                        
+
                         if (acts.Count > 0)
                         {
                             bool isOrdered = IsOrdered(acts);
@@ -228,7 +229,6 @@ namespace SilkySouls.Memory
                                 bestActs = acts;
                                 bestIsOrdered = isOrdered;
                             }
-                            
                         }
 
                         if (++matchCount >= maxMatches) break;
@@ -238,7 +238,132 @@ namespace SilkySouls.Memory
                         Console.WriteLine($"Error reading result data: {ex.Message}");
                     }
                 }
+
                 currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
+            }
+            Console.WriteLine("AOB scan pattern bytes:");
+            for (int i = 0; i < actAobScan.Length; i++)
+            {
+                Console.Write($"{actAobScan[i]:X2} ");
+                if ((i + 1) % 16 == 0) Console.WriteLine(); // New line every 16 bytes for readability
+            }
+            
+            Console.WriteLine("Best acts content:");
+            for (int i = 0; i < bestActs.Count; i++)
+            {
+                Console.WriteLine($"  Index {i}: {bestActs[i]}");
+            }
+            
+            if (bestActs.Count == 0)
+            {
+                Console.WriteLine($"Best acts empty, initiating fallback scan. Current best acts: [{string.Join(", ", bestActs)}]");
+    
+                var scriptModuleStart = _memoryIo.GetModuleStart((IntPtr)_memoryIo.ReadUInt64(Offsets.WorldAiMan.Base));
+                Console.WriteLine($"Script module address: 0x{scriptModuleStart.ToInt64():X}");
+    
+                var scanEndAddress = IntPtr.Add(scriptModuleStart, 79000000);
+                Console.WriteLine($"Scan end address: 0x{scanEndAddress.ToInt64():X}");
+
+                IntPtr currentScanAddr = scriptModuleStart;
+                List<int> fallbackActs = new List<int>();
+                bool foundMatch = false;
+
+                while (currentScanAddr.ToInt64() < scanEndAddress.ToInt64() && !foundMatch)
+                {
+                    int bytesRemaining = (int)(scanEndAddress.ToInt64() - currentScanAddr.ToInt64());
+                    int bytesToRead = Math.Min(bytesRemaining, chunkSize);
+
+                    Console.WriteLine(
+                        $"Scanning fallback location at 0x{currentScanAddr.ToInt64():X} - remaining bytes: {bytesRemaining}");
+
+                    if (bytesToRead < actAobScan.Length)
+                    {
+                        Console.WriteLine("Bytes to read less than pattern length, ending scan");
+                        break;
+                    }
+
+                    byte[] buffer;
+                    try
+                    {
+                        buffer = _memoryIo.ReadBytes(currentScanAddr, bytesToRead);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error reading memory at 0x{currentScanAddr.ToInt64():X}: {ex.Message}");
+                        currentScanAddr = IntPtr.Add(currentScanAddr, bytesToRead - actAobScan.Length + 1);
+                        continue;
+                    }
+
+                    for (int i = 0; i <= bytesToRead - actAobScan.Length; i++)
+                    {
+                        if (!IsPatternMatch(buffer, i, actAobScan)) continue;
+
+                        IntPtr foundAddress = IntPtr.Add(currentScanAddr, i);
+                        Console.WriteLine(
+                            $"Pattern match found at address 0x{foundAddress.ToInt64():X}, reading 4000 bytes");
+
+                        try
+                        {
+                            byte[] resultBuffer = _memoryIo.ReadBytes(foundAddress, 4000);
+                            string content = Encoding.ASCII.GetString(resultBuffer);
+
+                            Console.WriteLine("Parsing content with regex for Act patterns");
+                            var matches = Regex.Matches(content, @"Act(\d+)Per");
+                            Console.WriteLine($"Found {matches.Count} regex matches");
+
+                            int lastNum = -1;
+
+                            foreach (Match match in matches)
+                            {
+                                int actNum = int.Parse(match.Groups[1].Value);
+                                Console.WriteLine($"Found Act{actNum}Per pattern");
+
+                                if (lastNum != -1 && actNum <= lastNum)
+                                {
+                                    Console.WriteLine(
+                                        $"Unordered sequence detected (previous: {lastNum}, current: {actNum}), stopping collection");
+                                    break;
+                                }
+
+                                fallbackActs.Add(actNum);
+                                lastNum = actNum;
+                                Console.WriteLine(
+                                    $"Added Act {actNum} to fallback list, total count: {fallbackActs.Count}");
+                            }
+
+                            if (fallbackActs.Count > 0)
+                            {
+                                Console.WriteLine(
+                                    $"Successfully found {fallbackActs.Count} ordered acts in fallback scan");
+                                foundMatch = true;
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("No valid act sequences found at this location");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(
+                                $"Error reading fallback data at 0x{foundAddress.ToInt64():X}: {ex.Message}");
+                        }
+                    }
+
+                    currentScanAddr = IntPtr.Add(currentScanAddr, bytesToRead - actAobScan.Length + 1);
+                    Console.WriteLine($"Moving to next chunk at 0x{currentScanAddr.ToInt64():X}");
+                }
+
+                if (fallbackActs.Count > 0)
+                {
+                    Console.WriteLine($"Using fallback acts: {string.Join(", ", fallbackActs)}");
+                }
+                else
+                {
+                    Console.WriteLine("No fallback acts found in secondary scan");
+                }
+
+                bestActs = fallbackActs;
             }
 
             return bestActs.ToArray();
@@ -253,7 +378,7 @@ namespace SilkySouls.Memory
 
             return true;
         }
-        
+
         private List<int> ParseActsFromMemory(IntPtr address, string enemyId, int readSize)
         {
             string result = Encoding.ASCII.GetString(_memoryIo.ReadBytes(address, readSize));

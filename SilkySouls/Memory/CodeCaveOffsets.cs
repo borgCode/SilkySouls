@@ -50,7 +50,6 @@ namespace SilkySouls.Memory
             {
                 DesiredAct = 0xAF0,
                 Count = 0xAF4,
-                EnemyId = 0xB08,
                 Flag = 0xB14,
                 LastAct = 0xB18,
                 ActManipCode = 0xB20,

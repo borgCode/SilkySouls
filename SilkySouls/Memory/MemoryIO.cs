@@ -365,5 +365,10 @@ namespace SilkySouls.Memory
                 }
             }
         }
+
+        public IntPtr GetModuleStart(IntPtr address)
+        {
+            return Kernel32.QueryMemory(ProcessHandle, address).BaseAddress;
+        }
     }
 }
