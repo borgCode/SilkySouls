@@ -1302,21 +1302,32 @@ c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 15 &lt;skip_clear
 89 15 00 00 00 00       mov    DWORD PTR [rip+0x0],edx        # 40 &lt;skip_clear_flag+0x2b&gt;
 8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 46 &lt;skip_clear_flag+0x31&gt;
 83 f8 0c                cmp    eax,0xc
-75 28                   jne    73 &lt;skip_set_flag&gt;
+75 2a                   jne    75 &lt;check_pattern_2&gt;
 8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 51 &lt;skip_clear_flag+0x3c&gt;
 83 f8 0c                cmp    eax,0xc
-75 1d                   jne    73 &lt;skip_set_flag&gt;
+75 1f                   jne    75 &lt;check_pattern_2&gt;
 8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 5c &lt;skip_clear_flag+0x47&gt;
 83 f8 19                cmp    eax,0x19
-75 12                   jne    73 &lt;skip_set_flag&gt;
+75 14                   jne    75 &lt;check_pattern_2&gt;
 8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 67 &lt;skip_clear_flag+0x52&gt;
 83 f8 17                cmp    eax,0x17
-75 07                   jne    73 &lt;skip_set_flag&gt;
-c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 73 &lt;skip_set_flag&gt;
+75 09                   jne    75 &lt;check_pattern_2&gt;
+c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 73 &lt;skip_clear_flag+0x5e&gt;
+eb 28                   jmp    9d &lt;exit&gt;
+8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 7b &lt;check_pattern_2+0x6&gt;
+83 f8 01                cmp    eax,0x1
+75 1d                   jne    9d &lt;exit&gt;
+8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 86 &lt;check_pattern_2+0x11&gt;
+83 f8 14                cmp    eax,0x14
+75 12                   jne    9d &lt;exit&gt;
+8b 05 00 00 00 00       mov    eax,DWORD PTR [rip+0x0]        # 91 &lt;check_pattern_2+0x1c&gt;
+83 f8 17                cmp    eax,0x17
+75 07                   jne    9d &lt;exit&gt;
+c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 9d &lt;exit&gt;
 58                      pop    rax
 41 89 c7                mov    r15d,eax
 4f 8d 34 ec             lea    r14,[r12+r13*8]
-e9 00 00 00 00          jmp    80 &lt;skip_set_flag+0xd&gt;</value>
+e9 00 00 00 00          jmp    aa &lt;exit+0xd&gt;</value>
   </data>
   <data name="RepeatActIdCheck" xml:space="preserve">
     <value>51                      push   rcx

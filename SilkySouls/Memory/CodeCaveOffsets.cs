@@ -6,7 +6,6 @@ namespace SilkySouls.Memory
     {
        
             public static IntPtr Base;
-
             public const int EnableDraw = 0x0;
             public const int TargetView = 0x200;
             public const int LockedTarget = 0x220;
@@ -56,11 +55,10 @@ namespace SilkySouls.Memory
                 OpcodeHistory = 0xC00,
                 RepeatActFlagLoc = 0xC10,
                 OpcodeCheckCode = 0xC20,
-                EnemyIdV2 = 0xD10,
-                EnemyIdLen = 0xD20,
-                EnemySavedPtr = 0xD30,
-                EnemyIdCheckCode = 0xD40,
-                
+                EnemyId = 0xD40,
+                EnemyIdLen = 0xD50,
+                EnemySavedPtr = 0xD60,
+                EnemyIdCheckCode = 0xD70,
             }
     }
 }

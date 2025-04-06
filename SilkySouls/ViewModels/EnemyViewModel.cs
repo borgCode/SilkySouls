@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Threading;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
@@ -12,6 +11,7 @@ namespace SilkySouls.ViewModels
         private bool _areOptionsEnabled;
 
         private bool _isTargetOptionsEnabled;
+        private bool _isValidTarget;
         private readonly DispatcherTimer _targetOptionsTimer;
 
         private int _targetCurrentHealth;
@@ -48,6 +48,8 @@ namespace SilkySouls.ViewModels
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
         private bool _isAllNoDeathEnabled;
+
+        private string _currentlyRepeatingAct = "None";
         
         private readonly EnemyService _enemyService;
         private readonly HotkeyManager _hotkeyManager;
@@ -89,8 +91,13 @@ namespace SilkySouls.ViewModels
         
         private void TargetOptionsTimerTick(object sender, EventArgs e)
         {
-            if (!IsTargetValid()) return;
-            
+            if (!IsTargetValid())
+            {
+                IsValidTarget = false;
+                return;
+            }
+
+            IsValidTarget = true;
             TargetCurrentHealth = _enemyService.GetTargetHp();
             TargetMaxHealth = _enemyService.GetTargetMaxHp();
 
@@ -222,6 +229,12 @@ namespace SilkySouls.ViewModels
         {
             get => _areOptionsEnabled;
             set => SetProperty(ref _areOptionsEnabled, value);
+        }
+        
+        public bool IsValidTarget
+        {
+            get => _isValidTarget;
+            set => SetProperty(ref _isValidTarget, value);
         }
 
         public bool IsTargetOptionsEnabled
@@ -414,6 +427,7 @@ namespace SilkySouls.ViewModels
                 int index = RepeatActOptions.IndexOf(value);
                 int maxAct = RepeatActOptions.Count - 1;
                 _enemyService.RepeatAct(index, maxAct);
+                _currentlyRepeatingAct = value; 
             } 
         }
         
@@ -426,7 +440,7 @@ namespace SilkySouls.ViewModels
                 {
                     if (_isRepeatActEnabled)
                     {
-                        //TODO target validation
+             
                         for (int i = RepeatActOptions.Count - 1; i >= 0; i--)
                         {
                             if (RepeatActOptions[i] != "None")
@@ -439,6 +453,30 @@ namespace SilkySouls.ViewModels
                             string actLabel = $"Act {act}";
                             if (!RepeatActOptions.Contains(actLabel))
                                 RepeatActOptions.Add(actLabel);
+                        }
+                        
+                        var currentRepeatEnemyId = _enemyService.GetCurrentRepeatEnemyId();
+                        var lockedTargetId = _enemyService.GetEnemyBattleId();
+                        if (currentRepeatEnemyId != lockedTargetId)
+                        {
+                            _enemyService.DisableRepeatAct();
+                            _currentlyRepeatingAct = "None";
+                        }
+                        
+                        if (!RepeatActOptions.Contains(_currentlyRepeatingAct))
+                        {
+                            _currentlyRepeatingAct = "None";
+                        }
+                        SelectedRepeatActOption = _currentlyRepeatingAct;
+                    }
+                    else
+                    {
+                        var currentRepeatEnemyId = _enemyService.GetCurrentRepeatEnemyId();
+                        var lockedTargetId = _enemyService.GetEnemyBattleId();
+                        if (currentRepeatEnemyId == lockedTargetId)
+                        {
+                            _enemyService.DisableRepeatAct();
+                            _currentlyRepeatingAct = "None";
                         }
                     }
                 }

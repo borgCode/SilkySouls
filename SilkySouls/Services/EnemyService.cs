@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SilkySouls.memory;
@@ -23,6 +24,7 @@ namespace SilkySouls.Services
         private bool _isRepeatActCodeWritten;
         private bool _hasWrittenEnemyId;
         private bool _isRepeatActHookInstalled;
+        private List<long> _repeatActHooks = new List<long>();
 
         public EnemyService(MemoryIo memoryIo, HookManager hookManager, AoBScanner aobScanner)
         {
@@ -289,7 +291,7 @@ namespace SilkySouls.Services
                     Offsets.WorldAiMan.DLLua,
                     Offsets.WorldAiMan.LuaModule
                 }, true);
-            
+
             var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
                 new[]
                 {
@@ -299,7 +301,6 @@ namespace SilkySouls.Services
                 }, false);
 
             string enemyId = _memoryIo.ReadInt32(enemyBattleIdPtr).ToString();
-
             return _aoBScanner.DoActScan(luaModulePtr, enemyId);
         }
 
@@ -310,7 +311,7 @@ namespace SilkySouls.Services
             var hookLoc = Offsets.Hooks.LuaIfElse;
             var opcodeHookLoc = Offsets.Hooks.LuaOpcodeSwitch;
             var battleActivateHook = Offsets.Hooks.BattleActivate;
-            
+
             if (actLabelIndex == 0)
             {
                 _hookManager.UninstallHook(actManipCode.ToInt64());
@@ -327,8 +328,8 @@ namespace SilkySouls.Services
                     Offsets.ForceActOffset
                 }, false);
             _memoryIo.WriteByte(forceAct, actLabelIndex);
-            
-            var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdV2;
+
+            var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId;
             var enemyIdLengthPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdLen;
             if (!_hasWrittenEnemyId)
             {
@@ -339,11 +340,11 @@ namespace SilkySouls.Services
                         Offsets.BattleGoalIdPtr2,
                         Offsets.BattleGoalIdOffset
                     }, false);
-                
+
                 string enemyId = _memoryIo.ReadInt32(enemyBattleIdPtr).ToString();
                 byte[] enemyIdBytes = Encoding.ASCII.GetBytes(enemyId);
 
-                _memoryIo.WriteBytes(enemyIdLoc, enemyIdBytes); 
+                _memoryIo.WriteBytes(enemyIdLoc, enemyIdBytes);
                 _memoryIo.WriteInt32(enemyIdLengthPtr, enemyIdBytes.Length);
                 _hasWrittenEnemyId = true;
             }
@@ -360,21 +361,21 @@ namespace SilkySouls.Services
             var originalCallOffset = Offsets.Hooks.LuaIfElse + 0x906;
             var count = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Count;
             var flag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Flag;
-            
+
             if (!_isRepeatActCodeWritten)
             {
-                
                 byte[] enemyIdCheckBytes = AsmLoader.GetAsmBytes("RepeatActIdCheck");
-                AsmHelper.WriteRelativeOffsets(enemyIdCheckBytes, new[] { 
+                AsmHelper.WriteRelativeOffsets(enemyIdCheckBytes, new[]
+                {
                     (enemyIdCheckLoc.ToInt64() + 0x4B, enemyIdLoc.ToInt64(), 7, 0x4B + 3),
                     (enemyIdCheckLoc.ToInt64() + 0x52, enemyIdLengthPtr.ToInt64(), 7, 0x52 + 3),
                     (enemyIdCheckLoc.ToInt64() + 0x70, enemySavedPtr.ToInt64(), 7, 0x70 + 3)
                 });
-                
+
                 Byte[] bytes = BitConverter.GetBytes((int)battleActivateHook + 8 - (enemyIdCheckLoc.ToInt64() + 0x8B));
                 Array.Copy(bytes, 0, enemyIdCheckBytes, 0x86 + 1, 4);
                 _memoryIo.WriteBytes(enemyIdCheckLoc, enemyIdCheckBytes);
-                
+
                 byte[] opcodeCheckBytes = AsmLoader.GetAsmBytes("RepeatActFlagSet");
                 AsmHelper.WriteRelativeOffsets(opcodeCheckBytes, new[]
                 {
@@ -384,21 +385,25 @@ namespace SilkySouls.Services
                     (opcodeCheckCode.ToInt64() + 0x1C, opcodeHistoryLoc.ToInt64(), 6, 0x1C + 2),
                     (opcodeCheckCode.ToInt64() + 0x22, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x22 + 2),
                     (opcodeCheckCode.ToInt64() + 0x28, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x28 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x2E, opcodeHistoryLoc.ToInt64() + 0x1C, 6, 0x2E + 2),
+                    (opcodeCheckCode.ToInt64() + 0x2E, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x2E + 2),
                     (opcodeCheckCode.ToInt64() + 0x34, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x34 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x3A, opcodeHistoryLoc.ToInt64() + 0x1C, 6, 0x3A + 2),
-                    (opcodeCheckCode.ToInt64() + 0x40, opcodeHistoryLoc.ToInt64(), 6, 0x40 + 2),      // history[1]
-                    (opcodeCheckCode.ToInt64() + 0x4B, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x4B + 2),// history[2]
-                    (opcodeCheckCode.ToInt64() + 0x56, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x56 + 2),// history[3]
-                    (opcodeCheckCode.ToInt64() + 0x61, opcodeHistoryLoc.ToInt64() + 0x1C, 6, 0x61 + 2),// history[4]
-                    (opcodeCheckCode.ToInt64() + 0x6C, repeatActFlagLoc.ToInt64(), 7, 0x6C + 2)
+                    (opcodeCheckCode.ToInt64() + 0x3A, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x3A + 2),
+                    (opcodeCheckCode.ToInt64() + 0x40, opcodeHistoryLoc.ToInt64(), 6, 0x40 + 2), // history[1]
+                    (opcodeCheckCode.ToInt64() + 0x4B, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x4B + 2), // history[2]
+                    (opcodeCheckCode.ToInt64() + 0x56, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x56 + 2), // history[3]
+                    (opcodeCheckCode.ToInt64() + 0x61, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x61 + 2), // history[4]
+                    (opcodeCheckCode.ToInt64() + 0x6C, repeatActFlagLoc.ToInt64(), 7, 0x6C + 2),
+                    (opcodeCheckCode.ToInt64() + 0x75, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x75 + 2), // history[2]
+                    (opcodeCheckCode.ToInt64() + 0x80, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x80 + 2), // history[3]
+                    (opcodeCheckCode.ToInt64() + 0x8B, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x8B + 2), // history[4]
+                    (opcodeCheckCode.ToInt64() + 0x96, repeatActFlagLoc.ToInt64(), 7, 0x96 + 2),
                 });
-                
-                bytes = BitConverter.GetBytes((int)opcodeHookLoc + 7 - (opcodeCheckCode.ToInt64() + 0x80));
-                Array.Copy(bytes, 0, opcodeCheckBytes, 0x7B + 1, 4);
+
+                bytes = BitConverter.GetBytes((int)opcodeHookLoc + 7 - (opcodeCheckCode.ToInt64() + 0xAA));
+                Array.Copy(bytes, 0, opcodeCheckBytes, 0xA5 + 1, 4);
 
                 _memoryIo.WriteBytes(opcodeCheckCode, opcodeCheckBytes);
-                
+
                 byte[] repeatActBytes = AsmLoader.GetAsmBytes("RepeatAct");
                 AsmHelper.WriteRelativeOffsets(repeatActBytes, new[]
                 {
@@ -416,7 +421,7 @@ namespace SilkySouls.Services
                     (actManipCode.ToInt64() + 0x65, flag.ToInt64(), 6, 0x65 + 2),
                     (actManipCode.ToInt64() + 0x75, originalCallOffset, 5, 0x75 + 1)
                 });
-                
+
                 var hookJumpOffsets = new[]
                 {
                     (0x53, 0x4E + 1),
@@ -435,13 +440,44 @@ namespace SilkySouls.Services
             }
 
             if (_isRepeatActHookInstalled) return;
-            _hookManager.InstallHook(enemyIdCheckLoc.ToInt64(), battleActivateHook,
-                new byte[] { 0x48, 0x8B, 0x45, 0x18, 0x48, 0x2B, 0x45, 0x10 });
-            _hookManager.InstallHook(opcodeCheckCode.ToInt64(), opcodeHookLoc,
-                new byte[] { 0x44, 0x8B, 0xF8, 0x4F, 0x8D, 0x34, 0xEC });
-            _hookManager.InstallHook(actManipCode.ToInt64(), hookLoc,
-                new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 });
+            _repeatActHooks.Add(_hookManager.InstallHook(enemyIdCheckLoc.ToInt64(), battleActivateHook,
+                new byte[] { 0x48, 0x8B, 0x45, 0x18, 0x48, 0x2B, 0x45, 0x10 }));
+            _repeatActHooks.Add(_hookManager.InstallHook(opcodeCheckCode.ToInt64(), opcodeHookLoc,
+                new byte[] { 0x44, 0x8B, 0xF8, 0x4F, 0x8D, 0x34, 0xEC }));
+            _repeatActHooks.Add(_hookManager.InstallHook(actManipCode.ToInt64(), hookLoc,
+                    new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 }));
             _isRepeatActHookInstalled = true;
+        }
+
+        public void DisableRepeatAct()
+        {
+            foreach (var hookAddr in _repeatActHooks)
+            {
+                _hookManager.UninstallHook(hookAddr);
+            }
+            _repeatActHooks.Clear();
+            _hasWrittenEnemyId = false;
+            _isRepeatActCodeWritten = false;
+            _isRepeatActHookInstalled = false;
+            _memoryIo.WriteBytes(CodeCaveOffsets.Base + (int) CodeCaveOffsets.RepeatAct.DesiredAct, new byte[780]);
+        }
+
+        public int GetCurrentRepeatEnemyId()
+        {
+            var enemyIdBytes = _memoryIo.ReadBytes(CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId, 8);
+            return int.Parse(Encoding.ASCII.GetString(enemyIdBytes).TrimEnd('\0'));
+        }
+
+        public int GetEnemyBattleId()
+        {
+            var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
+                new[]
+                {
+                    Offsets.BattleGoalIdPtr1,
+                    Offsets.BattleGoalIdPtr2,
+                    Offsets.BattleGoalIdOffset
+                }, false);
+            return _memoryIo.ReadInt32(enemyBattleIdPtr);
         }
 
         public void ToggleAllNoDamage(int value)
@@ -469,7 +505,6 @@ namespace SilkySouls.Services
 
         public void ToggleAllNoDeath(int value)
         {
-            _hookManager.UninstallHook(_lastTargetBlock.ToInt64());
             var allNoDeathPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.AllNoDeath;
             _memoryIo.WriteInt32(allNoDeathPtr, value);
         }

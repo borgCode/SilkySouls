@@ -264,6 +264,7 @@ namespace SilkySouls.memory
             public const int DLLuaPtr = 0x17E8;
             public const int DLLua = 0x8;
             public const int LuaModule = 0x28;
+          
         }
         
         public static class Hooks

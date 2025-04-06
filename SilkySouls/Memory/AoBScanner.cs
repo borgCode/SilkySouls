@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using SilkySouls.memory;
 
 namespace SilkySouls.Memory
@@ -241,132 +244,149 @@ namespace SilkySouls.Memory
 
                 currentAddress = IntPtr.Add(currentAddress, bytesToRead - actAobScan.Length + 1);
             }
-            Console.WriteLine("AOB scan pattern bytes:");
-            for (int i = 0; i < actAobScan.Length; i++)
-            {
-                Console.Write($"{actAobScan[i]:X2} ");
-                if ((i + 1) % 16 == 0) Console.WriteLine(); // New line every 16 bytes for readability
-            }
-            
-            Console.WriteLine("Best acts content:");
-            for (int i = 0; i < bestActs.Count; i++)
-            {
-                Console.WriteLine($"  Index {i}: {bestActs[i]}");
-            }
-            
-            if (bestActs.Count == 0)
-            {
-                Console.WriteLine($"Best acts empty, initiating fallback scan. Current best acts: [{string.Join(", ", bestActs)}]");
-    
-                var scriptModuleStart = _memoryIo.GetModuleStart((IntPtr)_memoryIo.ReadUInt64(Offsets.WorldAiMan.Base));
-                Console.WriteLine($"Script module address: 0x{scriptModuleStart.ToInt64():X}");
-    
-                var scanEndAddress = IntPtr.Add(scriptModuleStart, 79000000);
-                Console.WriteLine($"Scan end address: 0x{scanEndAddress.ToInt64():X}");
 
-                IntPtr currentScanAddr = scriptModuleStart;
-                List<int> fallbackActs = new List<int>();
-                bool foundMatch = false;
 
-                while (currentScanAddr.ToInt64() < scanEndAddress.ToInt64() && !foundMatch)
+            if (bestActs.Count != 0) return bestActs.ToArray();
+
+            var worldAiBase = (IntPtr)_memoryIo.ReadUInt64(Offsets.WorldAiMan.Base);
+            var scriptModuleStart = _memoryIo.GetModuleStart(worldAiBase) + 0x8E20000;
+
+            var rangesToScan = new (IntPtr Start, IntPtr End)[]
+            {
+                (scriptModuleStart, (IntPtr)0x10000000),
+                ((IntPtr)0x1A000000, (IntPtr)0x1D000000)
+            };
+            var cts = new CancellationTokenSource();
+            var tasks = rangesToScan.Select((range, index) =>
+                ScanMemoryRange(
+                    range.Start,
+                    range.End,
+                    index,
+                    actAobScan,
+                    chunkSize,
+                    enemyId,
+                    cts.Token)
+            ).ToList();
+
+            try
+            {
+                while (tasks.Count > 0)
                 {
-                    int bytesRemaining = (int)(scanEndAddress.ToInt64() - currentScanAddr.ToInt64());
+                    var completedIndex = Task.WaitAny(tasks.Cast<Task>().ToArray());
+                    var completedTask = tasks[completedIndex];
+                    var result = completedTask.Result;
+                    tasks.Remove(completedTask);
+
+                    if (result.Acts.Count <= 0) continue;
+                    bestActs = result.Acts;
+                    cts.Cancel();
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                cts.Cancel();
+            }
+
+
+            return bestActs.ToArray();
+        }
+
+        private Task<(List<int> Acts, int RegionIndex)> ScanMemoryRange(
+            IntPtr rangeStart,
+            IntPtr rangeEnd,
+            int regionIndex,
+            byte[] actAobScan,
+            int chunkSize,
+            string enemyId,
+            CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                var fallbackActs = new List<int>();
+                IntPtr currentScanAddr = rangeStart;
+
+                while (currentScanAddr.ToInt64() < rangeEnd.ToInt64() && !cancellationToken.IsCancellationRequested)
+                {
+                    int bytesRemaining = (int)(rangeEnd.ToInt64() - currentScanAddr.ToInt64());
                     int bytesToRead = Math.Min(bytesRemaining, chunkSize);
 
-                    Console.WriteLine(
-                        $"Scanning fallback location at 0x{currentScanAddr.ToInt64():X} - remaining bytes: {bytesRemaining}");
-
-                    if (bytesToRead < actAobScan.Length)
-                    {
-                        Console.WriteLine("Bytes to read less than pattern length, ending scan");
-                        break;
-                    }
+                    if (bytesToRead < actAobScan.Length) break;
 
                     byte[] buffer;
                     try
                     {
                         buffer = _memoryIo.ReadBytes(currentScanAddr, bytesToRead);
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Console.WriteLine($"Error reading memory at 0x{currentScanAddr.ToInt64():X}: {ex.Message}");
                         currentScanAddr = IntPtr.Add(currentScanAddr, bytesToRead - actAobScan.Length + 1);
                         continue;
                     }
 
                     for (int i = 0; i <= bytesToRead - actAobScan.Length; i++)
                     {
+                        if (cancellationToken.IsCancellationRequested) break;
+
                         if (!IsPatternMatch(buffer, i, actAobScan)) continue;
 
                         IntPtr foundAddress = IntPtr.Add(currentScanAddr, i);
-                        Console.WriteLine(
-                            $"Pattern match found at address 0x{foundAddress.ToInt64():X}, reading 4000 bytes");
-
                         try
                         {
                             byte[] resultBuffer = _memoryIo.ReadBytes(foundAddress, 4000);
                             string content = Encoding.ASCII.GetString(resultBuffer);
 
-                            Console.WriteLine("Parsing content with regex for Act patterns");
                             var matches = Regex.Matches(content, @"Act(\d+)Per");
-                            Console.WriteLine($"Found {matches.Count} regex matches");
-
                             int lastNum = -1;
 
                             foreach (Match match in matches)
                             {
                                 int actNum = int.Parse(match.Groups[1].Value);
-                                Console.WriteLine($"Found Act{actNum}Per pattern");
 
-                                if (lastNum != -1 && actNum <= lastNum)
-                                {
-                                    Console.WriteLine(
-                                        $"Unordered sequence detected (previous: {lastNum}, current: {actNum}), stopping collection");
-                                    break;
-                                }
+                                if (lastNum != -1 && actNum <= lastNum) break;
 
                                 fallbackActs.Add(actNum);
                                 lastNum = actNum;
-                                Console.WriteLine(
-                                    $"Added Act {actNum} to fallback list, total count: {fallbackActs.Count}");
                             }
 
                             if (fallbackActs.Count > 0)
                             {
-                                Console.WriteLine(
-                                    $"Successfully found {fallbackActs.Count} ordered acts in fallback scan");
-                                foundMatch = true;
-                                break;
+                                return (fallbackActs, regionIndex);
                             }
-                            else
+
+                            var alternativeMatches = Regex.Matches(content, $@"{enemyId}_Act(\d+)");
+                            lastNum = -1;
+
+                            foreach (Match match in alternativeMatches)
                             {
-                                Console.WriteLine("No valid act sequences found at this location");
+                                int actNum = int.Parse(match.Groups[1].Value);
+
+                                if (actNum > 0 && actNum < 1000)
+                                {
+                                    if (lastNum != -1 && actNum <= lastNum) break;
+
+                                    fallbackActs.Add(actNum);
+                                    lastNum = actNum;
+                                }
+                            }
+
+                            if (fallbackActs.Count > 0)
+                            {
+                                return (fallbackActs, regionIndex);
                             }
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(
-                                $"Error reading fallback data at 0x{foundAddress.ToInt64():X}: {ex.Message}");
+                                $"Region {regionIndex}: Error reading fallback data at 0x{foundAddress.ToInt64():X}: {ex.Message}");
                         }
                     }
 
                     currentScanAddr = IntPtr.Add(currentScanAddr, bytesToRead - actAobScan.Length + 1);
-                    Console.WriteLine($"Moving to next chunk at 0x{currentScanAddr.ToInt64():X}");
                 }
 
-                if (fallbackActs.Count > 0)
-                {
-                    Console.WriteLine($"Using fallback acts: {string.Join(", ", fallbackActs)}");
-                }
-                else
-                {
-                    Console.WriteLine("No fallback acts found in secondary scan");
-                }
-
-                bestActs = fallbackActs;
-            }
-
-            return bestActs.ToArray();
+                return (fallbackActs, regionIndex);
+            }, cancellationToken);
         }
 
         private bool IsPatternMatch(byte[] buffer, int startIndex, byte[] pattern)

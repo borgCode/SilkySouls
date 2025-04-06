@@ -76,7 +76,14 @@
                         </UniformGrid>
 
                         <CheckBox Grid.Column="1" Content="Freeze Health" Margin="10,0,0,0"
-                                  IsChecked="{Binding IsFreezeHealthEnabled}" />
+                                  IsChecked="{Binding IsFreezeHealthEnabled}">
+                            <CheckBox.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="AreOptionsEnabled" />
+                                    <Binding Path="IsValidTarget" />
+                                </MultiBinding>
+                            </CheckBox.IsEnabled>
+                        </CheckBox>
                     </Grid>
 
                     <Grid Margin="0,5,0,10">
@@ -131,11 +138,12 @@
                                                                    HorizontalAlignment="Left"
                                                                    RadiusX="2" RadiusY="2"
                                                                    Margin="1" />
-                                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                        <TextBlock HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"
                                                                    Foreground="White" FontWeight="SemiBold">
-                                                            <Run Text="{Binding TargetCurrentPoise, Mode=OneWay}"/>
-                                                            <Run Text="/"/>
-                                                            <Run Text="{Binding TargetMaxPoise, Mode=OneWay}"/>
+                                                            <Run Text="{Binding TargetCurrentPoise, Mode=OneWay}" />
+                                                            <Run Text="/" />
+                                                            <Run Text="{Binding TargetMaxPoise, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </Grid>
                                                 </Border>
@@ -287,30 +295,44 @@
                                               PreviewKeyDown="SpeedUpDown_PreviewKeyDown"
                                               LostFocus="SpeedUpDown_LostFocus"
                                               Width="100"
-                                              HorizontalAlignment="Left" />
+                                              HorizontalAlignment="Left">
+                            <wpfTool:DoubleUpDown.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="AreOptionsEnabled" />
+                                    <Binding Path="IsValidTarget" />
+                                </MultiBinding>
+                            </wpfTool:DoubleUpDown.IsEnabled>
+                        </wpfTool:DoubleUpDown>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <CheckBox Content="Disable Target AI" Margin="10,0,0,0">
                             <CheckBox.IsEnabled>
                                 <MultiBinding Converter="{StaticResource BooleanAndConverter}">
                                     <Binding Path="AreOptionsEnabled" />
-                                    <Binding Path="IsTargetOptionsEnabled" />
+                                    <Binding Path="IsValidTarget" />
                                 </MultiBinding>
                             </CheckBox.IsEnabled>
                             <CheckBox.IsChecked>
                                 <Binding Path="IsDisableTargetAiEnabled" />
                             </CheckBox.IsChecked>
                         </CheckBox>
-    
+
                         <CheckBox x:Name="RepeatActCheckbox" Content="Repeat Act" Margin="20,0,0,0">
+                            <CheckBox.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                    <Binding Path="AreOptionsEnabled" />
+                                    <Binding Path="IsValidTarget" />
+                                </MultiBinding>
+                            </CheckBox.IsEnabled>
                             <CheckBox.IsChecked>
                                 <Binding Path="IsRepeatActEnabled" />
                             </CheckBox.IsChecked>
                         </CheckBox>
-    
+
                         <ComboBox Margin="10,0,0,0" Width="120">
                             <ComboBox.Visibility>
-                                <Binding Path="IsChecked" ElementName="RepeatActCheckbox" Converter="{StaticResource BoolToVis}" />
+                                <Binding Path="IsChecked" ElementName="RepeatActCheckbox"
+                                         Converter="{StaticResource BoolToVis}" />
                             </ComboBox.Visibility>
                             <ComboBox.ItemsSource>
                                 <Binding Path="RepeatActOptions" />
