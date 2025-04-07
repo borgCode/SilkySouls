@@ -15,6 +15,7 @@ Includes:
 * Character cheats such as No Death/No Damage
 * Skip Kalameet setup
 * Unlock bonfire warps
+* Auto set ng+6 / spawn weapon at start of new game
 
 Usage:
 Unzip the download and run the exe, it does not matter if you open the app before the game or after.
