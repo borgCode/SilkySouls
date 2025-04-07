@@ -445,7 +445,7 @@ namespace SilkySouls.Services
             _repeatActHooks.Add(_hookManager.InstallHook(luaSwitchCheckCode.ToInt64(), luaSwitchCaseHook,
                 new byte[] { 0x44, 0x8B, 0xF8, 0x4F, 0x8D, 0x34, 0xEC }));
             _repeatActHooks.Add(_hookManager.InstallHook(ifManipulationCode.ToInt64(), luaIfCaseHook,
-                    new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 }));
+                    new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x41, 0x3B, 0xC7 }));
             _isRepeatActHookInstalled = true;
         }
 

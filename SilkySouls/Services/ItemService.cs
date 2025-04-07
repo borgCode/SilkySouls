@@ -10,7 +10,6 @@ namespace SilkySouls.Services
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
         private IntPtr _itemSpawnBlock;
-        private IntPtr _codeCavebase;
         private IntPtr _flagLoc;
         private long _origin;
         private bool _hasSetupCave;

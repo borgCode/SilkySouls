@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using SilkySouls.memory;
 using SilkySouls.Memory;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
@@ -105,6 +106,7 @@ namespace SilkySouls
                     if (_loaded) return;
                     _loaded = true;
                     TryEnableActiveOptions();
+                    TrySetGameStartPrefs();
                     _settingsViewModel.ApplyLoadedOptions();
                 }
                 else if (_loaded)
@@ -125,12 +127,25 @@ namespace SilkySouls
                 IsAttachedText.Text = "Not attached";
             }
         }
+
         private void TryEnableActiveOptions()
         {
             _playerViewModel.TryEnableActiveOptions();
             _utilityViewModel.TryEnableActiveOptions();
             _enemyViewModel.TryEnableActiveOptions();
             _itemViewModel.TryEnableActiveOptions();
+        }
+
+        private void TrySetGameStartPrefs()
+        {
+            ulong gameDataPtr = _memoryIo.ReadUInt64(Offsets.GameDataMan.Base);
+            IntPtr inGameTimePtr = (IntPtr)(gameDataPtr + (int)Offsets.GameDataMan.GameDataOffsets.InGameTime);
+            long gameTimeMs = _memoryIo.ReadInt64(inGameTimePtr);
+            if (gameTimeMs < 5000)
+            {
+                _playerViewModel.TrySetNgPref();
+                _itemViewModel.TrySpawnWeaponPref();
+            }
         }
 
         private void DisableButtons()

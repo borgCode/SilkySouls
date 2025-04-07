@@ -381,9 +381,7 @@ namespace SilkySouls.ViewModels
                 _playerService.ToggleInfinitePoise(true);
             if (IsInfiniteDurabilityEnabled)
                 _playerService.ToggleInfiniteDurability(true);
-            if (IsAutoSetNewGameSixEnabled)
-                NewGame = _playerService.GetSetNewGame(7);
-            
+ 
             AreOptionsEnabled = true;
             LoadStats();
             _timer.Start();
@@ -620,6 +618,12 @@ namespace SilkySouls.ViewModels
         public void SetSpeed(float? value)
         {
             PlayerSpeed = value;
+        }
+
+        public void TrySetNgPref()
+        {
+            if (IsAutoSetNewGameSixEnabled)
+                NewGame = _playerService.GetSetNewGame(7);
         }
     }
 }

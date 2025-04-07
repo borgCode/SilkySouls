@@ -86,6 +86,7 @@ namespace SilkySouls.memory
             {
                 PlayerGameData = 0x10,
                 Ng = 0x78,
+                InGameTime = 0xA4,
             }
             
             public enum PlayerGameData

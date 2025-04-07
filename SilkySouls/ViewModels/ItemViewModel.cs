@@ -34,6 +34,9 @@ namespace SilkySouls.ViewModels
         private ObservableCollection<ItemCategory> _categories;
         private ObservableCollection<Item> _items;
         private ObservableCollection<string> _availableInfusions;
+        
+        private bool _autoSpawnEnabled;
+        private Item _selectedAutoSpawnWeapon;
 
 
         public ItemViewModel(ItemService itemService)
@@ -89,6 +92,8 @@ namespace SilkySouls.ViewModels
             _itemsByCategory.Add("Weapons", new ObservableCollection<Item>(DataLoader.GetItemList("Weapons")));
 
             SelectedCategory = Categories.FirstOrDefault();
+            
+            SelectedAutoSpawnWeapon = _itemsByCategory["Weapons"].FirstOrDefault();
         }
 
         public bool AreOptionsEnabled
@@ -335,6 +340,20 @@ namespace SilkySouls.ViewModels
                 SelectedCategory.Id,
                 SelectedQuantity);
         }
+        
+        public bool AutoSpawnEnabled
+        {
+            get => _autoSpawnEnabled;
+            set => SetProperty(ref _autoSpawnEnabled, value);
+        }
+
+        public Item SelectedAutoSpawnWeapon
+        {
+            get => _selectedAutoSpawnWeapon;
+            set => SetProperty(ref _selectedAutoSpawnWeapon, value);
+        }
+        
+        public ObservableCollection<Item> WeaponList => _itemsByCategory["Weapons"];
 
         public void DisableButtons()
         {
@@ -345,6 +364,19 @@ namespace SilkySouls.ViewModels
         public void TryEnableActiveOptions()
         {
             AreOptionsEnabled = true;
+        }
+
+        public void TrySpawnWeaponPref()
+        {
+            if (AutoSpawnEnabled && SelectedAutoSpawnWeapon != null)
+            {
+                int itemId = SelectedAutoSpawnWeapon.Id;
+                
+                _itemService.ItemSpawn(
+                    itemId,
+                    0x00000000, 
+                    1);
+            }
         }
     }
 }
