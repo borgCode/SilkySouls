@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SilkySouls.Memory
 {
@@ -66,6 +67,14 @@ namespace SilkySouls.Memory
         public void ClearHooks()
         {
             _hookRegistry.Clear();
+        }
+
+        public void UninstallAllHooks()
+        {
+            foreach (var key in _hookRegistry.Keys.ToList())
+            {
+                UninstallHook(key);
+            }
         }
     }
 }

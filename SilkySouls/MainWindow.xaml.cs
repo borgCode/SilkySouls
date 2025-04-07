@@ -144,6 +144,7 @@ namespace SilkySouls
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+            _hookManager?.UninstallAllHooks();
             _memoryIo?.Dispose();
         }
 
