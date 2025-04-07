@@ -47,18 +47,18 @@ namespace SilkySouls.Memory
 
             public enum RepeatAct
             {
-                DesiredAct = 0xAF0,
-                Count = 0xAF4,
-                Flag = 0xB14,
-                LastAct = 0xB18,
-                ActManipCode = 0xB20,
-                OpcodeHistory = 0xC00,
-                RepeatActFlagLoc = 0xC10,
-                OpcodeCheckCode = 0xC20,
+                TargetActIndex = 0xAF0,
+                LuaIfCounter = 0xAF4,
+                IfConditionFlag = 0xB14,
+                FinalActIndex = 0xB18,
+                LuaIfManipulationCode = 0xB20,
+                LuaSwitchHistory = 0xC00,
+                LuaSwitchPatternMatchFlag = 0xC10,
+                LuaSwitchCheckCode = 0xC20,
                 EnemyId = 0xD40,
-                EnemyIdLen = 0xD50,
-                EnemySavedPtr = 0xD60,
-                EnemyIdCheckCode = 0xD70,
+                EnemyIdLength = 0xD50,
+                EnemyRaxIdentifier = 0xD60,
+                EnemyIdentifierCode = 0xD70,
             }
     }
 }

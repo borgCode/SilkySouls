@@ -304,17 +304,17 @@ namespace SilkySouls.Services
             return _aoBScanner.DoActScan(luaModulePtr, enemyId);
         }
 
-        public void RepeatAct(int actLabelIndex, int lastAct)
+        public void RepeatAct(int actLabelIndex, int finalActIndex)
         {
-            var actManipCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.ActManipCode;
-            var opcodeCheckCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.OpcodeCheckCode;
-            var hookLoc = Offsets.Hooks.LuaIfElse;
-            var opcodeHookLoc = Offsets.Hooks.LuaOpcodeSwitch;
+            var ifManipulationCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaIfManipulationCode;
+            var luaSwitchCheckCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaSwitchCheckCode;
+            var luaIfCaseHook = Offsets.Hooks.LuaIfCase;
+            var luaSwitchCaseHook = Offsets.Hooks.LuaSwitchCase;
             var battleActivateHook = Offsets.Hooks.BattleActivate;
 
             if (actLabelIndex == 0)
             {
-                _hookManager.UninstallHook(actManipCode.ToInt64());
+                _hookManager.UninstallHook(ifManipulationCode.ToInt64());
                 _hasWrittenEnemyId = false;
                 _isRepeatActHookInstalled = false;
                 return;
@@ -330,7 +330,7 @@ namespace SilkySouls.Services
             _memoryIo.WriteByte(forceAct, actLabelIndex);
 
             var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId;
-            var enemyIdLengthPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdLen;
+            var enemyIdLengthPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdLength;
             if (!_hasWrittenEnemyId)
             {
                 var enemyBattleIdPtr = _memoryIo.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
@@ -349,77 +349,77 @@ namespace SilkySouls.Services
                 _hasWrittenEnemyId = true;
             }
 
-            var desiredActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.DesiredAct;
-            var lastActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LastAct;
-            _memoryIo.WriteInt32(desiredActLoc, actLabelIndex - 1);
-            _memoryIo.WriteInt32(lastActLoc, lastAct - 1);
+            var targetActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.TargetActIndex;
+            var finalActLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.FinalActIndex;
+            _memoryIo.WriteInt32(targetActLoc, actLabelIndex - 1);
+            _memoryIo.WriteInt32(finalActLoc, finalActIndex - 1);
 
-            var repeatActFlagLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.RepeatActFlagLoc;
-            var enemySavedPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemySavedPtr;
-            var enemyIdCheckLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdCheckCode;
-            var opcodeHistoryLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.OpcodeHistory;
-            var originalCallOffset = Offsets.Hooks.LuaIfElse + 0x906;
-            var count = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Count;
-            var flag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.Flag;
+            var switchPatternMatchFlag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaSwitchPatternMatchFlag;
+            var enemyRaxIdentifier = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyRaxIdentifier;
+            var enemyIdentifierCode = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdentifierCode;
+            var luaSwitchHistory = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaSwitchHistory;
+            var originalCallOffset = Offsets.Hooks.LuaIfCase + 0x906;
+            var luaIfCounter = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.LuaIfCounter;
+            var ifConditionFlag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.IfConditionFlag;
 
             if (!_isRepeatActCodeWritten)
             {
                 byte[] enemyIdCheckBytes = AsmLoader.GetAsmBytes("RepeatActIdCheck");
                 AsmHelper.WriteRelativeOffsets(enemyIdCheckBytes, new[]
                 {
-                    (enemyIdCheckLoc.ToInt64() + 0x4B, enemyIdLoc.ToInt64(), 7, 0x4B + 3),
-                    (enemyIdCheckLoc.ToInt64() + 0x52, enemyIdLengthPtr.ToInt64(), 7, 0x52 + 3),
-                    (enemyIdCheckLoc.ToInt64() + 0x70, enemySavedPtr.ToInt64(), 7, 0x70 + 3)
+                    (enemyIdentifierCode.ToInt64() + 0x4B, enemyIdLoc.ToInt64(), 7, 0x4B + 3),
+                    (enemyIdentifierCode.ToInt64() + 0x52, enemyIdLengthPtr.ToInt64(), 7, 0x52 + 3),
+                    (enemyIdentifierCode.ToInt64() + 0x70, enemyRaxIdentifier.ToInt64(), 7, 0x70 + 3)
                 });
 
-                Byte[] bytes = BitConverter.GetBytes((int)battleActivateHook + 8 - (enemyIdCheckLoc.ToInt64() + 0x8B));
+                Byte[] bytes = BitConverter.GetBytes((int)battleActivateHook + 8 - (enemyIdentifierCode.ToInt64() + 0x8B));
                 Array.Copy(bytes, 0, enemyIdCheckBytes, 0x86 + 1, 4);
-                _memoryIo.WriteBytes(enemyIdCheckLoc, enemyIdCheckBytes);
+                _memoryIo.WriteBytes(enemyIdentifierCode, enemyIdCheckBytes);
 
-                byte[] opcodeCheckBytes = AsmLoader.GetAsmBytes("RepeatActFlagSet");
-                AsmHelper.WriteRelativeOffsets(opcodeCheckBytes, new[]
+                byte[] switchCheckBytes = AsmLoader.GetAsmBytes("RepeatActFlagSet");
+                AsmHelper.WriteRelativeOffsets(switchCheckBytes, new[]
                 {
-                    (opcodeCheckCode.ToInt64(), repeatActFlagLoc.ToInt64(), 7, 0x2),
-                    (opcodeCheckCode.ToInt64() + 0xE, repeatActFlagLoc.ToInt64(), 7, 0xE + 2),
-                    (opcodeCheckCode.ToInt64() + 0x16, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x16 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x1C, opcodeHistoryLoc.ToInt64(), 6, 0x1C + 2),
-                    (opcodeCheckCode.ToInt64() + 0x22, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x22 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x28, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x28 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x2E, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x2E + 2),
-                    (opcodeCheckCode.ToInt64() + 0x34, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x34 + 2),
-                    (opcodeCheckCode.ToInt64() + 0x3A, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x3A + 2),
-                    (opcodeCheckCode.ToInt64() + 0x40, opcodeHistoryLoc.ToInt64(), 6, 0x40 + 2), // history[1]
-                    (opcodeCheckCode.ToInt64() + 0x4B, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x4B + 2), // history[2]
-                    (opcodeCheckCode.ToInt64() + 0x56, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x56 + 2), // history[3]
-                    (opcodeCheckCode.ToInt64() + 0x61, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x61 + 2), // history[4]
-                    (opcodeCheckCode.ToInt64() + 0x6C, repeatActFlagLoc.ToInt64(), 7, 0x6C + 2),
-                    (opcodeCheckCode.ToInt64() + 0x75, opcodeHistoryLoc.ToInt64() + 0x4, 6, 0x75 + 2), // history[2]
-                    (opcodeCheckCode.ToInt64() + 0x80, opcodeHistoryLoc.ToInt64() + 0x8, 6, 0x80 + 2), // history[3]
-                    (opcodeCheckCode.ToInt64() + 0x8B, opcodeHistoryLoc.ToInt64() + 0xC, 6, 0x8B + 2), // history[4]
-                    (opcodeCheckCode.ToInt64() + 0x96, repeatActFlagLoc.ToInt64(), 7, 0x96 + 2),
+                    (luaSwitchCheckCode.ToInt64(), switchPatternMatchFlag.ToInt64(), 7, 0x2),
+                    (luaSwitchCheckCode.ToInt64() + 0xE, switchPatternMatchFlag.ToInt64(), 7, 0xE + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x16, luaSwitchHistory.ToInt64() + 0x4, 6, 0x16 + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x1C, luaSwitchHistory.ToInt64(), 6, 0x1C + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x22, luaSwitchHistory.ToInt64() + 0x8, 6, 0x22 + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x28, luaSwitchHistory.ToInt64() + 0x4, 6, 0x28 + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x2E, luaSwitchHistory.ToInt64() + 0xC, 6, 0x2E + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x34, luaSwitchHistory.ToInt64() + 0x8, 6, 0x34 + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x3A, luaSwitchHistory.ToInt64() + 0xC, 6, 0x3A + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x40, luaSwitchHistory.ToInt64(), 6, 0x40 + 2), // history[1]
+                    (luaSwitchCheckCode.ToInt64() + 0x4B, luaSwitchHistory.ToInt64() + 0x4, 6, 0x4B + 2), // history[2]
+                    (luaSwitchCheckCode.ToInt64() + 0x56, luaSwitchHistory.ToInt64() + 0x8, 6, 0x56 + 2), // history[3]
+                    (luaSwitchCheckCode.ToInt64() + 0x61, luaSwitchHistory.ToInt64() + 0xC, 6, 0x61 + 2), // history[4]
+                    (luaSwitchCheckCode.ToInt64() + 0x6C, switchPatternMatchFlag.ToInt64(), 7, 0x6C + 2),
+                    (luaSwitchCheckCode.ToInt64() + 0x75, luaSwitchHistory.ToInt64() + 0x4, 6, 0x75 + 2), // history[2]
+                    (luaSwitchCheckCode.ToInt64() + 0x80, luaSwitchHistory.ToInt64() + 0x8, 6, 0x80 + 2), // history[3]
+                    (luaSwitchCheckCode.ToInt64() + 0x8B, luaSwitchHistory.ToInt64() + 0xC, 6, 0x8B + 2), // history[4]
+                    (luaSwitchCheckCode.ToInt64() + 0x96, switchPatternMatchFlag.ToInt64(), 7, 0x96 + 2),
                 });
 
-                bytes = BitConverter.GetBytes((int)opcodeHookLoc + 7 - (opcodeCheckCode.ToInt64() + 0xAA));
-                Array.Copy(bytes, 0, opcodeCheckBytes, 0xA5 + 1, 4);
+                bytes = BitConverter.GetBytes((int)luaSwitchCaseHook + 7 - (luaSwitchCheckCode.ToInt64() + 0xAA));
+                Array.Copy(bytes, 0, switchCheckBytes, 0xA5 + 1, 4);
 
-                _memoryIo.WriteBytes(opcodeCheckCode, opcodeCheckBytes);
+                _memoryIo.WriteBytes(luaSwitchCheckCode, switchCheckBytes);
 
-                byte[] repeatActBytes = AsmLoader.GetAsmBytes("RepeatAct");
-                AsmHelper.WriteRelativeOffsets(repeatActBytes, new[]
+                byte[] ifManipBytes = AsmLoader.GetAsmBytes("RepeatAct");
+                AsmHelper.WriteRelativeOffsets(ifManipBytes, new[]
                 {
-                    (actManipCode.ToInt64(), repeatActFlagLoc.ToInt64(), 7, 0x2),
-                    (actManipCode.ToInt64() + 0xA, enemySavedPtr.ToInt64(), 7, 0xA + 3),
-                    (actManipCode.ToInt64() + 0x17, originalCallOffset, 5, 0x17 + 1),
-                    (actManipCode.ToInt64() + 0x1E, count.ToInt64(), 6, 0x1E + 2),
-                    (actManipCode.ToInt64() + 0x24, desiredActLoc.ToInt64(), 6, 0x24 + 2),
-                    (actManipCode.ToInt64() + 0x2E, flag.ToInt64(), 7, 0x2E + 2),
-                    (actManipCode.ToInt64() + 0x37, count.ToInt64(), 6, 0x37 + 2),
-                    (actManipCode.ToInt64() + 0x3D, flag.ToInt64(), 6, 0x3D + 2),
-                    (actManipCode.ToInt64() + 0x45, flag.ToInt64(), 7, 0x45 + 2),
-                    (actManipCode.ToInt64() + 0x55, lastActLoc.ToInt64(), 6, 0x55 + 2),
-                    (actManipCode.ToInt64() + 0x5F, count.ToInt64(), 6, 0x5F + 2),
-                    (actManipCode.ToInt64() + 0x65, flag.ToInt64(), 6, 0x65 + 2),
-                    (actManipCode.ToInt64() + 0x75, originalCallOffset, 5, 0x75 + 1)
+                    (ifManipulationCode.ToInt64(), switchPatternMatchFlag.ToInt64(), 7, 0x2),
+                    (ifManipulationCode.ToInt64() + 0xA, enemyRaxIdentifier.ToInt64(), 7, 0xA + 3),
+                    (ifManipulationCode.ToInt64() + 0x17, originalCallOffset, 5, 0x17 + 1),
+                    (ifManipulationCode.ToInt64() + 0x1E, luaIfCounter.ToInt64(), 6, 0x1E + 2),
+                    (ifManipulationCode.ToInt64() + 0x24, targetActLoc.ToInt64(), 6, 0x24 + 2),
+                    (ifManipulationCode.ToInt64() + 0x2E, ifConditionFlag.ToInt64(), 7, 0x2E + 2),
+                    (ifManipulationCode.ToInt64() + 0x37, luaIfCounter.ToInt64(), 6, 0x37 + 2),
+                    (ifManipulationCode.ToInt64() + 0x3D, ifConditionFlag.ToInt64(), 6, 0x3D + 2),
+                    (ifManipulationCode.ToInt64() + 0x45, ifConditionFlag.ToInt64(), 7, 0x45 + 2),
+                    (ifManipulationCode.ToInt64() + 0x55, finalActLoc.ToInt64(), 6, 0x55 + 2),
+                    (ifManipulationCode.ToInt64() + 0x5F, luaIfCounter.ToInt64(), 6, 0x5F + 2),
+                    (ifManipulationCode.ToInt64() + 0x65, ifConditionFlag.ToInt64(), 6, 0x65 + 2),
+                    (ifManipulationCode.ToInt64() + 0x75, originalCallOffset, 5, 0x75 + 1)
                 });
 
                 var hookJumpOffsets = new[]
@@ -431,20 +431,20 @@ namespace SilkySouls.Services
 
                 foreach (var (target, offset) in hookJumpOffsets)
                 {
-                    var jumpOffset = BitConverter.GetBytes((int)hookLoc + 8 - (actManipCode.ToInt64() + target));
-                    Array.Copy(jumpOffset, 0, repeatActBytes, offset, 4);
+                    var jumpOffset = BitConverter.GetBytes((int)luaIfCaseHook + 8 - (ifManipulationCode.ToInt64() + target));
+                    Array.Copy(jumpOffset, 0, ifManipBytes, offset, 4);
                 }
 
-                _memoryIo.WriteBytes(actManipCode, repeatActBytes);
+                _memoryIo.WriteBytes(ifManipulationCode, ifManipBytes);
                 _isRepeatActCodeWritten = true;
             }
 
             if (_isRepeatActHookInstalled) return;
-            _repeatActHooks.Add(_hookManager.InstallHook(enemyIdCheckLoc.ToInt64(), battleActivateHook,
+            _repeatActHooks.Add(_hookManager.InstallHook(enemyIdentifierCode.ToInt64(), battleActivateHook,
                 new byte[] { 0x48, 0x8B, 0x45, 0x18, 0x48, 0x2B, 0x45, 0x10 }));
-            _repeatActHooks.Add(_hookManager.InstallHook(opcodeCheckCode.ToInt64(), opcodeHookLoc,
+            _repeatActHooks.Add(_hookManager.InstallHook(luaSwitchCheckCode.ToInt64(), luaSwitchCaseHook,
                 new byte[] { 0x44, 0x8B, 0xF8, 0x4F, 0x8D, 0x34, 0xEC }));
-            _repeatActHooks.Add(_hookManager.InstallHook(actManipCode.ToInt64(), hookLoc,
+            _repeatActHooks.Add(_hookManager.InstallHook(ifManipulationCode.ToInt64(), luaIfCaseHook,
                     new byte[] { 0xE8, 0x01, 0x09, 0x00, 0x00, 0x44, 0x39, 0xF8 }));
             _isRepeatActHookInstalled = true;
         }
@@ -459,13 +459,27 @@ namespace SilkySouls.Services
             _hasWrittenEnemyId = false;
             _isRepeatActCodeWritten = false;
             _isRepeatActHookInstalled = false;
-            _memoryIo.WriteBytes(CodeCaveOffsets.Base + (int) CodeCaveOffsets.RepeatAct.DesiredAct, new byte[780]);
+            _memoryIo.WriteBytes(CodeCaveOffsets.Base + (int) CodeCaveOffsets.RepeatAct.TargetActIndex, new byte[780]);
         }
 
         public int GetCurrentRepeatEnemyId()
         {
-            var enemyIdBytes = _memoryIo.ReadBytes(CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId, 8);
-            return int.Parse(Encoding.ASCII.GetString(enemyIdBytes).TrimEnd('\0'));
+            try
+            {
+                var enemyIdBytes = _memoryIo.ReadBytes(CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId, 8);
+                if (enemyIdBytes == null || enemyIdBytes.Length == 0) return -1; 
+                
+                string idString = Encoding.ASCII.GetString(enemyIdBytes).TrimEnd('\0');
+                if (string.IsNullOrWhiteSpace(idString)) return -1;
+                
+                if (int.TryParse(idString, out int result)) return result;
+                
+                return -1;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
 
         public int GetEnemyBattleId()

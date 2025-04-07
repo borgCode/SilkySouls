@@ -58,8 +58,8 @@ namespace SilkySouls.Memory
             Offsets.Hooks.ControllerL2 = FindAddressByPattern(Patterns.ControllerL2).ToInt64();
             Offsets.Hooks.UpdateCoords = FindAddressByPattern(Patterns.UpdateCoords).ToInt64();
             Offsets.Hooks.WarpCoords = FindAddressByPattern(Patterns.WarpCoords).ToInt64();
-            Offsets.Hooks.LuaIfElse = FindAddressByPattern(Patterns.LuaIfElseHook).ToInt64();
-            Offsets.Hooks.LuaOpcodeSwitch = FindAddressByPattern(Patterns.LuaOpCodeSwitch).ToInt64();
+            Offsets.Hooks.LuaIfCase = FindAddressByPattern(Patterns.LuaIfElseHook).ToInt64();
+            Offsets.Hooks.LuaSwitchCase = FindAddressByPattern(Patterns.LuaOpCodeSwitch).ToInt64();
             Offsets.Hooks.BattleActivate = FindAddressByPattern(Patterns.BattleActivateHook).ToInt64();
 
             Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
@@ -98,7 +98,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Hooks.ControllerL2: 0x{Offsets.Hooks.ControllerL2:X}");
             Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
             Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
-            Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfElse:X}");
+            Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfCase:X}");
         }
 
         public IntPtr FindAddressByPattern(Pattern pattern)
@@ -259,14 +259,7 @@ namespace SilkySouls.Memory
             var cts = new CancellationTokenSource();
             var tasks = rangesToScan.Select((range, index) =>
                 ScanMemoryRange(
-                    range.Start,
-                    range.End,
-                    index,
-                    actAobScan,
-                    chunkSize,
-                    enemyId,
-                    cts.Token)
-            ).ToList();
+                    range.Start, range.End, index, actAobScan, chunkSize, enemyId, cts.Token)).ToList();
 
             try
             {
@@ -293,13 +286,7 @@ namespace SilkySouls.Memory
         }
 
         private Task<(List<int> Acts, int RegionIndex)> ScanMemoryRange(
-            IntPtr rangeStart,
-            IntPtr rangeEnd,
-            int regionIndex,
-            byte[] actAobScan,
-            int chunkSize,
-            string enemyId,
-            CancellationToken cancellationToken)
+            IntPtr rangeStart, IntPtr rangeEnd, int regionIndex, byte[] actAobScan, int chunkSize, string enemyId, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {

@@ -280,8 +280,8 @@ namespace SilkySouls.memory
             public static long ControllerL2;
             public static long UpdateCoords;
             public static long WarpCoords;
-            public static long LuaIfElse;
-            public static long LuaOpcodeSwitch;
+            public static long LuaIfCase;
+            public static long LuaSwitchCase;
             public static long BattleActivate;
         }
     }

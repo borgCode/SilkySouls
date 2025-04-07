@@ -106,6 +106,7 @@ namespace SilkySouls.ViewModels
             if (targetId != _currentTargetId)
             {
                 IsDisableTargetAiEnabled = _enemyService.IsTargetAiDisabled();
+                IsRepeatActEnabled = IsCurrentTargetRepeating();
                 IsFreezeHealthEnabled = _enemyService.IsTargetNoDamageEnabled();
                 _currentTargetId = targetId;
                 TargetMaxPoise = _enemyService.GetTargetMaxPoise();
@@ -427,7 +428,8 @@ namespace SilkySouls.ViewModels
                 int index = RepeatActOptions.IndexOf(value);
                 int maxAct = RepeatActOptions.Count - 1;
                 _enemyService.RepeatAct(index, maxAct);
-                _currentlyRepeatingAct = value; 
+                if (value == null) return;
+                _currentlyRepeatingAct = value;
             } 
         }
         
@@ -436,51 +438,50 @@ namespace SilkySouls.ViewModels
             get => _isRepeatActEnabled;
             set
             {
-                if (SetProperty(ref _isRepeatActEnabled, value))
+                if (!SetProperty(ref _isRepeatActEnabled, value)) return;
+                if (_isRepeatActEnabled)
                 {
-                    if (_isRepeatActEnabled)
-                    {
              
-                        for (int i = RepeatActOptions.Count - 1; i >= 0; i--)
-                        {
-                            if (RepeatActOptions[i] != "None")
-                                RepeatActOptions.RemoveAt(i);
-                        }
-
-                        int[] acts = _enemyService.GetActs();
-                        foreach (int act in acts)
-                        {
-                            string actLabel = $"Act {act}";
-                            if (!RepeatActOptions.Contains(actLabel))
-                                RepeatActOptions.Add(actLabel);
-                        }
-                        
-                        var currentRepeatEnemyId = _enemyService.GetCurrentRepeatEnemyId();
-                        var lockedTargetId = _enemyService.GetEnemyBattleId();
-                        if (currentRepeatEnemyId != lockedTargetId)
-                        {
-                            _enemyService.DisableRepeatAct();
-                            _currentlyRepeatingAct = "None";
-                        }
-                        
-                        if (!RepeatActOptions.Contains(_currentlyRepeatingAct))
-                        {
-                            _currentlyRepeatingAct = "None";
-                        }
-                        SelectedRepeatActOption = _currentlyRepeatingAct;
-                    }
-                    else
+                    for (int i = RepeatActOptions.Count - 1; i >= 0; i--)
                     {
-                        var currentRepeatEnemyId = _enemyService.GetCurrentRepeatEnemyId();
-                        var lockedTargetId = _enemyService.GetEnemyBattleId();
-                        if (currentRepeatEnemyId == lockedTargetId)
-                        {
-                            _enemyService.DisableRepeatAct();
-                            _currentlyRepeatingAct = "None";
-                        }
+                        if (RepeatActOptions[i] != "None")
+                            RepeatActOptions.RemoveAt(i);
                     }
+
+                    int[] acts = _enemyService.GetActs();
+                    foreach (int act in acts)
+                    {
+                        string actLabel = $"Act {act}";
+                        if (!RepeatActOptions.Contains(actLabel))
+                            RepeatActOptions.Add(actLabel);
+                    }
+                    
+                    if (!IsCurrentTargetRepeating())
+                    {
+                        _enemyService.DisableRepeatAct();
+                        _currentlyRepeatingAct = "None";
+                    }
+                        
+                    if (!RepeatActOptions.Contains(_currentlyRepeatingAct))
+                    {
+                        _currentlyRepeatingAct = "None";
+                    }
+                    SelectedRepeatActOption = _currentlyRepeatingAct;
+                }
+                else
+                {
+                    if (!IsCurrentTargetRepeating()) return;
+                    _enemyService.DisableRepeatAct();
+                    _currentlyRepeatingAct = "None";
                 }
             }
+        }
+
+        private bool IsCurrentTargetRepeating()
+        {
+            var currentRepeatEnemyId = _enemyService.GetCurrentRepeatEnemyId();
+            var lockedTargetId = _enemyService.GetEnemyBattleId();
+            return currentRepeatEnemyId == lockedTargetId;
         }
 
         public bool IsDisableAiEnabled
@@ -523,6 +524,9 @@ namespace SilkySouls.ViewModels
         {
             _targetOptionsTimer.Stop();
             IsFreezeHealthEnabled = false;
+            IsRepeatActEnabled = false;
+            _enemyService.DisableRepeatAct();
+            _currentlyRepeatingAct = "None";
             AreOptionsEnabled = false;
         }
 
