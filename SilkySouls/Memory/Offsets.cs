@@ -118,6 +118,7 @@ namespace SilkySouls.memory
             public static IntPtr Base;
             public const int RenderPtr = 0x28;
             public const int FilterRemoval = 0x34D;
+            public const int brightness = 0x350;
         }
 
         public static class GameMan
@@ -140,6 +141,8 @@ namespace SilkySouls.memory
         public static IntPtr DrawSoundViewPatch;
 
         public static IntPtr InfiniteDurabilityPatch;
+
+        public static IntPtr FourKingsPatch;
 
         public static class MenuMan
         {

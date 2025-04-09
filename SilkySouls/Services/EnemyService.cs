@@ -528,5 +528,12 @@ namespace SilkySouls.Services
             var disableAiPtr = Offsets.DebugFlags.Base + Offsets.DebugFlags.DisableAi;
             _memoryIo.WriteInt32(disableAiPtr, value);
         }
+
+        public void Toggle4KingsTimer(bool is4KingsTimerStopped)
+        {
+            var patchLocation = Offsets.FourKingsPatch;
+            if (is4KingsTimerStopped) _memoryIo.WriteBytes(patchLocation, new byte[] {0x90, 0x90, 0x90, 0x90, 0x90});
+            else _memoryIo.WriteBytes(patchLocation, new byte[]{ 0xF3, 0x0F, 0x11, 0x47, 0x10 });
+        }
     }
 }

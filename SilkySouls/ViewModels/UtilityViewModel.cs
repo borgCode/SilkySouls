@@ -191,7 +191,7 @@ namespace SilkySouls.ViewModels
             set
             {
                 if (!SetProperty(ref _isFilterRemoveEnabled, value)) return;
-                _utilityService.ToggleFilter(_isFilterRemoveEnabled ? 1 : 0);
+                _utilityService.ToggleFilter(_isFilterRemoveEnabled);
             }
         }
 
@@ -223,7 +223,7 @@ namespace SilkySouls.ViewModels
             if (IsTargetingViewEnabled)
                 _utilityService.EnableTargetingView();
             if (IsFilterRemoveEnabled)
-                _utilityService.ToggleFilter(1);
+                _utilityService.ToggleFilter(IsFilterRemoveEnabled);
             
             AreButtonsEnabled = true;
         }

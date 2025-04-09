@@ -46,6 +46,14 @@
             RipType.None
         );
 
+        public static readonly Pattern FourKingsPatch = new Pattern(
+            new byte[] { 0xF3, 0x0F, 0x11, 0x47, 0x10, 0x84 },
+            "xxxxxx",
+            0,
+            RipType.None
+            );
+
+
         public static readonly Pattern LuaOpCodeSwitch = new Pattern(
             new byte[] { 0x44, 0x8B, 0xF8, 0x4F },
             "xxxx",

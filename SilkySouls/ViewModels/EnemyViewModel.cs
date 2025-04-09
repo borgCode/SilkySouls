@@ -48,6 +48,7 @@ namespace SilkySouls.ViewModels
         private bool _isDisableAiEnabled;
         private bool _isAllNoDamageEnabled;
         private bool _isAllNoDeathEnabled;
+        private bool _is4KingsTimerStopped;
 
         private string _currentlyRepeatingAct = "None";
         
@@ -519,6 +520,18 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
+        
+        public bool Is4KingsTimerStopped
+        {
+            get => _is4KingsTimerStopped;
+            set
+            {
+                if (SetProperty(ref _is4KingsTimerStopped, value))
+                {
+                    _enemyService.Toggle4KingsTimer(_is4KingsTimerStopped);
+                }
+            }
+        }
 
         public void DisableButtons()
         {
@@ -540,6 +553,8 @@ namespace SilkySouls.ViewModels
                 _enemyService.ToggleAllNoDeath(1);
             if (IsTargetOptionsEnabled)
                 _targetOptionsTimer.Start();
+            if (Is4KingsTimerStopped)
+                _enemyService.Toggle4KingsTimer(true);
             AreOptionsEnabled = true;
         }
     }

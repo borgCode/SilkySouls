@@ -395,11 +395,39 @@ namespace SilkySouls.Services
             return false;
         }
 
-        public void ToggleFilter(int value)
+        public void ToggleFilter(bool value)
         {
-            var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
-            _memoryIo.WriteByte(filterPtr, value);
+            if (value)
+            {
+                var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
+                _memoryIo.WriteByte(filterPtr, 1);
+                var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.brightness}, false );
+                var bytes = new byte[12];
+                var floatBytes = BitConverter.GetBytes(5.0f);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 4, 4);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 8, 4);
+
+                _memoryIo.WriteBytes(brightnessPtr, bytes);
+            }
+            else
+            {
+                var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
+                _memoryIo.WriteByte(filterPtr, 0);
+                var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.brightness}, false );
+                var bytes = new byte[12];
+                var floatBytes = BitConverter.GetBytes(1.0f);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 4, 4);
+                Buffer.BlockCopy(floatBytes, 0, bytes, 8, 4);
+
+                _memoryIo.WriteBytes(brightnessPtr, bytes);
+            }
+            
         }
 
         public void ShowMenu(Offsets.MenuMan.MenuManData menuType)
