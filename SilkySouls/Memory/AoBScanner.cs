@@ -47,6 +47,7 @@ namespace SilkySouls.Memory
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
             Offsets.WorldAiMan.Base = FindAddressByPattern(Patterns.WorldAiMan);
             Offsets.FourKingsPatch = FindAddressByPattern(Patterns.FourKingsPatch);
+            Offsets.NoRollPatch = FindAddressByPattern(Patterns.NoRollPatch);
 
             Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
             Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();

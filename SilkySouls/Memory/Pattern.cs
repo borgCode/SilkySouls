@@ -296,5 +296,12 @@
             "xxxxxx",
             0,
             RipType.None);
+
+        public static readonly Pattern NoRollPatch = new Pattern(
+            new byte[] { 0xC6, 0x87, 0x93, 0x00, 0x00, 0x00, 0x01, 0x80, 0x8F, 0xC4, 0x01, 0x00, 0x00, 0x01, 0x45 },
+            "xxxxxxxxxxxxxxx",
+            0,
+            RipType.None
+        );
     }
 }

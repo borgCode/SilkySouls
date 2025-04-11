@@ -16,6 +16,7 @@ namespace SilkySouls.ViewModels
         private bool _isDrawEventEnabled;
         private bool _isTargetingViewEnabled;
         private bool _isNoClipEnabled;
+        private bool _isNoRollEnabled;
         private bool _isFilterRemoveEnabled;
         
         private bool _areButtonsEnabled;
@@ -185,6 +186,16 @@ namespace SilkySouls.ViewModels
             }
         }
         
+        public bool IsNoRollEnabled
+        {
+            get => _isNoRollEnabled;
+            set
+            {
+                if (!SetProperty(ref _isNoRollEnabled, value)) return;
+                _utilityService.ToggleNoRoll(_isNoRollEnabled);
+            }
+        }
+        
         public bool IsFilterRemoveEnabled
         {
             get => _isFilterRemoveEnabled;
@@ -224,6 +235,8 @@ namespace SilkySouls.ViewModels
                 _utilityService.EnableTargetingView();
             if (IsFilterRemoveEnabled)
                 _utilityService.ToggleFilter(IsFilterRemoveEnabled);
+            if (IsNoRollEnabled)
+                _utilityService.ToggleNoRoll(IsNoRollEnabled);
             
             AreButtonsEnabled = true;
         }

@@ -403,7 +403,7 @@ namespace SilkySouls.Services
                     { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
                 _memoryIo.WriteByte(filterPtr, 1);
                 var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.brightness}, false );
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.Brightness}, false );
                 var bytes = new byte[12];
                 var floatBytes = BitConverter.GetBytes(5.0f);
                 Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
@@ -418,7 +418,7 @@ namespace SilkySouls.Services
                     { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
                 _memoryIo.WriteByte(filterPtr, 0);
                 var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.brightness}, false );
+                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.Brightness}, false );
                 var bytes = new byte[12];
                 var floatBytes = BitConverter.GetBytes(1.0f);
                 Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
@@ -479,6 +479,26 @@ namespace SilkySouls.Services
                 Offsets.EventFlagMan.KalameetBit1, true);
             _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetMoreFlags,
                 Offsets.EventFlagMan.KalameetBit2, true);
+        }
+
+        public void ToggleNoRoll(bool isNoRollEnabled)
+        {
+            var noRollPatchPtr = Offsets.NoRollPatch;
+            var noBackstepPatchPtr = noRollPatchPtr + 0xFF;
+            if (isNoRollEnabled)
+            {
+                _memoryIo.WriteByte(noRollPatchPtr + 0x6, 0);
+                _memoryIo.WriteByte(noRollPatchPtr + 0xD, 0);
+                _memoryIo.WriteByte(noBackstepPatchPtr + 0x6, 0);
+                _memoryIo.WriteByte(noBackstepPatchPtr + 0xD, 0);
+            }
+            else
+            {
+                _memoryIo.WriteByte(noRollPatchPtr + 0x6, 1);
+                _memoryIo.WriteByte(noRollPatchPtr + 0xD, 1);
+                _memoryIo.WriteByte(noBackstepPatchPtr + 0x6, 1);
+                _memoryIo.WriteByte(noBackstepPatchPtr + 0xD, 1);
+            }
         }
     }
 }

@@ -118,7 +118,7 @@ namespace SilkySouls.memory
             public static IntPtr Base;
             public const int RenderPtr = 0x28;
             public const int FilterRemoval = 0x34D;
-            public const int brightness = 0x350;
+            public const int Brightness = 0x350;
         }
 
         public static class GameMan
@@ -261,6 +261,8 @@ namespace SilkySouls.memory
                 Bks = 0x44,
             }
         }
+
+        public static IntPtr NoRollPatch;
 
         public static class WorldAiMan
         {
