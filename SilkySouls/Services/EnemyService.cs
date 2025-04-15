@@ -18,8 +18,7 @@ namespace SilkySouls.Services
         private IntPtr _lastTargetBlock;
 
         private bool _isHookInstalled;
-
-        private long _lockedTargetOrigin;
+        
         private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
         private bool _isRepeatActCodeWritten;
         private bool _hasWrittenEnemyId;
@@ -36,9 +35,7 @@ namespace SilkySouls.Services
         internal void TryInstallTargetHook()
         {
             if (_isHookInstalled) return;
-            if (IsHookInstalled()) return;
-            if (!IsTargetOriginInitialized()) return;
-
+            var lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
             _lockedTargetPtr = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr;
             _lastTargetBlock = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTarget;
 
@@ -53,12 +50,12 @@ namespace SilkySouls.Services
             bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
             Array.Copy(bytes, 0, lockedTargetBytes, 30, bytes.Length);
 
-            int originOffset = (int)(_lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 50));
+            int originOffset = (int)(lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 50));
             bytes = BitConverter.GetBytes(originOffset);
             Array.Copy(bytes, 0, lockedTargetBytes, 46, bytes.Length);
 
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
-            _hookManager.InstallHook(_lastTargetBlock.ToInt64(), _lockedTargetOrigin, _lockedTargetOriginBytes);
+            _hookManager.InstallHook(_lastTargetBlock.ToInt64(), lockedTargetOrigin, _lockedTargetOriginBytes);
             _isHookInstalled = true;
         }
 
@@ -66,27 +63,7 @@ namespace SilkySouls.Services
         {
             _isHookInstalled = false;
         }
-
-        private bool IsHookInstalled()
-        {
-            byte[] codeCaveBytes = _memoryIo.ReadBytes(_lastTargetBlock, 2);
-            byte[] expectedSignature = { 0x50, 0x51 };
-            if (codeCaveBytes.SequenceEqual(expectedSignature))
-            {
-                _isHookInstalled = true;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsTargetOriginInitialized()
-        {
-            _lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
-            var originBytes = _memoryIo.ReadBytes((IntPtr)_lockedTargetOrigin, _lockedTargetOriginBytes.Length);
-            return originBytes.SequenceEqual(_lockedTargetOriginBytes);
-        }
-
+        
         public int GetTargetHp()
         {
             var lockedTargetPtr = _memoryIo.ReadUInt64(CodeCaveOffsets.Base +
@@ -531,7 +508,7 @@ namespace SilkySouls.Services
 
         public void Toggle4KingsTimer(bool is4KingsTimerStopped)
         {
-            var patchLocation = Offsets.FourKingsPatch;
+            var patchLocation = Offsets.Patches.FourKingsPatch;
             if (is4KingsTimerStopped) _memoryIo.WriteBytes(patchLocation, new byte[] {0x90, 0x90, 0x90, 0x90, 0x90});
             else _memoryIo.WriteBytes(patchLocation, new byte[]{ 0xF3, 0x0F, 0x11, 0x47, 0x10 });
         }

@@ -136,14 +136,7 @@ namespace SilkySouls.memory
             public static IntPtr Base;
             public const int HitboxFlag = 0x30;
         }
-
-        public static IntPtr DrawEventPatch;
-        public static IntPtr DrawSoundViewPatch;
-
-        public static IntPtr InfiniteDurabilityPatch;
-
-        public static IntPtr FourKingsPatch;
-
+        
         public static class MenuMan
         {
             public static IntPtr Base;
@@ -161,7 +154,6 @@ namespace SilkySouls.memory
         public static long OpenEnhanceShopArmor;
         
         public static int ShowEnhancedShopArmorOffset = -0x40;
-        public static IntPtr QuitoutPatch;
 
         public enum LockedTarget
         {
@@ -261,9 +253,7 @@ namespace SilkySouls.memory
                 Bks = 0x44,
             }
         }
-
-        public static IntPtr NoRollPatch;
-
+        
         public static class WorldAiMan
         {
             public static IntPtr Base;
@@ -289,6 +279,16 @@ namespace SilkySouls.memory
             public static long LuaIfCase;
             public static long LuaSwitchCase;
             public static long BattleActivate;
+        }
+
+        public static class Patches
+        {
+            public static IntPtr DrawEventPatch;
+            public static IntPtr DrawSoundViewPatch;
+            public static IntPtr InfiniteDurabilityPatch;
+            public static IntPtr FourKingsPatch;
+            public static IntPtr NoRollPatch;
+            public static IntPtr QuitoutPatch;
         }
     }
 }

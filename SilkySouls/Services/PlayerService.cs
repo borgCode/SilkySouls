@@ -445,8 +445,8 @@ namespace SilkySouls.Services
 
         public void ToggleInfiniteDurability(bool isInfiniteDurabilityEnabled)
         {
-            if(isInfiniteDurabilityEnabled) _memoryIo.WriteByte(Offsets.InfiniteDurabilityPatch + 0x1, 0x89);
-            else _memoryIo.WriteByte(Offsets.InfiniteDurabilityPatch + 0x1, 0x88);
+            if(isInfiniteDurabilityEnabled) _memoryIo.WriteByte(Offsets.Patches.InfiniteDurabilityPatch + 0x1, 0x89);
+            else _memoryIo.WriteByte(Offsets.Patches.InfiniteDurabilityPatch + 0x1, 0x88);
         }
     }
 }
