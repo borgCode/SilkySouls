@@ -16,6 +16,7 @@ Includes:
 * Skip Kalameet setup
 * Unlock bonfire warps
 * Auto set ng+6 / spawn weapon at start of new game
+* Stop 4 kings spawn timer
 
 Usage:
 Unzip the download and run the exe, it does not matter if you open the app before the game or after.
