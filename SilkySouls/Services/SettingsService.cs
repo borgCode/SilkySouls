@@ -24,7 +24,7 @@ namespace SilkySouls.Services
 
         public void ToggleFastQuitout(int value)
         {
-            _memoryIo.WriteByte(Offsets.QuitoutPatch, value);
+            _memoryIo.WriteByte(Offsets.Patches.QuitoutPatch, value);
         }
 
         public void SetGuaranteedBkhDrop(bool setValue)

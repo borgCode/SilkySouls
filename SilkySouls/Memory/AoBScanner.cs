@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,6 +22,21 @@ namespace SilkySouls.Memory
 
         public void Scan()
         {
+            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SilkySouls3");
+            Directory.CreateDirectory(appData);
+            string savePath = Path.Combine(appData, "backup_addresses.txt");
+            
+            Dictionary<string, long> saved = new Dictionary<string, long>();
+            if (File.Exists(savePath))
+            {
+                foreach (string line in File.ReadAllLines(savePath))
+                {
+                    string[] parts = line.Split('=');
+                    saved[parts[0]] = Convert.ToInt64(parts[1], 16);
+                }
+            }
+            
+            
             Offsets.WorldChrMan.Base = FindAddressByPattern(Patterns.WorldChrMan);
             Offsets.DebugFlags.Base = FindAddressByPattern(Patterns.DebugFlags);
             Offsets.Cam.Base = FindAddressByPattern(Patterns.CamBase);
@@ -31,8 +47,6 @@ namespace SilkySouls.Memory
             Offsets.FieldArea.Base = FindAddressByPattern(Patterns.FieldArea);
             Offsets.GameMan.Base = FindAddressByPattern(Patterns.GameMan);
             Offsets.DamageMan.Base = FindAddressByPattern(Patterns.DamMan);
-            Offsets.DrawEventPatch = FindAddressByPattern(Patterns.DrawEventPatch);
-            Offsets.DrawSoundViewPatch = FindAddressByPattern(Patterns.DrawSoundViewPatch);
             Offsets.MenuMan.Base = FindAddressByPattern(Patterns.MenuMan);
             Offsets.EventFlagMan.Base = FindAddressByPattern(Patterns.EventFlagMan);
             Offsets.LevelUpFunc = FindAddressByPattern(Patterns.LevelUpFunc).ToInt64();
@@ -40,30 +54,59 @@ namespace SilkySouls.Memory
             Offsets.HgDraw.Base = FindAddressByPattern(Patterns.HgDraw);
             Offsets.WarpEvent = FindAddressByPattern(Patterns.WarpEvent);
             Offsets.WarpFunc = FindAddressByPattern(Patterns.WarpFunc).ToInt64();
-            Offsets.QuitoutPatch = FindAddressByPattern(Patterns.QuitoutPatch);
             Offsets.SoloParamMan.Base = FindAddressByPattern(Patterns.SoloParamMan);
-            Offsets.InfiniteDurabilityPatch = FindAddressByPattern(Patterns.InfiniteDurabilityPatch);
             Offsets.OpenEnhanceShopWeapon = FindAddressByPattern(Patterns.OpenEnhanceShop).ToInt64();
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
             Offsets.WorldAiMan.Base = FindAddressByPattern(Patterns.WorldAiMan);
-            Offsets.FourKingsPatch = FindAddressByPattern(Patterns.FourKingsPatch);
-            Offsets.NoRollPatch = FindAddressByPattern(Patterns.NoRollPatch);
 
-            Offsets.Hooks.LastLockedTarget = FindAddressByPattern(Patterns.LastLockedTarget).ToInt64();
-            Offsets.Hooks.AllNoDamage = FindAddressByPattern(Patterns.AllNoDamage).ToInt64();
-            Offsets.Hooks.ItemSpawn = FindAddressByPattern(Patterns.ItemSpawnHook).ToInt64();
-            Offsets.Hooks.Draw = FindAddressByPattern(Patterns.DrawHook).ToInt64();
-            Offsets.Hooks.TargetingView = FindAddressByPattern(Patterns.TargetingView).ToInt64();
-            Offsets.Hooks.InAirTimer = FindAddressByPattern(Patterns.InAirTimer).ToInt64();
-            Offsets.Hooks.Keyboard = FindAddressByPattern(Patterns.Keyboard).ToInt64();
-            Offsets.Hooks.ControllerR2 = FindAddressByPattern(Patterns.ControllerR2).ToInt64();
-            Offsets.Hooks.ControllerL2 = FindAddressByPattern(Patterns.ControllerL2).ToInt64();
-            Offsets.Hooks.UpdateCoords = FindAddressByPattern(Patterns.UpdateCoords).ToInt64();
-            Offsets.Hooks.WarpCoords = FindAddressByPattern(Patterns.WarpCoords).ToInt64();
-            Offsets.Hooks.LuaIfCase = FindAddressByPattern(Patterns.LuaIfElseHook).ToInt64();
-            Offsets.Hooks.LuaSwitchCase = FindAddressByPattern(Patterns.LuaOpCodeSwitch).ToInt64();
-            Offsets.Hooks.BattleActivate = FindAddressByPattern(Patterns.BattleActivateHook).ToInt64();
+            // Hooks
+            TryPatternWithFallback("LastLockedTarget", Patterns.LastLockedTarget,
+                addr => Offsets.Hooks.LastLockedTarget = addr.ToInt64(), saved);
+            TryPatternWithFallback("AllNoDamage", Patterns.AllNoDamage,
+                addr => Offsets.Hooks.AllNoDamage = addr.ToInt64(), saved);
+            TryPatternWithFallback("ItemSpawn", Patterns.ItemSpawnHook,
+                addr => Offsets.Hooks.ItemSpawn = addr.ToInt64(), saved);
+            TryPatternWithFallback("Draw", Patterns.DrawHook, addr => Offsets.Hooks.Draw = addr.ToInt64(), saved);
+            TryPatternWithFallback("TargetingView", Patterns.TargetingView,
+                addr => Offsets.Hooks.TargetingView = addr.ToInt64(), saved);
+            TryPatternWithFallback("InAirTimer", Patterns.InAirTimer, addr => Offsets.Hooks.InAirTimer = addr.ToInt64(),
+                saved);
+            TryPatternWithFallback("Keyboard", Patterns.Keyboard, addr => Offsets.Hooks.Keyboard = addr.ToInt64(),
+                saved);
+            TryPatternWithFallback("ControllerR2", Patterns.ControllerR2,
+                addr => Offsets.Hooks.ControllerR2 = addr.ToInt64(), saved);
+            TryPatternWithFallback("ControllerL2", Patterns.ControllerL2,
+                addr => Offsets.Hooks.ControllerL2 = addr.ToInt64(), saved);
+            TryPatternWithFallback("UpdateCoords", Patterns.UpdateCoords,
+                addr => Offsets.Hooks.UpdateCoords = addr.ToInt64(), saved);
+            TryPatternWithFallback("WarpCoords", Patterns.WarpCoords, addr => Offsets.Hooks.WarpCoords = addr.ToInt64(),
+                saved);
+            TryPatternWithFallback("LuaIfCase", Patterns.LuaIfElseHook,
+                addr => Offsets.Hooks.LuaIfCase = addr.ToInt64(), saved);
+            TryPatternWithFallback("LuaSwitchCase", Patterns.LuaOpCodeSwitch,
+                addr => Offsets.Hooks.LuaSwitchCase = addr.ToInt64(), saved);
+            TryPatternWithFallback("BattleActivate", Patterns.BattleActivateHook,
+                addr => Offsets.Hooks.BattleActivate = addr.ToInt64(), saved);
 
+// Patches
+            TryPatternWithFallback("FourKingsPatch", Patterns.FourKingsPatch,
+                addr => Offsets.Patches.FourKingsPatch = addr, saved);
+            TryPatternWithFallback("NoRollPatch", Patterns.NoRollPatch, addr => Offsets.Patches.NoRollPatch = addr,
+                saved);
+            TryPatternWithFallback("InfiniteDurabilityPatch", Patterns.InfiniteDurabilityPatch,
+                addr => Offsets.Patches.InfiniteDurabilityPatch = addr, saved);
+            TryPatternWithFallback("DrawEventPatch", Patterns.DrawEventPatch,
+                addr => Offsets.Patches.DrawEventPatch = addr, saved);
+            TryPatternWithFallback("DrawSoundViewPatch", Patterns.DrawSoundViewPatch,
+                addr => Offsets.Patches.DrawSoundViewPatch = addr, saved);
+            TryPatternWithFallback("QuitoutPatch", Patterns.QuitoutPatch, addr => Offsets.Patches.QuitoutPatch = addr,
+                saved);
+            
+            using (var writer = new StreamWriter(savePath))
+            {
+                foreach (var pair in saved)
+                    writer.WriteLine($"{pair.Key}={pair.Value:X}");
+            }
             // Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
             // Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
             // Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
@@ -74,8 +117,8 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"FieldArea.Base: 0x{Offsets.FieldArea.Base.ToInt64():X}");
             // Console.WriteLine($"GameMan.Base: 0x{Offsets.GameMan.Base.ToInt64():X}");
             // Console.WriteLine($"DamageMan.Base: 0x{Offsets.DamageMan.Base.ToInt64():X}");
-            // Console.WriteLine($"DrawEventPatch: 0x{Offsets.DrawEventPatch.ToInt64():X}");
-            // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.DrawSoundViewPatch.ToInt64():X}");
+            // Console.WriteLine($"DrawEventPatch: 0x{Offsets.Patches.DrawEventPatch.ToInt64():X}");
+            // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.Patches.DrawSoundViewPatch.ToInt64():X}");
             // Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
             // Console.WriteLine($"EventFlagMan.Base: 0x{Offsets.EventFlagMan.Base.ToInt64():X}");
             // Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
@@ -83,7 +126,7 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
             // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
             // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
-            // Console.WriteLine($"FastQuitout: 0x{Offsets.QuitoutPatch.ToInt64():X}");
+            // Console.WriteLine($"FastQuitout: 0x{Offsets.Patches.QuitoutPatch.ToInt64():X}");
             // Console.WriteLine($"WorldAiMan: 0x{Offsets.WorldAiMan.Base.ToInt64():X}");
             //
             // Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
@@ -101,6 +144,18 @@ namespace SilkySouls.Memory
             // Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
             // Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
             // Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfCase:X}");
+        }
+        
+        private void TryPatternWithFallback(string name, Pattern pattern, Action<IntPtr> setter, Dictionary<string, long> saved)
+        {
+            var addr = FindAddressByPattern(pattern);
+    
+            if (addr == IntPtr.Zero && saved.TryGetValue(name, out var value))
+                addr = new IntPtr(value);
+            else if (addr != IntPtr.Zero)
+                saved[name] = addr.ToInt64();
+
+            setter(addr);
         }
 
         public IntPtr FindAddressByPattern(Pattern pattern)
@@ -288,7 +343,8 @@ namespace SilkySouls.Memory
         }
 
         private Task<(List<int> Acts, int RegionIndex)> ScanMemoryRange(
-            IntPtr rangeStart, IntPtr rangeEnd, int regionIndex, byte[] actAobScan, int chunkSize, string enemyId, CancellationToken cancellationToken)
+            IntPtr rangeStart, IntPtr rangeEnd, int regionIndex, byte[] actAobScan, int chunkSize, string enemyId,
+            CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {

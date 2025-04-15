@@ -85,22 +85,22 @@ namespace SilkySouls.Services
         
         internal void EnableSoundView()
         {
-            _memoryIo.WriteByte(Offsets.DrawSoundViewPatch, 1);
+            _memoryIo.WriteByte(Offsets.Patches.DrawSoundViewPatch, 1);
         }
 
         internal void DisableSoundView()
         {
-            _memoryIo.WriteByte(Offsets.DrawSoundViewPatch, 0);
+            _memoryIo.WriteByte(Offsets.Patches.DrawSoundViewPatch, 0);
         }
 
         public void EnableDrawEvent()
         {
-            _memoryIo.WriteByte(Offsets.DrawEventPatch, 1);
+            _memoryIo.WriteByte(Offsets.Patches.DrawEventPatch, 1);
         }
 
         public void DisableDrawEvent()
         {
-            _memoryIo.WriteByte(Offsets.DrawEventPatch, 0);
+            _memoryIo.WriteByte(Offsets.Patches.DrawEventPatch, 0);
         }
 
         private bool _targetViewIsInstalled;
@@ -483,7 +483,7 @@ namespace SilkySouls.Services
 
         public void ToggleNoRoll(bool isNoRollEnabled)
         {
-            var noRollPatchPtr = Offsets.NoRollPatch;
+            var noRollPatchPtr = Offsets.Patches.NoRollPatch;
             var noBackstepPatchPtr = noRollPatchPtr + 0xFF;
             if (isNoRollEnabled)
             {
