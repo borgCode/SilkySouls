@@ -37,7 +37,10 @@ namespace SilkySouls.ViewModels
         
         private bool _autoSpawnEnabled;
         private Item _selectedAutoSpawnWeapon;
-
+        
+        private string _preSearchCategory;
+        private bool _isSearchActive;
+        private readonly ObservableCollection<Item> _searchResultsCollection = new ObservableCollection<Item>();
 
         public ItemViewModel(ItemService itemService)
         {
@@ -64,6 +67,7 @@ namespace SilkySouls.ViewModels
             _infusionTypes.Add("Magic", new InfusionType(400, 10, false));
             _infusionTypes.Add("Occult", new InfusionType(700, 5, true));
             _infusionTypes.Add("Raw", new InfusionType(300, 5, true));
+            
         }
 
 
@@ -92,7 +96,6 @@ namespace SilkySouls.ViewModels
             _itemsByCategory.Add("Weapons", new ObservableCollection<Item>(DataLoader.GetItemList("Weapons")));
 
             SelectedCategory = Categories.FirstOrDefault();
-            
             SelectedAutoSpawnWeapon = _itemsByCategory["Weapons"].FirstOrDefault();
         }
 
@@ -126,19 +129,18 @@ namespace SilkySouls.ViewModels
             get => _selectedCategory;
             set
             {
-                if (SetProperty(ref _selectedCategory, value) && value != null)
+                if (!SetProperty(ref _selectedCategory, value) || value == null) return;
+                if (_selectedCategory == null) return;
+                if (_isSearchActive)
                 {
-                    if (_selectedCategory != null)
-                    {
-                        Items = _itemsByCategory[_selectedCategory.Name];
-                        SelectedItem = Items.FirstOrDefault();
-
-                        if (!string.IsNullOrEmpty(SearchText))
-                        {
-                            ApplyFilter();
-                        }
-                    }
+                    IsSearchActive = false;
+                    _searchText = string.Empty;
+                    OnPropertyChanged(nameof(SearchText));
+                    _preSearchCategory = null;
                 }
+
+                Items = _itemsByCategory[_selectedCategory.Name];
+                SelectedItem = Items.FirstOrDefault();
             }
         }
 
@@ -171,14 +173,44 @@ namespace SilkySouls.ViewModels
             get => _maxQuantity;
             private set => SetProperty(ref _maxQuantity, value);
         }
+        
+        public bool IsSearchActive
+        {
+            get => _isSearchActive;
+            private set => SetProperty(ref _isSearchActive, value);
+        }
 
         public string SearchText
         {
             get => _searchText;
             set
             {
-                if (SetProperty(ref _searchText, value))
+                if (!SetProperty(ref _searchText, value))
                 {
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    _isSearchActive = false;
+
+                    if (_preSearchCategory != null)
+                    {
+                        _selectedCategory.Name = _preSearchCategory;
+                        Items = _itemsByCategory[_selectedCategory.Name];
+                        SelectedItem = Items.FirstOrDefault();
+                        _preSearchCategory = null;
+                    }
+                    
+                }
+                else
+                {
+                    if (!_isSearchActive)
+                    {
+                        _preSearchCategory = SelectedCategory.Name;
+                        _isSearchActive = true;
+                    }
+                    
                     ApplyFilter();
                 }
             }
@@ -186,104 +218,107 @@ namespace SilkySouls.ViewModels
 
         private void ApplyFilter()
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(Items);
-
-            if (string.IsNullOrEmpty(SearchText))
+            
+            _searchResultsCollection.Clear();
+            var searchTextLower = SearchText.ToLower();
+            
+            foreach (var category in _itemsByCategory)
             {
-                view.Filter = null;
+                foreach (var item in category.Value)
+                {
+                    if (item.Name.ToLower().Contains(searchTextLower))
+                    {
+                        item.CategoryName = category.Key;
+                        _searchResultsCollection.Add(item);
+                    }
+                }
             }
-            else
-            {
-                view.Filter = item => ((Item)item).Name.ToLower().Contains(SearchText.ToLower());
-            }
+            Items = _searchResultsCollection;
         }
-
         public Item SelectedItem
         {
             get => _selectedItem;
             set
             {
                 SetProperty(ref _selectedItem, value);
-                if (_selectedItem != null)
+                if (_selectedItem == null) return;
+                if (_selectedCategory.Name == "Spells")
                 {
-                    if (_selectedCategory.Name == "Spells")
-                    {
-                        QuantityEnabled = true;
-                        MaxQuantity = _selectedItem.StackSize;
-                        SelectedQuantity = 1;
-                    }
-                    else if (_selectedItem.StackSize > 1)
-                    {
-                        QuantityEnabled = true;
-                        MaxQuantity = _selectedItem.StackSize;
-                        SelectedQuantity = _selectedItem.StackSize;
-                    }
-                    else
-                    {
-                        QuantityEnabled = false;
-                        MaxQuantity = 1;
-                        SelectedQuantity = 1;
-                    }
+                    QuantityEnabled = true;
+                    MaxQuantity = _selectedItem.StackSize;
+                    SelectedQuantity = 1;
+                }
+                else if (_selectedItem.StackSize > 1)
+                {
+                    QuantityEnabled = true;
+                    MaxQuantity = _selectedItem.StackSize;
+                    SelectedQuantity = _selectedItem.StackSize;
+                }
+                else
+                {
+                    QuantityEnabled = false;
+                    MaxQuantity = 1;
+                    SelectedQuantity = 1;
+                }
 
-                    var newInfusions = new ObservableCollection<string>();
+                var newInfusions = new ObservableCollection<string>();
 
-                    switch (_selectedItem.UpgradeType)
-                    {
-                        case UpgradeType.None:
-                            CanUpgrade = false;
-                            CanInfuse = false;
-                            SelectedUpgrade = 0;
+                switch (_selectedItem.UpgradeType)
+                {
+                    case UpgradeType.None:
+                        CanUpgrade = false;
+                        CanInfuse = false;
+                        SelectedUpgrade = 0;
+                        SelectedInfusionType = "Normal";
+                        break;
+                    case UpgradeType.Special:
+                        CanUpgrade = true;
+                        CanInfuse = false;
+                        SelectedInfusionType = "Normal";
+                        MaxUpgradeLevel = 5;
+                        break;
+                    case UpgradeType.Infusable:
+                        CanUpgrade = true;
+                        CanInfuse = true;
+                        foreach (var key in _infusionTypes.Keys)
+                        {
+                            newInfusions.Add(key);
+                        }
+
+                        AvailableInfusions = newInfusions;
+                        if (!newInfusions.Contains(SelectedInfusionType))
                             SelectedInfusionType = "Normal";
-                            break;
-                        case UpgradeType.Special:
-                            CanUpgrade = true;
-                            CanInfuse = false;
+
+                        MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
+                        break;
+                    case UpgradeType.InfusableLimited:
+                        CanUpgrade = true;
+                        CanInfuse = true;
+                        foreach (var kvp in _infusionTypes)
+                        {
+                            if (kvp.Value.Limited) continue;
+                            newInfusions.Add(kvp.Key);
+                        }
+
+                        AvailableInfusions = newInfusions;
+
+                        if (!newInfusions.Contains(SelectedInfusionType))
                             SelectedInfusionType = "Normal";
-                            MaxUpgradeLevel = 5;
-                            break;
-                        case UpgradeType.Infusable:
-                            CanUpgrade = true;
-                            CanInfuse = true;
-                            foreach (var key in _infusionTypes.Keys)
-                            {
-                                newInfusions.Add(key);
-                            }
 
-                            AvailableInfusions = newInfusions;
-                            if (!newInfusions.Contains(SelectedInfusionType))
-                                SelectedInfusionType = "Normal";
-
-                            MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
-                            break;
-                        case UpgradeType.InfusableLimited:
-                            CanUpgrade = true;
-                            CanInfuse = true;
-                            foreach (var kvp in _infusionTypes)
-                            {
-                                if (kvp.Value.Limited) continue;
-                                newInfusions.Add(kvp.Key);
-                            }
-
-                            AvailableInfusions = newInfusions;
-
-                            if (!newInfusions.Contains(SelectedInfusionType))
-                                SelectedInfusionType = "Normal";
-
-                            MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
-                            break;
-                        case UpgradeType.PyromancyFlame:
-                            CanUpgrade = true;
-                            CanInfuse = false;
-                            SelectedInfusionType = "Normal";
-                            MaxUpgradeLevel = 15;
-                            break;
-                        case UpgradeType.PyromancyAscended:
-                            CanUpgrade = true;
-                            CanInfuse = false;
-                            SelectedInfusionType = "Normal";
-                            MaxUpgradeLevel = 5;
-                            break;
-                    }
+                        MaxUpgradeLevel = _infusionTypes[SelectedInfusionType].MaxUpgrade;
+                        break;
+                    case UpgradeType.PyromancyFlame:
+                        CanUpgrade = true;
+                        CanInfuse = false;
+                        SelectedInfusionType = "Normal";
+                        MaxUpgradeLevel = 15;
+                        break;
+                    case UpgradeType.PyromancyAscended:
+                        CanUpgrade = true;
+                        CanInfuse = false;
+                        SelectedInfusionType = "Normal";
+                        MaxUpgradeLevel = 5;
+                        break;
                 }
             }
         }
@@ -353,7 +388,7 @@ namespace SilkySouls.ViewModels
             set => SetProperty(ref _selectedAutoSpawnWeapon, value);
         }
         
-        public ObservableCollection<Item> WeaponList => _itemsByCategory["Weapons"];
+        public ObservableCollection<Item> WeaponList => new ObservableCollection<Item>(_itemsByCategory["Weapons"]);
 
         public void DisableButtons()
         {
@@ -378,5 +413,6 @@ namespace SilkySouls.ViewModels
                     1);
             }
         }
+        
     }
 }

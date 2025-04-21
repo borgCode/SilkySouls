@@ -22,7 +22,7 @@ namespace SilkySouls.Memory
 
         public void Scan()
         {
-            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SilkySouls3");
+            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SilkySouls");
             Directory.CreateDirectory(appData);
             string savePath = Path.Combine(appData, "backup_addresses.txt");
             

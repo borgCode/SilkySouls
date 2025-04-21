@@ -11,6 +11,8 @@
         <Color x:Key="HoverColor">#005555</Color>
         <Color x:Key="BorderColor">#333333</Color>
         <Color x:Key="ControlBackgroundColor">#252525</Color>
+        <SolidColorBrush x:Key="AttachedBrush" Color="#4CAF50" />
+        <SolidColorBrush x:Key="NotAttachedBrush" Color="#D32F2F" />
         
         <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
         <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelColor}" />
@@ -70,7 +72,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="{StaticResource ControlBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="5,3" />
+            <Setter Property="HasDropShadow" Value="True" />
+        </Style>
         <Style TargetType="TextBox">
             <Setter Property="Background" Value="{StaticResource ControlBackgroundBrush}" />
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
@@ -411,6 +420,30 @@
         <Style TargetType="ScrollBar">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="#006B6B" /> 
+            <Setter Property="Width" Value="8" /> 
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="Bg" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}">
+                                <Track.Thumb>
+                                    <Thumb Background="{TemplateBinding Foreground}" Style="{DynamicResource ScrollBarThumbStyle}" />
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ScrollBarThumbStyle" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Rectangle Fill="{TemplateBinding Background}" RadiusX="4" RadiusY="4" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         
         <Style TargetType="wpfTool:IntegerUpDown" xmlns:wpfTool="http://schemas.xceed.com/wpf/xaml/toolkit">

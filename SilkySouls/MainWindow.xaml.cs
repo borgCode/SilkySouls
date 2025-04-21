@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using SilkySouls.memory;
 using SilkySouls.Memory;
@@ -83,7 +85,7 @@ namespace SilkySouls
             if (_memoryIo.IsAttached)
             {
                 IsAttachedText.Text = "Attached to game";
-                
+                IsAttachedText.Foreground = (SolidColorBrush)Application.Current.Resources["AttachedBrush"];
                 
                 if (!_hasScanned)
                 {
@@ -125,6 +127,7 @@ namespace SilkySouls
                 _hasAllocatedMemory = false;
                 _loaded = false;
                 IsAttachedText.Text = "Not attached";
+                IsAttachedText.Foreground = (SolidColorBrush)Application.Current.Resources["NotAttachedBrush"];
             }
         }
 
@@ -183,9 +186,8 @@ namespace SilkySouls
             WindowState = WindowState.Minimized;
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+        
+     
     }
 }

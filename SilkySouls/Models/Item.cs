@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public UpgradeType UpgradeType { get; set; }
         public int StackSize { get; set; }
+        public string CategoryName { get; set; }
         
         public Item(int id, int stackSize, UpgradeType upgradeType, string name)
         {

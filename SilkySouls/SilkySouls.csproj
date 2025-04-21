@@ -101,6 +101,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanAndConverter.cs" />
     <Compile Include="Converters\ImmuneFillConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Memory\AoBScanner.cs" />
     <Compile Include="Memory\AsmHelper.cs" />
     <Compile Include="Memory\CodeCaveOffsets.cs" />
@@ -120,6 +121,8 @@
     <Compile Include="Utilities\AsmLoader.cs" />
     <Compile Include="Utilities\HotkeyManager.cs" />
     <Compile Include="Utilities\DataLoader.cs" />
+    <Compile Include="Utilities\SettingsManager.cs" />
+    <Compile Include="Utilities\User32.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
