@@ -60,5 +60,16 @@ namespace SilkySouls.Memory
                 EnemyRaxIdentifier = 0xD60,
                 EnemyIdentifierCode = 0xD70,
             }
+
+            public enum EmevdCommand
+            {
+                XmmStorage = 0x1000, 
+                CommandParams = 0x1090,
+                FuncParams = 0x1098,
+                Flag = 0x10A0,
+                ParamStruct = 0x10B0,
+                Code = 0x11B0,
+            }
+            
     }
 }

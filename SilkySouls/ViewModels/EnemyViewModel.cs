@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
+using SilkySouls.Views;
 
 namespace SilkySouls.ViewModels
 {
@@ -13,6 +14,10 @@ namespace SilkySouls.ViewModels
         private bool _isTargetOptionsEnabled;
         private bool _isValidTarget;
         private readonly DispatcherTimer _targetOptionsTimer;
+        
+        
+        private ResistancesWindow _resistancesWindowWindow;
+        private bool _isResistancesWindowOpen;
 
         private int _targetCurrentHealth;
         private int _targetMaxHealth;
@@ -115,6 +120,9 @@ namespace SilkySouls.ViewModels
                 TargetMaxBleed = IsBleedImmune ? 0 : _enemyService.GetTargetMaxBleed();
                 TargetMaxPoison = IsPoisonImmune ? 0 : _enemyService.GetTargetMaxPoison();
                 TargetMaxToxic = IsToxicImmune ? 0 : _enemyService.GetTargetMaxToxic();
+                if (!IsResistancesWindowOpen || _resistancesWindowWindow == null) return;
+                _resistancesWindowWindow.DataContext = null;
+                _resistancesWindowWindow.DataContext = this;
             }
             
             TargetSpeed = _enemyService.GetTargetSpeed();
@@ -124,6 +132,7 @@ namespace SilkySouls.ViewModels
             TargetCurrentPoison = IsPoisonImmune ? 0 : _enemyService.GetTargetPoison();
             TargetCurrentToxic = IsToxicImmune ? 0 : _enemyService.GetTargetToxic();
         }
+        
 
         private bool IsTargetValid()
         {
@@ -149,6 +158,36 @@ namespace SilkySouls.ViewModels
             return true;
         }
         
+        public bool IsResistancesWindowOpen
+        {
+            get => _isResistancesWindowOpen;
+            set
+            {
+                if (!SetProperty(ref _isResistancesWindowOpen, value)) return;
+                if (value)
+                    OpenResistancesWindow();
+                else
+                    CloseResistancesWindow();
+            }
+        }
+        private void OpenResistancesWindow()
+        {
+            if (_resistancesWindowWindow != null && _resistancesWindowWindow.IsVisible) return;
+            _resistancesWindowWindow = new ResistancesWindow
+            {
+                DataContext = this
+            };
+            _resistancesWindowWindow.Closed += (s, e) => _isResistancesWindowOpen = false;
+            _resistancesWindowWindow.Show();
+        }
+        
+        private void CloseResistancesWindow()
+        {
+            if (_resistancesWindowWindow == null || !_resistancesWindowWindow.IsVisible) return;
+            _resistancesWindowWindow.Close();
+            _resistancesWindowWindow = null;
+        }
+        
         private void UpdateResistancesDisplay()
         {
             if (!IsTargetOptionsEnabled) return;
@@ -166,6 +205,9 @@ namespace SilkySouls.ViewModels
                 ShowPoison = false;
                 ShowToxic = false;
             }
+            if (!IsResistancesWindowOpen || _resistancesWindowWindow == null) return;
+            _resistancesWindowWindow.DataContext = null;
+            _resistancesWindowWindow.DataContext = this;
         }
         
         private void SetResistances()
@@ -247,15 +289,34 @@ namespace SilkySouls.ViewModels
                 if (!SetProperty(ref _isTargetOptionsEnabled, value)) return;
                 if (value)
                 {
+                    _enemyService.InstallTargetHook();
                     _targetOptionsTimer.Start();
+                    ShowAllResistances = true;
                 }
                 else
                 {
                     _targetOptionsTimer.Stop();
+                    IsRepeatActEnabled = false;
+                    ShowAllResistances = false;
+                    IsResistancesWindowOpen = false;
+                    IsFreezeHealthEnabled = false;
+                    _enemyService.UninstallTargetHook();
                     ShowPoise = false;
                     ShowBleed = false;
                     ShowPoison = false;
                     ShowToxic = false;
+                }
+            }
+        }
+        
+        public bool ShowAllResistances
+        {
+            get => _showAllResistances;
+            set
+            {
+                if (SetProperty(ref _showAllResistances, value))
+                {
+                    UpdateResistancesDisplay();
                 }
             }
         }
@@ -545,6 +606,11 @@ namespace SilkySouls.ViewModels
 
         public void TryEnableActiveOptions()
         {
+            if (IsTargetOptionsEnabled)
+            {
+                _enemyService.InstallTargetHook();
+                _targetOptionsTimer.Start();
+            }
             if (IsDisableAiEnabled)
                 _enemyService.ToggleAi(1);
             if (IsAllNoDamageEnabled)

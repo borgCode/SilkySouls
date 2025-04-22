@@ -22,8 +22,10 @@ namespace SilkySouls.memory
                 PlayerCtrl = 0x68,
                 PadMan = 0x70,
                 InfinitePoise = 0x2A6,
+                ReadOnlyCoords = 0x2C0,
                 Health = 0x3E8,
                 MaxHealth = 0x3EC,
+                Stamina = 0x3F8,
                 NoDamage = 0x524,
                 ChrFlags = 0x525,
                 NoGoodsConsume = 0x527,
@@ -188,12 +190,21 @@ namespace SilkySouls.memory
         public static class EventFlagMan
         {
             public static IntPtr Base;
-            public const int BonfireOffset = 0x0;
+            public const int FlagPtr = 0x0;
             public const int WarpFlag = 0x5B;
             public const int WarpFlagBit1 = 1;
             public const int WarpFlagBit2 = 5;
             
             public const int BonfireFlags = 0x18;
+
+            public const int QuelaagBellPtr1 = 0x40;
+            public const int QuelaagBellPtr2 = 0x690;
+            public const int QuelaagBellPtr3 = 0x18;
+            public const int QuelaagBellBit = 8;
+      
+
+            public const int GargOffset = 0xF54;
+            public const int GargBellBit = 0x1C;
             
             public enum BonfireBitFlag
             {
@@ -219,18 +230,6 @@ namespace SilkySouls.memory
                 SancGarden = 14,
                 Manus = 11
             }
-
-            public const int KalameetPtr1 = 0x40;
-            public const int KalameetPtr2 = 0x3F0;
-            public const int KalameetOffset = 0x4;
-            public const int KalameetVisitedBit = 12; 
-    
-            public const int KalameetGoughOffset = 0x48;
-            public const int KalameetGoughBit = 15; 
-    
-            public const int KalameetMoreFlags = 0x40;
-            public const int KalameetBit1 = 4; 
-            public const int KalameetBit2 = 8;     
         }
 
         public static class HgDraw
@@ -262,6 +261,11 @@ namespace SilkySouls.memory
             public const int LuaModule = 0x28;
           
         }
+
+        public static class EmkEventIns
+        {
+            public static IntPtr Base;
+        }
         
         public static class Hooks
         {
@@ -279,6 +283,7 @@ namespace SilkySouls.memory
             public static long LuaIfCase;
             public static long LuaSwitchCase;
             public static long BattleActivate;
+            public static long Emevd;
         }
 
         public static class Patches
@@ -289,6 +294,15 @@ namespace SilkySouls.memory
             public static IntPtr FourKingsPatch;
             public static IntPtr NoRollPatch;
             public static IntPtr QuitoutPatch;
+        }
+
+        public static class Funcs
+        {
+            public static long SetEvent;
+            public static long ShopParamSave;
+            public static long OpenRegularShop;
+            public static long ProcessEmevdCommand;
+
         }
     }
 }

@@ -61,18 +61,53 @@
                         </ProgressBar.Template>
                     </ProgressBar>
 
-                    <Grid Margin="0,0,0,10">
+                    <Grid Margin="0,0,0,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <UniformGrid Grid.Column="0" Rows="1" Columns="5">
-                            <Button Content="Kill" Margin="1" Click="OnHealthButtonClick" CommandParameter="0" />
-                            <Button Content="25%" Margin="1" Click="OnHealthButtonClick" CommandParameter="25" />
-                            <Button Content="50%" Margin="1" Click="OnHealthButtonClick" CommandParameter="50" />
-                            <Button Content="75%" Margin="1" Click="OnHealthButtonClick" CommandParameter="75" />
-                            <Button Content="100%" Margin="1" Click="OnHealthButtonClick" CommandParameter="100" />
+                            <Button Content="Kill" Margin="1" Click="OnHealthButtonClick" CommandParameter="0">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="AreOptionsEnabled" />
+                                        <Binding Path="IsValidTarget" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
+                            <Button Content="25%" Margin="1" Click="OnHealthButtonClick" CommandParameter="25">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="AreOptionsEnabled" />
+                                        <Binding Path="IsValidTarget" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
+                            <Button Content="50%" Margin="1" Click="OnHealthButtonClick" CommandParameter="50">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="AreOptionsEnabled" />
+                                        <Binding Path="IsValidTarget" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
+                            <Button Content="75%" Margin="1" Click="OnHealthButtonClick" CommandParameter="75">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="AreOptionsEnabled" />
+                                        <Binding Path="IsValidTarget" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
+                            <Button Content="100%" Margin="1" Click="OnHealthButtonClick" CommandParameter="100">
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                                        <Binding Path="AreOptionsEnabled" />
+                                        <Binding Path="IsValidTarget" />
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
                         </UniformGrid>
 
                         <CheckBox Grid.Column="1" Content="Freeze Health" Margin="10,0,0,0"
@@ -86,14 +121,37 @@
                         </CheckBox>
                     </Grid>
 
-                    <Grid Margin="0,5,0,10">
+                    <Grid Margin="0,5,0,5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Show:" Margin="0,0,0,5" />
+                        <TextBlock Grid.Row="0" Text="Show:" Margin="0,0,0,0" />
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <CheckBox Content="Pop out Resistances"
+                                      IsEnabled="{Binding IsTargetOptionsEnabled}"
+                                      IsChecked="{Binding IsResistancesWindowOpen}"
+                                      Margin="0,2" />
+
+                            <Border
+                                Background="#3498db"
+                                CornerRadius="10"
+                                Width="12"
+                                Height="12"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center"
+                                ToolTip="Will only stay on top of game in windowed mode"
+                                ToolTipService.InitialShowDelay='100'>
+                                <TextBlock Text="i"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           FontSize="10" />
+                            </Border>
+                        </StackPanel>
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
@@ -110,9 +168,11 @@
                                           IsChecked="{Binding ShowPoison, FallbackValue=False}" />
                                 <CheckBox Content="Toxic" Margin="0,5"
                                           IsChecked="{Binding ShowToxic, FallbackValue=False}" />
+                                <CheckBox Content="Show All" Margin="0,5"
+                                          IsChecked="{Binding ShowAllResistances, FallbackValue=False}" />
                             </StackPanel>
 
-                            <Grid Grid.Column="1">
+                            <Grid Grid.Column="1" Margin="0,15,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -275,7 +335,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Margin="0,10,0,10">
+                    <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -305,7 +365,7 @@
                         </wpfTool:DoubleUpDown>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <CheckBox Content="Disable Target AI" Margin="10,0,0,0">
+                        <CheckBox Content="Freeze Target AI" Margin="10,0,0,0">
                             <CheckBox.IsEnabled>
                                 <MultiBinding Converter="{StaticResource BooleanAndConverter}">
                                     <Binding Path="AreOptionsEnabled" />
@@ -387,10 +447,10 @@
                         BorderBrush="#333"
                         CornerRadius="3"
                         Margin="5,0,0,0">
-                    <StackPanel Margin="10">
+                    <StackPanel Margin="5">
                         <TextBlock Text="Misc"
                                    FontWeight="Bold"
-                                   Margin="0,0,0,10" />
+                                   Margin="0,0,0,5" />
 
                         <UniformGrid Columns="1">
                             <CheckBox Content="Stop 4 kings spawn timer"

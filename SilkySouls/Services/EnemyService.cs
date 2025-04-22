@@ -14,12 +14,12 @@ namespace SilkySouls.Services
         private readonly HookManager _hookManager;
         private readonly AoBScanner _aoBScanner;
 
-        private IntPtr _lockedTargetPtr;
+        private IntPtr savedTargetPtr;
         private IntPtr _lastTargetBlock;
 
         private bool _isHookInstalled;
         
-        private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x8D, 0x54, 0x24, 0x38 };
+        private readonly byte[] _lockedTargetOriginBytes = { 0x48, 0x89, 0xFA, 0x48, 0x89, 0xD9,};
         private bool _isRepeatActCodeWritten;
         private bool _hasWrittenEnemyId;
         private bool _isRepeatActHookInstalled;
@@ -32,37 +32,29 @@ namespace SilkySouls.Services
             _aoBScanner = aobScanner;
         }
 
-        internal void TryInstallTargetHook()
+        internal void InstallTargetHook()
         {
-            if (_isHookInstalled) return;
             var lockedTargetOrigin = Offsets.Hooks.LastLockedTarget;
-            _lockedTargetPtr = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr;
+            var savedTargetPtr = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr;
             _lastTargetBlock = CodeCaveOffsets.Base + CodeCaveOffsets.LockedTarget;
 
             byte[] lockedTargetBytes = AsmLoader.GetAsmBytes("LastLockedTarget");
-
-
+            
             byte[] bytes = BitConverter.GetBytes(Offsets.WorldChrMan.Base.ToInt64());
-            Array.Copy(bytes, 0, lockedTargetBytes, 4, bytes.Length);
+            Array.Copy(bytes, 0, lockedTargetBytes, 0x5 + 2, bytes.Length);
+            
+            bytes = BitConverter.GetBytes(savedTargetPtr.ToInt64());
+            Array.Copy(bytes, 0, lockedTargetBytes, 0x1B + 2, bytes.Length);
 
-            bytes = BitConverter.GetBytes(13); // Jump to exit if player
-            Array.Copy(bytes, 0, lockedTargetBytes, 21, bytes.Length);
-            bytes = BitConverter.GetBytes(_lockedTargetPtr.ToInt64());
-            Array.Copy(bytes, 0, lockedTargetBytes, 30, bytes.Length);
-
-            int originOffset = (int)(lockedTargetOrigin + 5 - (_lastTargetBlock.ToInt64() + 50));
+            int originOffset = (int)(lockedTargetOrigin + 6 - (_lastTargetBlock.ToInt64() + 0x2F));
             bytes = BitConverter.GetBytes(originOffset);
-            Array.Copy(bytes, 0, lockedTargetBytes, 46, bytes.Length);
+            Array.Copy(bytes, 0, lockedTargetBytes, 0x2A + 1, bytes.Length);
 
             _memoryIo.WriteBytes(_lastTargetBlock, lockedTargetBytes);
             _hookManager.InstallHook(_lastTargetBlock.ToInt64(), lockedTargetOrigin, _lockedTargetOriginBytes);
-            _isHookInstalled = true;
         }
 
-        internal void ResetHooks()
-        {
-            _isHookInstalled = false;
-        }
+        public void UninstallTargetHook() => _hookManager.UninstallHook(_lastTargetBlock.ToInt64());
         
         public int GetTargetHp()
         {

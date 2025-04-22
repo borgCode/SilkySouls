@@ -24,5 +24,7 @@ namespace SilkySouls.Memory
                 Array.Copy(relativeBytes, 0, bytes, offset, 4);
             }
         }
+        public static byte[] GetJmpOriginOffsetBytes(long hookLocation, int originalInstrLen, IntPtr customCodeAddr)
+            => BitConverter.GetBytes((int)(hookLocation + originalInstrLen - customCodeAddr.ToInt64()));
     }
 }

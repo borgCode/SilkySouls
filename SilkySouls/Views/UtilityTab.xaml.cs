@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SilkySouls.Memory;
 using SilkySouls.ViewModels;
 
 namespace SilkySouls.Views
@@ -74,6 +75,116 @@ namespace SilkySouls.Views
         private void UnlockKalameet_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.UnlockKalameet();
+        }
+
+        private void GargBell_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.RingGargBell();
+        }
+
+        private void QuelaggBell_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.RingQuelaggBell();
+        }
+
+        private void Sens_Click(object sender, RoutedEventArgs e)
+        {
+             _utilityViewModel.OpenSens();
+        }
+
+        private void MaleUdMerchant_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.MaleUdMerchant);
+        }
+
+        private void FemaleUdMerchant_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.FemaleUdMerchant);
+        }
+
+        private void Zena_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Zena);
+        }
+
+        private void Patches_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Patches);
+        }
+
+        private void Shiva_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Shiva);
+        }
+
+        private void Griggs_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Griggs);
+        }
+
+        private void Dusk_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Dusk);
+        }
+
+        private void Ingward_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Ingward);
+        }
+
+        private void Laurentius_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Laurentius);
+        }
+
+        private void Eingyi_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Eingyi);
+        }
+
+        private void Quelana_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Quelana);
+        }
+
+        private void Petrus_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Petrus);
+        }
+
+        private void Reah_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Reah);
+        }
+
+        private void Oswald_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Oswald);
+        }
+
+        private void Logan_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Logan);
+        }
+
+        private void CrestfallenMerchant_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.CrestfallenMerchant);
+        }
+
+        private void Chester_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Chester);
+        }
+
+        private void Elizabeth_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Elizabeth);
+        }
+
+        private void Gough_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenShop(GameIds.ShopParams.Gough);
         }
     }
 }

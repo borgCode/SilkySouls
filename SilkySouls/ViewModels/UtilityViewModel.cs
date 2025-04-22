@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SilkySouls.memory;
+using SilkySouls.Memory;
 using SilkySouls.Models;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
+using static SilkySouls.memory.Offsets;
 
 namespace SilkySouls.ViewModels
 {
@@ -18,32 +19,33 @@ namespace SilkySouls.ViewModels
         private bool _isNoClipEnabled;
         private bool _isNoRollEnabled;
         private bool _isFilterRemoveEnabled;
-        
+
         private bool _areButtonsEnabled;
         private bool _areAttachedOptionsEnabled;
         private bool _areAttachedOptionsRestored;
 
         private bool _wasNoDeathEnabled;
-        
+
         private readonly UtilityService _utilityService;
         private readonly PlayerService _playerService;
         private readonly HotkeyManager _hotkeyManager;
-        
+
         private readonly Dictionary<string, Location> _warpLocations;
         private KeyValuePair<string, string> _selectedLocation;
-        
+
         public UtilityViewModel(UtilityService utilityService, PlayerService playerService, HotkeyManager hotkeyManager)
         {
             _utilityService = utilityService;
             _playerService = playerService;
             _warpLocations = DataLoader.GetLocationDict();
             _hotkeyManager = hotkeyManager;
-            
+
             if (_warpLocations.Any())
             {
                 var firstLocation = _warpLocations.First();
                 _selectedLocation = new KeyValuePair<string, string>(firstLocation.Key, firstLocation.Value.Name);
             }
+
             RegisterHotkeys();
         }
 
@@ -52,10 +54,10 @@ namespace SilkySouls.ViewModels
             _hotkeyManager.RegisterAction("NoClip", () => { IsNoClipEnabled = !IsNoClipEnabled; });
             _hotkeyManager.RegisterAction("Warp", Warp);
         }
-        
+
         public IEnumerable<KeyValuePair<string, string>> WarpLocations =>
             _warpLocations.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.Name));
-        
+
         public KeyValuePair<string, string> SelectedLocation
         {
             get => _selectedLocation;
@@ -185,7 +187,7 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
-        
+
         public bool IsNoRollEnabled
         {
             get => _isNoRollEnabled;
@@ -195,7 +197,7 @@ namespace SilkySouls.ViewModels
                 _utilityService.ToggleNoRoll(_isNoRollEnabled);
             }
         }
-        
+
         public bool IsFilterRemoveEnabled
         {
             get => _isFilterRemoveEnabled;
@@ -216,7 +218,7 @@ namespace SilkySouls.ViewModels
 
             _ = Task.Run(() => _utilityService.Warp(_warpLocations[SelectedLocation.Key]));
         }
-        
+
         public void DisableButtons()
         {
             IsNoClipEnabled = false;
@@ -237,17 +239,17 @@ namespace SilkySouls.ViewModels
                 _utilityService.ToggleFilter(IsFilterRemoveEnabled);
             if (IsNoRollEnabled)
                 _utilityService.ToggleNoRoll(IsNoRollEnabled);
-            
+
             AreButtonsEnabled = true;
         }
-        
+
         public void ResetAttached()
         {
             IsNoClipEnabled = false;
             _areAttachedOptionsRestored = false;
             _utilityService.ResetHook();
         }
-        
+
         public void TryRestoreAttachedFeatures()
         {
             if (_areAttachedOptionsRestored) return;
@@ -255,32 +257,25 @@ namespace SilkySouls.ViewModels
             {
                 if (!_utilityService.EnableDraw()) return;
             }
+
             _areAttachedOptionsRestored = true;
         }
 
-        public void ShowLevelUpMenu()
-        {
-            _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.LevelUpMenu);
-        }
-
-        public void ShowAttunementMenu()
-        {
-            _utilityService.ShowMenu(Offsets.MenuMan.MenuManData.AttunementMenu);
-        }
+        public void ShowLevelUpMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.LevelUpMenu);
         
-        public void UnlockBonfires()
-        {
-            _utilityService.UnlockBonfireWarps();
-        }
+        public void ShowAttunementMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.AttunementMenu);
+        
+        public void UnlockBonfires() => _utilityService.UnlockBonfireWarps();
 
-        public void UnlockKalameet()
-        {
-            _utilityService.UnlockKalameet();
-        }
+        public void UnlockKalameet() => _utilityService.SetMultipleEvents(GameIds.EventFlags.UnlockKalameet);
 
-        public void ShowUpgradeMenu(bool isWeapon)
-        {
-            _utilityService.ShowUpgradeMenu(isWeapon);
-        }
+        public void ShowUpgradeMenu(bool isWeapon) => _utilityService.ShowUpgradeMenu(isWeapon);
+
+        public void RingGargBell() => _utilityService.RingGargBell();
+
+        public void RingQuelaggBell() => _utilityService.RingQuelaagBell();
+
+        public void OpenSens() => _utilityService.OpenSensGate(GameIds.EventFlags.Sens);
+        public void OpenShop(ulong[] shopParams) => _utilityService.OpenRegularShop(shopParams);
     }
 }

@@ -1203,20 +1203,22 @@ c3                      ret</value>
 e9 00 00 00 00          jmp    21 &lt;_main+0x21&gt;</value>
   </data>
   <data name="LastLockedTarget" xml:space="preserve">
-    <value>50                      push   rax
+    <value>48 89 fa                mov    rdx,rdi
+50                      push   rax
 51                      push   rcx
-48 a1 00 00 00 00 00    movabs rax,0x0
+48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 48 8b 48 68             mov    rcx,QWORD PTR [rax+0x68]
-48 39 d9                cmp    rcx,rbx
-0f 84 00 00 00 00       je     19 &lt;_main+0x19&gt;
-48 89 d8                mov    rax,rbx
+48 39 d1                cmp    rcx,rdx
+74 0d                   je     25 &lt;exit&gt;
+48 89 d0                mov    rax,rdx
 48 a3 00 00 00 00 00    movabs ds:0x0,rax
 00 00 00
+000000000025 &lt;exit&gt;:
 59                      pop    rcx
 58                      pop    rax
-48 8d 4c 24 38          lea    rcx,[rsp+0x38]
-e9 00 00 00 00          jmp    32 &lt;_main+0x32&gt;</value>
+48 89 d9                mov    rcx,rbx
+e9 00 00 00 00          jmp    2f &lt;exit+0xa&gt;</value>
   </data>
   <data name="WarpAngle" xml:space="preserve">
     <value>51                      push   rcx
@@ -1374,5 +1376,123 @@ f3 a6                   repz cmps BYTE PTR ds:[rsi],BYTE PTR es:[rdi]
 48 8b 45 18             mov    rax,QWORD PTR [rbp+0x18]
 48 2b 45 10             sub    rax,QWORD PTR [rbp+0x10]
 e9 00 00 00 00          jmp    8b &lt;not_match+0x14&gt;</value>
+  </data>
+  <data name="SetEvent" xml:space="preserve">
+    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+48 ba 00 00 00 00 00    movabs rdx,0x0
+00 00 00
+41 b8 01 00 00 00       mov    r8d,0x1
+41 b9 00 00 00 00       mov    r9d,0x0
+48 83 ec 48             sub    rsp,0x48
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 48             add    rsp,0x48
+c3                      ret</value>
+  </data>
+  <data name="OpenRegularShop" xml:space="preserve">
+    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+48 ba 00 00 00 00 00    movabs rdx,0x0
+00 00 00
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 ec 28             sub    rsp,0x28
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 28             add    rsp,0x28
+c3                      ret</value>
+  </data>
+  <data name="ScriptCommands" xml:space="preserve">
+    <value>83 3d 00 00 00 00 01    cmp    DWORD PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
+0f 84 16 01 00 00       je     123 &lt;executeOriginal&gt;
+c7 05 00 00 00 00 01    mov    DWORD PTR [rip+0x0],0x1        # 17 &lt;_main+0x17&gt;
+00 00 00
+50                      push   rax
+53                      push   rbx
+51                      push   rcx
+52                      push   rdx
+56                      push   rsi
+57                      push   rdi
+41 50                   push   r8
+41 51                   push   r9
+41 52                   push   r10
+41 53                   push   r11
+41 54                   push   r12
+41 55                   push   r13
+41 56                   push   r14
+41 57                   push   r15
+9c                      pushf
+48 83 ec 10             sub    rsp,0x10
+f3 0f 7f 05 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm0        # 3a &lt;_main+0x3a&gt;
+00
+f3 0f 7f 0d 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm1        # 42 &lt;_main+0x42&gt;
+00
+f3 0f 7f 15 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm2        # 4a &lt;_main+0x4a&gt;
+00
+f3 0f 7f 1d 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm3        # 52 &lt;_main+0x52&gt;
+00
+f3 0f 7f 25 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm4        # 5a &lt;_main+0x5a&gt;
+00
+f3 0f 7f 2d 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm5        # 62 &lt;_main+0x62&gt;
+00
+f3 0f 7f 35 00 00 00    movdqu XMMWORD PTR [rip+0x0],xmm6        # 6a &lt;_main+0x6a&gt;
+00
+f3 44 0f 7f 0d 00 00    movdqu XMMWORD PTR [rip+0x0],xmm9        # 73 &lt;_main+0x73&gt;
+00 00
+f3 44 0f 7f 15 00 00    movdqu XMMWORD PTR [rip+0x0],xmm10        # 7c &lt;_main+0x7c&gt;
+00 00
+4c 8d 05 00 00 00 00    lea    r8,[rip+0x0]        # 83 &lt;_main+0x83&gt;
+48 8d 05 00 00 00 00    lea    rax,[rip+0x0]        # 8a &lt;_main+0x8a&gt;
+49 89 80 b0 00 00 00    mov    QWORD PTR [r8+0xb0],rax
+48 8d 05 00 00 00 00    lea    rax,[rip+0x0]        # 98 &lt;_main+0x98&gt;
+49 89 80 b8 00 00 00    mov    QWORD PTR [r8+0xb8],rax
+48 8b 0d 00 00 00 00    mov    rcx,QWORD PTR [rip+0x0]        # a6 &lt;_main+0xa6&gt;
+48 8b 09                mov    rcx,QWORD PTR [rcx]
+48 8b 49 28             mov    rcx,QWORD PTR [rcx+0x28]
+48 8b 49 30             mov    rcx,QWORD PTR [rcx+0x30]
+48 83 ec 28             sub    rsp,0x28
+e8 00 00 00 00          call   ba &lt;_main+0xba&gt;
+48 83 c4 28             add    rsp,0x28
+f3 44 0f 6f 15 00 00    movdqu xmm10,XMMWORD PTR [rip+0x0]        # c7 &lt;_main+0xc7&gt;
+00 00
+f3 44 0f 6f 0d 00 00    movdqu xmm9,XMMWORD PTR [rip+0x0]        # d0 &lt;_main+0xd0&gt;
+00 00
+f3 0f 6f 35 00 00 00    movdqu xmm6,XMMWORD PTR [rip+0x0]        # d8 &lt;_main+0xd8&gt;
+00
+f3 0f 6f 2d 00 00 00    movdqu xmm5,XMMWORD PTR [rip+0x0]        # e0 &lt;_main+0xe0&gt;
+00
+f3 0f 6f 25 00 00 00    movdqu xmm4,XMMWORD PTR [rip+0x0]        # e8 &lt;_main+0xe8&gt;
+00
+f3 0f 6f 1d 00 00 00    movdqu xmm3,XMMWORD PTR [rip+0x0]        # f0 &lt;_main+0xf0&gt;
+00
+f3 0f 6f 15 00 00 00    movdqu xmm2,XMMWORD PTR [rip+0x0]        # f8 &lt;_main+0xf8&gt;
+00
+f3 0f 6f 0d 00 00 00    movdqu xmm1,XMMWORD PTR [rip+0x0]        # 100 &lt;_main+0x100&gt;
+00
+f3 0f 6f 05 00 00 00    movdqu xmm0,XMMWORD PTR [rip+0x0]        # 108 &lt;_main+0x108&gt;
+00
+48 83 c4 10             add    rsp,0x10
+9d                      popf
+41 5f                   pop    r15
+41 5e                   pop    r14
+41 5d                   pop    r13
+41 5c                   pop    r12
+41 5b                   pop    r11
+41 5a                   pop    r10
+41 59                   pop    r9
+41 58                   pop    r8
+5f                      pop    rdi
+5e                      pop    rsi
+5a                      pop    rdx
+59                      pop    rcx
+5b                      pop    rbx
+58                      pop    rax
+00000123 &lt;executeOriginal&gt;:
+ba 01 00 00 00          mov    edx,0x1
+e9 00 00 00 00          jmp    12d &lt;executeOriginal+0xa&gt;</value>
   </data>
 </root>

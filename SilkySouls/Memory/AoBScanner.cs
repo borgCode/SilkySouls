@@ -58,6 +58,7 @@ namespace SilkySouls.Memory
             Offsets.OpenEnhanceShopWeapon = FindAddressByPattern(Patterns.OpenEnhanceShop).ToInt64();
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
             Offsets.WorldAiMan.Base = FindAddressByPattern(Patterns.WorldAiMan);
+            Offsets.EmkEventIns.Base = FindAddressByPattern(Patterns.EmkEventIns);
 
             // Hooks
             TryPatternWithFallback("LastLockedTarget", Patterns.LastLockedTarget,
@@ -86,7 +87,9 @@ namespace SilkySouls.Memory
             TryPatternWithFallback("LuaSwitchCase", Patterns.LuaOpCodeSwitch,
                 addr => Offsets.Hooks.LuaSwitchCase = addr.ToInt64(), saved);
             TryPatternWithFallback("BattleActivate", Patterns.BattleActivateHook,
-                addr => Offsets.Hooks.BattleActivate = addr.ToInt64(), saved);
+                addr => Offsets.Hooks.BattleActivate = addr.ToInt64(), saved); 
+            TryPatternWithFallback("Emevd", Patterns.EmevdCommandHook,
+                addr => Offsets.Hooks.Emevd = addr.ToInt64(), saved);
 
 // Patches
             TryPatternWithFallback("FourKingsPatch", Patterns.FourKingsPatch,
@@ -107,43 +110,60 @@ namespace SilkySouls.Memory
                 foreach (var pair in saved)
                     writer.WriteLine($"{pair.Key}={pair.Value:X}");
             }
-            // Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
-            // Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
-            // Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
-            // Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
-            // Console.WriteLine($"ItemGet: 0x{Offsets.ItemGet:X}");
-            // Console.WriteLine($"ItemGetMenuMan: 0x{Offsets.ItemGetMenuMan.ToInt64():X}");
-            // Console.WriteLine($"ItemDlgFunc: 0x{Offsets.ItemDlgFunc:X}");
-            // Console.WriteLine($"FieldArea.Base: 0x{Offsets.FieldArea.Base.ToInt64():X}");
-            // Console.WriteLine($"GameMan.Base: 0x{Offsets.GameMan.Base.ToInt64():X}");
-            // Console.WriteLine($"DamageMan.Base: 0x{Offsets.DamageMan.Base.ToInt64():X}");
-            // Console.WriteLine($"DrawEventPatch: 0x{Offsets.Patches.DrawEventPatch.ToInt64():X}");
-            // Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.Patches.DrawSoundViewPatch.ToInt64():X}");
-            // Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
-            // Console.WriteLine($"EventFlagMan.Base: 0x{Offsets.EventFlagMan.Base.ToInt64():X}");
-            // Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
-            // Console.WriteLine($"RestoreCastsFunc: 0x{Offsets.RestoreCastsFunc:X}");
-            // Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
-            // Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
-            // Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
-            // Console.WriteLine($"FastQuitout: 0x{Offsets.Patches.QuitoutPatch.ToInt64():X}");
-            // Console.WriteLine($"WorldAiMan: 0x{Offsets.WorldAiMan.Base.ToInt64():X}");
-            //
-            // Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
-            // Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
-            //
-            // Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
-            // Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
-            // Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
-            // Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");
-            // Console.WriteLine($"Hooks.TargetingView: 0x{Offsets.Hooks.TargetingView:X}");
-            // Console.WriteLine($"Hooks.InAirTimer: 0x{Offsets.Hooks.InAirTimer:X}");
-            // Console.WriteLine($"Hooks.Keyboard: 0x{Offsets.Hooks.Keyboard:X}");
-            // Console.WriteLine($"Hooks.ControllerR2: 0x{Offsets.Hooks.ControllerR2:X}");
-            // Console.WriteLine($"Hooks.ControllerL2: 0x{Offsets.Hooks.ControllerL2:X}");
-            // Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
-            // Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
-            // Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfCase:X}");
+            
+            
+            Offsets.Funcs.SetEvent = FindAddressByPattern(Patterns.SetEvent).ToInt64();
+            Offsets.Funcs.ShopParamSave = FindAddressByPattern(Patterns.ShopParamSave).ToInt64();
+            Offsets.Funcs.OpenRegularShop = FindAddressByPattern(Patterns.OpenRegularShop).ToInt64();
+            Offsets.Funcs.ProcessEmevdCommand = FindAddressByPattern(Patterns.ProcessEmevdCommand).ToInt64();
+            
+            
+            #if DEBUG
+            Console.WriteLine($"WorldChrMan.Base: 0x{Offsets.WorldChrMan.Base.ToInt64():X}");
+            Console.WriteLine($"DebugFlags.Base: 0x{Offsets.DebugFlags.Base.ToInt64():X}");
+            Console.WriteLine($"Cam.Base: 0x{Offsets.Cam.Base.ToInt64():X}");
+            Console.WriteLine($"GameDataMan.Base: 0x{Offsets.GameDataMan.Base.ToInt64():X}");
+            Console.WriteLine($"ItemGet: 0x{Offsets.ItemGet:X}");
+            Console.WriteLine($"ItemGetMenuMan: 0x{Offsets.ItemGetMenuMan.ToInt64():X}");
+            Console.WriteLine($"ItemDlgFunc: 0x{Offsets.ItemDlgFunc:X}");
+            Console.WriteLine($"FieldArea.Base: 0x{Offsets.FieldArea.Base.ToInt64():X}");
+            Console.WriteLine($"GameMan.Base: 0x{Offsets.GameMan.Base.ToInt64():X}");
+            Console.WriteLine($"DamageMan.Base: 0x{Offsets.DamageMan.Base.ToInt64():X}");
+            Console.WriteLine($"DrawEventPatch: 0x{Offsets.Patches.DrawEventPatch.ToInt64():X}");
+            Console.WriteLine($"DrawSoundViewPatch: 0x{Offsets.Patches.DrawSoundViewPatch.ToInt64():X}");
+            Console.WriteLine($"MenuMan.Base: 0x{Offsets.MenuMan.Base.ToInt64():X}");
+            Console.WriteLine($"EventFlagMan.Base: 0x{Offsets.EventFlagMan.Base.ToInt64():X}");
+            Console.WriteLine($"LevelUpFunc: 0x{Offsets.LevelUpFunc:X}");
+            Console.WriteLine($"RestoreCastsFunc: 0x{Offsets.RestoreCastsFunc:X}");
+            Console.WriteLine($"HgDraw.Base: 0x{Offsets.HgDraw.Base.ToInt64():X}");
+            Console.WriteLine($"WarpEvent: 0x{Offsets.WarpEvent.ToInt64():X}");
+            Console.WriteLine($"WarpFunc: 0x{Offsets.WarpFunc:X}");
+            Console.WriteLine($"FastQuitout: 0x{Offsets.Patches.QuitoutPatch.ToInt64():X}");
+            Console.WriteLine($"WorldAiMan: 0x{Offsets.WorldAiMan.Base.ToInt64():X}");
+            Console.WriteLine($"EmkEventIns: 0x{Offsets.EmkEventIns.Base.ToInt64():X}");
+            
+            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
+            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
+            
+            Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
+            Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
+            Console.WriteLine($"Hooks.ItemSpawn: 0x{Offsets.Hooks.ItemSpawn:X}");
+            Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");
+            Console.WriteLine($"Hooks.TargetingView: 0x{Offsets.Hooks.TargetingView:X}");
+            Console.WriteLine($"Hooks.InAirTimer: 0x{Offsets.Hooks.InAirTimer:X}");
+            Console.WriteLine($"Hooks.Keyboard: 0x{Offsets.Hooks.Keyboard:X}");
+            Console.WriteLine($"Hooks.ControllerR2: 0x{Offsets.Hooks.ControllerR2:X}");
+            Console.WriteLine($"Hooks.ControllerL2: 0x{Offsets.Hooks.ControllerL2:X}");
+            Console.WriteLine($"Hooks.UpdateCoords: 0x{Offsets.Hooks.UpdateCoords:X}");
+            Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
+            Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfCase:X}");
+            Console.WriteLine($"Hooks.Emevd: 0x{Offsets.Hooks.Emevd:X}");
+            
+            Console.WriteLine($"Funcs.SetEvent: 0x{Offsets.Funcs.SetEvent:X}");
+            Console.WriteLine($"Funcs.ShopParamSave: 0x{Offsets.Funcs.ShopParamSave:X}");
+            Console.WriteLine($"Funcs.OpenRegularShop: 0x{Offsets.Funcs.OpenRegularShop:X}");
+            Console.WriteLine($"Funcs.ProcessEmevdCommand: 0x{Offsets.Funcs.ProcessEmevdCommand:X}");
+#endif
         }
         
         private void TryPatternWithFallback(string name, Pattern pattern, Action<IntPtr> setter, Dictionary<string, long> saved)
@@ -171,7 +191,7 @@ namespace SilkySouls.Memory
                 case RipType.None:
                     return instructionAddress;
 
-                case RipType.Standard:
+                case RipType.Mov64:
                     // e.g. 48 8B 05/0D - Standard mov rax/rcx,[rip+offset]
                     int stdOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
                     return IntPtr.Add(instructionAddress, stdOffset + 7);

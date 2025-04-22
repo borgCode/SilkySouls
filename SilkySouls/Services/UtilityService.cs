@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using SilkySouls.memory;
 using SilkySouls.Memory;
 using SilkySouls.Models;
 using SilkySouls.Utilities;
+using static SilkySouls.memory.Offsets;
 
 namespace SilkySouls.Services
 {
@@ -13,15 +15,15 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-        
+
         private IntPtr _targetView;
         private IntPtr _draw;
         private long _drawOrigin;
-        
+
         private readonly byte[] _drawOriginBytes = { 0x44, 0x8B, 0xC6, 0xBA, 0x16, 0x00, 0x00, 0x00 };
-        
+
         private List<long> _noClipHooks;
-        
+
 
         public UtilityService(MemoryIo memoryIo, HookManager hookManager)
         {
@@ -34,10 +36,10 @@ namespace SilkySouls.Services
             if (!IsDrawOriginInitialized()) return false;
             _draw = CodeCaveOffsets.Base + CodeCaveOffsets.EnableDraw;
 
-            var ezDraw = _memoryIo.FollowPointers(Offsets.HgDraw.Base, new[] { Offsets.HgDraw.EzDraw }, true);
+            var ezDraw = _memoryIo.FollowPointers(HgDraw.Base, new[] { HgDraw.EzDraw }, true);
             long drawFunc1 = _drawOrigin + 11 + 5 + _memoryIo.ReadInt32((IntPtr)(_drawOrigin + 11) + 1);
             long drawFunc2 = _drawOrigin + 43 + 5 + _memoryIo.ReadInt32((IntPtr)(_drawOrigin + 43) + 1);
-            
+
             byte[] drawBytes = AsmLoader.GetAsmBytes("EnableDraw");
             byte[] bytes = BitConverter.GetBytes(ezDraw.ToInt64());
             Array.Copy(bytes, 0, drawBytes, 2, 8);
@@ -49,18 +51,18 @@ namespace SilkySouls.Services
             Array.Copy(bytes, 0, drawBytes, 108, 8);
             bytes = BitConverter.GetBytes(drawFunc2);
             Array.Copy(bytes, 0, drawBytes, 147, 8);
-            byte[] jumpBytes = BitConverter.GetBytes((int)(_drawOrigin + 8 -  ( _draw.ToInt64() + 170)));
+            byte[] jumpBytes = BitConverter.GetBytes((int)(_drawOrigin + 8 - (_draw.ToInt64() + 170)));
             Array.Copy(jumpBytes, 0, drawBytes, 166, 4);
             _memoryIo.WriteBytes(_draw, drawBytes);
-            
+
             _hookManager.InstallHook(_draw.ToInt64(), _drawOrigin, _drawOriginBytes);
             return true;
         }
 
         private bool IsDrawOriginInitialized()
         {
-            _drawOrigin = Offsets.Hooks.Draw;
-            var originBytes = _memoryIo.ReadBytes((IntPtr) _drawOrigin, 8);
+            _drawOrigin = Hooks.Draw;
+            var originBytes = _memoryIo.ReadBytes((IntPtr)_drawOrigin, 8);
             return originBytes.SequenceEqual(_drawOriginBytes);
         }
 
@@ -72,35 +74,35 @@ namespace SilkySouls.Services
         internal void EnableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointers(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
+                _memoryIo.FollowPointers(DamageMan.Base, new[] { DamageMan.HitboxFlag }, false);
             _memoryIo.WriteInt32(hitboxAddr, 1);
         }
 
         internal void DisableHitboxView()
         {
             var hitboxAddr =
-                _memoryIo.FollowPointers(Offsets.DamageMan.Base, new[] {Offsets.DamageMan.HitboxFlag }, false);
+                _memoryIo.FollowPointers(DamageMan.Base, new[] { DamageMan.HitboxFlag }, false);
             _memoryIo.WriteInt32(hitboxAddr, 0);
         }
-        
+
         internal void EnableSoundView()
         {
-            _memoryIo.WriteByte(Offsets.Patches.DrawSoundViewPatch, 1);
+            _memoryIo.WriteByte(Patches.DrawSoundViewPatch, 1);
         }
 
         internal void DisableSoundView()
         {
-            _memoryIo.WriteByte(Offsets.Patches.DrawSoundViewPatch, 0);
+            _memoryIo.WriteByte(Patches.DrawSoundViewPatch, 0);
         }
 
         public void EnableDrawEvent()
         {
-            _memoryIo.WriteByte(Offsets.Patches.DrawEventPatch, 1);
+            _memoryIo.WriteByte(Patches.DrawEventPatch, 1);
         }
 
         public void DisableDrawEvent()
         {
-            _memoryIo.WriteByte(Offsets.Patches.DrawEventPatch, 0);
+            _memoryIo.WriteByte(Patches.DrawEventPatch, 0);
         }
 
         private bool _targetViewIsInstalled;
@@ -109,9 +111,9 @@ namespace SilkySouls.Services
         {
             if (!_targetViewIsInstalled)
             {
-                long targetViewOrigin = Offsets.Hooks.TargetingView;
+                long targetViewOrigin = Hooks.TargetingView;
                 _targetView = CodeCaveOffsets.Base + CodeCaveOffsets.TargetView;
-                
+
                 byte[] targetViewBytes =
                 {
                     0xC6, 0x41, 0x48, 0x02, // mov    BYTE PTR [rcx+0x48],0x2
@@ -152,14 +154,14 @@ namespace SilkySouls.Services
         {
             var zDirectionAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionVariable;
 
-            var playerCoordsBase = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
+            var playerCoordsBase = _memoryIo.FollowPointers(WorldChrMan.Base,
                 new[]
                 {
-                  (int)Offsets.WorldChrMan.BaseOffsets.UpdateCoordsBasePtr, Offsets.WorldChrMan.UpdateCoords
+                    (int)WorldChrMan.BaseOffsets.UpdateCoordsBasePtr, WorldChrMan.UpdateCoords
                 },
                 true);
 
-            var inAirTimerOrigin = Offsets.Hooks.InAirTimer;
+            var inAirTimerOrigin = Hooks.InAirTimer;
             IntPtr inAirTimerBlock = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.InAirTimer;
             byte[] inAirTimerCodeBytes = AsmLoader.GetAsmBytes("NoClip_InAirTimer");
 
@@ -173,7 +175,7 @@ namespace SilkySouls.Services
             _memoryIo.WriteBytes(inAirTimerBlock, inAirTimerCodeBytes);
 
             IntPtr zDirectionKbCheck = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionKbCheck;
-            var keyOrigin = Offsets.Hooks.Keyboard;
+            var keyOrigin = Hooks.Keyboard;
 
             byte[] zDirectKbBytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_KB");
             bytes = BitConverter.GetBytes(25);
@@ -197,7 +199,7 @@ namespace SilkySouls.Services
             _memoryIo.WriteBytes(zDirectionKbCheck, zDirectKbBytes);
 
             IntPtr zDirectionR2Check = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionR2Check;
-            var r2Origin = Offsets.Hooks.ControllerR2;
+            var r2Origin = Hooks.ControllerR2;
 
             byte[] r2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_R2");
 
@@ -212,7 +214,7 @@ namespace SilkySouls.Services
             _memoryIo.WriteBytes(zDirectionR2Check, r2Bytes);
 
             IntPtr zDirectionL2Check = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionL2Check;
-            var l2Origin = Offsets.Hooks.ControllerL2;
+            var l2Origin = Hooks.ControllerL2;
 
             byte[] l2Bytes = AsmLoader.GetAsmBytes("NoClip_ZDirection_L2");
 
@@ -228,24 +230,24 @@ namespace SilkySouls.Services
 
             IntPtr updateCoordsBlock = CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.UpdateCoords;
 
-            var coordsPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,new[]
+            var coordsPtr = _memoryIo.FollowPointers(WorldChrMan.Base, new[]
             {
-                (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
-                (int)Offsets.WorldChrMan.PlayerInsOffsets.CoordsPtr1,
-                Offsets.WorldChrMan.CoordsPtr2,
-                Offsets.WorldChrMan.CoordsPtr3,
-                Offsets.WorldChrMan.CoordsPtr4,
+                (int)WorldChrMan.BaseOffsets.PlayerIns,
+                (int)WorldChrMan.PlayerInsOffsets.CoordsPtr1,
+                WorldChrMan.CoordsPtr2,
+                WorldChrMan.CoordsPtr3,
+                WorldChrMan.CoordsPtr4,
             }, true);
 
-            var updateCoordsOrigin = Offsets.Hooks.UpdateCoords;
-            var padManPtr = _memoryIo.FollowPointers(Offsets.WorldChrMan.Base,
+            var updateCoordsOrigin = Hooks.UpdateCoords;
+            var padManPtr = _memoryIo.FollowPointers(WorldChrMan.Base,
                 new[]
                 {
-                    (int)Offsets.WorldChrMan.BaseOffsets.PlayerIns,
-                    (int)Offsets.WorldChrMan.PlayerInsOffsets.PadMan
+                    (int)WorldChrMan.BaseOffsets.PlayerIns,
+                    (int)WorldChrMan.PlayerInsOffsets.PadMan
                 }, true);
 
-            var camPtr = _memoryIo.FollowPointers(Offsets.Cam.Base, new[] {Offsets.Cam.ChrCam, Offsets.Cam.ChrExFollowCam }, true);
+            var camPtr = _memoryIo.FollowPointers(Cam.Base, new[] { Cam.ChrCam, Cam.ChrExFollowCam }, true);
 
             byte[] updateCoordsCodeBytes = AsmLoader.GetAsmBytes("NoClip_UpdateCoords");
 
@@ -297,6 +299,7 @@ namespace SilkySouls.Services
             {
                 _hookManager.UninstallHook(_noClipHooks[i]);
             }
+
             _noClipHooks.Clear();
             _memoryIo.WriteBytes(CodeCaveOffsets.Base + (int)CodeCaveOffsets.NoClip.ZDirectionVariable, new byte[641]);
         }
@@ -305,22 +308,22 @@ namespace SilkySouls.Services
         public void Warp(Location location)
         {
             var lastBonfireAdr =
-                _memoryIo.FollowPointers(Offsets.GameMan.Base, new[] {Offsets.GameMan.LastBonfire }, false);
+                _memoryIo.FollowPointers(GameMan.Base, new[] { GameMan.LastBonfire }, false);
 
             _memoryIo.WriteInt32(lastBonfireAdr, location.Id);
 
             byte[] warpBytes = AsmLoader.GetAsmBytes("Warp");
-            byte[] bytes = BitConverter.GetBytes(Offsets.WarpEvent.ToInt64());
+            byte[] bytes = BitConverter.GetBytes(WarpEvent.ToInt64());
             Array.Copy(bytes, 0, warpBytes, 2, 8);
-            bytes = BitConverter.GetBytes(Offsets.WarpFunc);
+            bytes = BitConverter.GetBytes(WarpFunc);
             Array.Copy(bytes, 0, warpBytes, 24, 8);
-            
+
             _memoryIo.AllocateAndExecute(warpBytes);
-            
+
             if (location.HasCoordinates)
             {
                 var coordsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.Coords;
-                var coordsOrigin = Offsets.Hooks.WarpCoords;
+                var coordsOrigin = Hooks.WarpCoords;
                 var coordCodeBlockAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.WarpCoords.CoordCode;
 
                 byte[] coords = new byte[4 * sizeof(float)];
@@ -346,7 +349,7 @@ namespace SilkySouls.Services
                 bytes = BitConverter.GetBytes(location.Angle);
                 Array.Copy(bytes, 0, angle, 4, 4);
                 _memoryIo.WriteBytes(angleAddr, angle);
-                
+
                 byte[] angleWarpBytes = AsmLoader.GetAsmBytes("WarpAngle");
                 bytes = BitConverter.GetBytes(angleAddr.ToInt64());
                 Array.Copy(bytes, 0, angleWarpBytes, 3, 8);
@@ -354,8 +357,9 @@ namespace SilkySouls.Services
                 bytes = BitConverter.GetBytes(originOffset);
                 Array.Copy(bytes, 0, angleWarpBytes, 29, 4);
                 _memoryIo.WriteBytes(angleCodeBlockAddr, angleWarpBytes);
-                
-                IntPtr loadingFlagAddr = _memoryIo.FollowPointers(Offsets.MenuMan.Base,new[] { (int)Offsets.MenuMan.MenuManData.LoadedFlag }, false);
+
+                IntPtr loadingFlagAddr =
+                    _memoryIo.FollowPointers(MenuMan.Base, new[] { (int)MenuMan.MenuManData.LoadedFlag }, false);
 
                 if (!WaitForLoadingFlag(loadingFlagAddr, 0))
                 {
@@ -366,7 +370,7 @@ namespace SilkySouls.Services
                     new byte[] { 0x66, 0x0F, 0x7F, 0x80, 0x80, 0x0A, 0x00, 0x00 });
                 _hookManager.InstallHook(angleCodeBlockAddr.ToInt64(), angleOrigin,
                     new byte[] { 0x66, 0x0F, 0x7F, 0x80, 0x90, 0x0A, 0x00, 0x00 });
-                
+
 
                 if (!WaitForLoadingFlag(loadingFlagAddr, 1))
                 {
@@ -374,7 +378,6 @@ namespace SilkySouls.Services
 
                 _hookManager.UninstallHook(coordCodeBlockAddr.ToInt64());
                 _hookManager.UninstallHook(angleCodeBlockAddr.ToInt64());
-                
             }
         }
 
@@ -389,9 +392,10 @@ namespace SilkySouls.Services
                 {
                     return true;
                 }
-               
+
                 Thread.Sleep(50);
             }
+
             return false;
         }
 
@@ -399,11 +403,11 @@ namespace SilkySouls.Services
         {
             if (value)
             {
-                var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
+                var filterPtr = _memoryIo.FollowPointers(FieldArea.Base, new[]
+                    { FieldArea.RenderPtr, FieldArea.FilterRemoval }, false);
                 _memoryIo.WriteByte(filterPtr, 1);
-                var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.Brightness}, false );
+                var brightnessPtr = _memoryIo.FollowPointers(FieldArea.Base, new[]
+                    { FieldArea.RenderPtr, FieldArea.Brightness }, false);
                 var bytes = new byte[12];
                 var floatBytes = BitConverter.GetBytes(5.0f);
                 Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
@@ -414,11 +418,11 @@ namespace SilkySouls.Services
             }
             else
             {
-                var filterPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.FilterRemoval}, false );
+                var filterPtr = _memoryIo.FollowPointers(FieldArea.Base, new[]
+                    { FieldArea.RenderPtr, FieldArea.FilterRemoval }, false);
                 _memoryIo.WriteByte(filterPtr, 0);
-                var brightnessPtr = _memoryIo.FollowPointers(Offsets.FieldArea.Base, new[]
-                    { Offsets.FieldArea.RenderPtr, Offsets.FieldArea.Brightness}, false );
+                var brightnessPtr = _memoryIo.FollowPointers(FieldArea.Base, new[]
+                    { FieldArea.RenderPtr, FieldArea.Brightness }, false);
                 var bytes = new byte[12];
                 var floatBytes = BitConverter.GetBytes(1.0f);
                 Buffer.BlockCopy(floatBytes, 0, bytes, 0, 4);
@@ -427,63 +431,47 @@ namespace SilkySouls.Services
 
                 _memoryIo.WriteBytes(brightnessPtr, bytes);
             }
-            
         }
 
-        public void ShowMenu(Offsets.MenuMan.MenuManData menuType)
+        public void ShowMenu(MenuMan.MenuManData menuType)
         {
-            var menuPtr = _memoryIo.FollowPointers(Offsets.MenuMan.Base, new[] {(int)menuType }, false);
+            var menuPtr = _memoryIo.FollowPointers(MenuMan.Base, new[] { (int)menuType }, false);
             _memoryIo.WriteByte(menuPtr, 1);
         }
 
         public void ShowUpgradeMenu(bool isWeapon)
         {
             byte[] upgradeBytes = AsmLoader.GetAsmBytes("OpenEnhanceShop");
-            var playerGameData = _memoryIo.FollowPointers(Offsets.GameDataMan.Base,
-                new[] { (int)Offsets.GameDataMan.GameDataOffsets.PlayerGameData }, true);
+            var playerGameData = _memoryIo.FollowPointers(GameDataMan.Base,
+                new[] { (int)GameDataMan.GameDataOffsets.PlayerGameData }, true);
             byte[] bytes = BitConverter.GetBytes(playerGameData.ToInt64());
             Array.Copy(bytes, 0, upgradeBytes, 2, bytes.Length);
-            bytes = BitConverter.GetBytes(isWeapon ? Offsets.OpenEnhanceShopWeapon : Offsets.OpenEnhanceShopArmor);
+            bytes = BitConverter.GetBytes(isWeapon ? OpenEnhanceShopWeapon : OpenEnhanceShopArmor);
             Array.Copy(bytes, 0, upgradeBytes, 16, bytes.Length);
             _memoryIo.AllocateAndExecute(upgradeBytes);
         }
 
         public void UnlockBonfireWarps()
         {
-            var bonfireFlagBase = _memoryIo.FollowPointers(Offsets.EventFlagMan.Base,
-                new[] { Offsets.EventFlagMan.BonfireOffset}, true);
+            var bonfireFlagBase = _memoryIo.FollowPointers(EventFlagMan.Base,
+                new[] { EventFlagMan.FlagPtr }, true);
 
-            var bonfireWarpFlagAddr = bonfireFlagBase + Offsets.EventFlagMan.WarpFlag;
-            _memoryIo.SetBit32(bonfireWarpFlagAddr, Offsets.EventFlagMan.WarpFlagBit1, true);
-            _memoryIo.SetBit32(bonfireWarpFlagAddr, Offsets.EventFlagMan.WarpFlagBit2, true);
-            
-            var bonfireFlagAddr = bonfireFlagBase + Offsets.EventFlagMan.BonfireFlags;
-            foreach (Offsets.EventFlagMan.BonfireBitFlag flag in Enum.GetValues(
-                         typeof(Offsets.EventFlagMan.BonfireBitFlag)))
+            var bonfireWarpFlagAddr = bonfireFlagBase + EventFlagMan.WarpFlag;
+            _memoryIo.SetBit32(bonfireWarpFlagAddr, EventFlagMan.WarpFlagBit1, true);
+            _memoryIo.SetBit32(bonfireWarpFlagAddr, EventFlagMan.WarpFlagBit2, true);
+
+            var bonfireFlagAddr = bonfireFlagBase + EventFlagMan.BonfireFlags;
+            foreach (EventFlagMan.BonfireBitFlag flag in Enum.GetValues(
+                         typeof(EventFlagMan.BonfireBitFlag)))
             {
                 int bitPosition = (int)flag;
                 _memoryIo.SetBit32(bonfireFlagAddr, bitPosition, true);
             }
         }
 
-        public void UnlockKalameet()
-        {
-            var kalameetBase =  _memoryIo.FollowPointers(Offsets.EventFlagMan.Base,
-                new[] { Offsets.EventFlagMan.KalameetPtr1, Offsets.EventFlagMan.KalameetPtr2}, true);
-
-            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetOffset,
-                Offsets.EventFlagMan.KalameetVisitedBit, true);
-            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetGoughOffset,
-                Offsets.EventFlagMan.KalameetGoughBit, true);
-            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetMoreFlags,
-                Offsets.EventFlagMan.KalameetBit1, true);
-            _memoryIo.SetBit32(kalameetBase + Offsets.EventFlagMan.KalameetMoreFlags,
-                Offsets.EventFlagMan.KalameetBit2, true);
-        }
-
         public void ToggleNoRoll(bool isNoRollEnabled)
         {
-            var noRollPatchPtr = Offsets.Patches.NoRollPatch;
+            var noRollPatchPtr = Patches.NoRollPatch;
             var noBackstepPatchPtr = noRollPatchPtr + 0xFF;
             if (isNoRollEnabled)
             {
@@ -499,6 +487,137 @@ namespace SilkySouls.Services
                 _memoryIo.WriteByte(noBackstepPatchPtr + 0x6, 1);
                 _memoryIo.WriteByte(noBackstepPatchPtr + 0xD, 1);
             }
+        }
+
+        public void SetEvent(ulong flagId)
+        {
+            var eventMan = _memoryIo.ReadInt64(EventFlagMan.Base);
+            var setEventBytes = AsmLoader.GetAsmBytes("SetEvent");
+            var bytes = BitConverter.GetBytes(eventMan);
+            Array.Copy(bytes, 0, setEventBytes, 0x2, 8);
+            bytes = BitConverter.GetBytes(flagId);
+            Array.Copy(bytes, 0, setEventBytes, 0xA + 2, 8);
+            bytes = BitConverter.GetBytes(Funcs.SetEvent);
+            Array.Copy(bytes, 0, setEventBytes, 0x24 + 2, 8);
+            _memoryIo.AllocateAndExecute(setEventBytes);
+        }
+
+        public void SetMultipleEvents(params ulong[] flagIds)
+        {
+            foreach (var flagId in flagIds)
+            {
+                SetEvent(flagId);
+            }
+        }
+
+        public void OpenRegularShop(ulong[] shopParams)
+        {
+            var openRegularShopBytes = AsmLoader.GetAsmBytes("OpenRegularShop");
+            var bytes = BitConverter.GetBytes(shopParams[0]);
+            Array.Copy(bytes, 0, openRegularShopBytes, 0x0 + 2, 8);
+            bytes = BitConverter.GetBytes(shopParams[1]);
+            Array.Copy(bytes, 0, openRegularShopBytes, 0xA + 2, 8);
+            bytes = BitConverter.GetBytes(Funcs.ShopParamSave);
+            Array.Copy(bytes, 0, openRegularShopBytes, 0x14 + 2, 8);
+            bytes = BitConverter.GetBytes(Funcs.OpenRegularShop);
+            Array.Copy(bytes, 0, openRegularShopBytes, 0x24 + 2, 8);
+            _memoryIo.AllocateAndExecute(openRegularShopBytes);
+        }
+
+        public void RingGargBell()
+        {
+            SetEvent(GameIds.EventFlags.GargBell);
+
+            var quelaagBellCheckPtr = _memoryIo.FollowPointers(EventFlagMan.Base, new[]
+            {
+                EventFlagMan.QuelaagBellPtr1,
+                EventFlagMan.QuelaagBellPtr2,
+                EventFlagMan.QuelaagBellPtr3,
+            }, false);
+            Console.WriteLine(_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.QuelaagBellBit));
+            if (_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.QuelaagBellBit))
+                SetEvent(GameIds.EventFlags.Sens);
+            _hookManager.UninstallHook((CodeCaveOffsets.Base + (int)CodeCaveOffsets.EmevdCommand.Code).ToInt64());
+        }
+
+        public void RingQuelaagBell()
+        {
+            SetEvent(GameIds.EventFlags.QuelaagBell);
+
+            var quelaagBellCheckPtr = _memoryIo.FollowPointers(EventFlagMan.Base, new[]
+            {
+                EventFlagMan.FlagPtr,
+                EventFlagMan.GargOffset,
+            }, false);
+
+            Console.WriteLine(_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.GargBellBit));
+            if (_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.GargBellBit)) SetEvent(GameIds.EventFlags.Sens);
+        }
+
+        public void OpenSensGate(ulong sens)
+        {
+            SetEvent(sens);
+            _ = ExecuteEmevdCommands(GameIds.EmevdCommandParams.ReproduceObjectAnimation,
+                GameIds.EmevdCommandParams.SensDoor);
+        }
+
+        private async Task ExecuteEmevdCommands(int[] commandParams, int[] funcParams)
+        {
+            var hookLoc = Hooks.Emevd;
+            var codeCaveBase = CodeCaveOffsets.Base;
+            var xmmStorage = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.XmmStorage;
+            var commandParamsLoc = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.CommandParams;
+            var funcParamsLoc = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.FuncParams;
+            var flag = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.Flag;
+            var paramStruct = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.ParamStruct;
+            var code = codeCaveBase + (int)CodeCaveOffsets.EmevdCommand.Code;
+
+            _memoryIo.WriteInt32(commandParamsLoc, commandParams[0]);
+            _memoryIo.WriteInt32(commandParamsLoc + 0x4, commandParams[1]);
+            _memoryIo.WriteInt32(funcParamsLoc, funcParams[0]);
+            _memoryIo.WriteInt32(funcParamsLoc + 0x4, funcParams[1]);
+
+            var codeBytes = AsmLoader.GetAsmBytes("ScriptCommands");
+            AsmHelper.WriteRelativeOffsets(codeBytes, new[]
+            {
+                (code.ToInt64(), flag.ToInt64(), 7, 0x2),
+                (code.ToInt64() + 0xD, flag.ToInt64(), 7, 0xD + 0x2),
+                (code.ToInt64() + 0x32, xmmStorage.ToInt64(), 8, 0x32 + 0x4),
+                (code.ToInt64() + 0x3A, xmmStorage.ToInt64() + 0x10, 8, 0x3A + 0x4),
+                (code.ToInt64() + 0x42, xmmStorage.ToInt64() + 0x20, 8, 0x42 + 0x4),
+                (code.ToInt64() + 0x4A, xmmStorage.ToInt64() + 0x30, 8, 0x4A + 0x4),
+                (code.ToInt64() + 0x52, xmmStorage.ToInt64() + 0x40, 8, 0x52 + 0x4),
+                (code.ToInt64() + 0x5A, xmmStorage.ToInt64() + 0x50, 8, 0x5A + 0x4),
+                (code.ToInt64() + 0x62, xmmStorage.ToInt64() + 0x60, 8, 0x62 + 0x4),
+                (code.ToInt64() + 0x6A, xmmStorage.ToInt64() + 0x70, 9, 0x6A + 0x5),
+                (code.ToInt64() + 0x73, xmmStorage.ToInt64() + 0x80, 9, 0x73 + 0x5),
+                (code.ToInt64() + 0x7C, paramStruct.ToInt64(), 7, 0x7C + 0x3),
+                (code.ToInt64() + 0x83, commandParamsLoc.ToInt64(), 7, 0x83 + 0x3),
+                (code.ToInt64() + 0x91, funcParamsLoc.ToInt64(), 7, 0x91 + 0x3),
+                (code.ToInt64() + 0x9F, EmkEventIns.Base.ToInt64(), 7, 0x9F + 0x3),
+                (code.ToInt64() + 0xB5, Funcs.ProcessEmevdCommand, 5, 0xB5 + 0x1),
+                (code.ToInt64() + 0xBE, xmmStorage.ToInt64() + 0x80, 9, 0xBE + 0x5),
+                (code.ToInt64() + 0xC7, xmmStorage.ToInt64() + 0x70, 9, 0xC7 + 0x5),
+                (code.ToInt64() + 0xD0, xmmStorage.ToInt64() + 0x60, 8, 0xD0 + 0x4),
+                (code.ToInt64() + 0xD8, xmmStorage.ToInt64() + 0x50, 8, 0xD8 + 0x4),
+                (code.ToInt64() + 0xE0, xmmStorage.ToInt64() + 0x40, 8, 0xE0 + 0x4),
+                (code.ToInt64() + 0xE8, xmmStorage.ToInt64() + 0x30, 8, 0xE8 + 0x4),
+                (code.ToInt64() + 0xF0, xmmStorage.ToInt64() + 0x20, 8, 0xF0 + 0x4),
+                (code.ToInt64() + 0xF8, xmmStorage.ToInt64() + 0x10, 8, 0xF8 + 0x4),
+                (code.ToInt64() + 0x100, xmmStorage.ToInt64(), 8, 0x100 + 0x4)
+            });
+
+            var jumpBytes = AsmHelper.GetJmpOriginOffsetBytes(hookLoc, 5, code + 0x12D);
+            Array.Copy(jumpBytes, 0, codeBytes, 0x128 + 1, 4);
+
+            _memoryIo.WriteBytes(code, codeBytes);
+            _hookManager.InstallHook(code.ToInt64(), hookLoc, new byte[]
+            {
+                0xBA, 0x01, 0x00, 0x00, 0x00,
+            });
+            
+            await Task.Delay(1000);
+            _hookManager.UninstallHook(code.ToInt64());
         }
     }
 }

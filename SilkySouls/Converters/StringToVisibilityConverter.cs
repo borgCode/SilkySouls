@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace SilkySouls3.Converters
+namespace SilkySouls.Converters
 {
     public class StringToVisibilityConverter : IValueConverter
     {

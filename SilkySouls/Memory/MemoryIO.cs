@@ -339,6 +339,15 @@ namespace SilkySouls.Memory
             
             WriteInt32(wordAddr, (int)newValue);
         }
+        
+        public bool IsBit32Set(IntPtr addr, int bitPosition)
+        {
+            IntPtr wordAddr = IntPtr.Add(addr, (bitPosition / 32) * 4);
+            int bitPos = 31 - (bitPosition % 32);
+            uint currentValue = ReadUInt32(wordAddr);
+            uint bitMask = 1u << bitPos;
+            return (currentValue & bitMask) != 0;
+        }
 
         public bool IsGameLoaded()
         {

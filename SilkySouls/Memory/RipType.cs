@@ -3,7 +3,7 @@
     public enum RipType
     {
         None,       
-        Standard,    
+        Mov64,    
         Comparison,
         Call
     }

@@ -101,13 +101,16 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanAndConverter.cs" />
     <Compile Include="Converters\ImmuneFillConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Memory\AoBScanner.cs" />
     <Compile Include="Memory\AsmHelper.cs" />
     <Compile Include="Memory\CodeCaveOffsets.cs" />
+    <Compile Include="Memory\GameIds.cs" />
     <Compile Include="Memory\HookManager.cs" />
     <Compile Include="Memory\Pattern.cs" />
     <Compile Include="Memory\RipType.cs" />
+    <Compile Include="Models\CharacterState.cs" />
     <Compile Include="Models\InfusionType.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />
@@ -138,6 +141,9 @@
     <Compile Include="Views\EnemyTab.xaml.cs">
       <DependentUpon>EnemyTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ResistancesWindow.xaml.cs">
+      <DependentUpon>ResistancesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsTab.xaml.cs">
       <DependentUpon>SettingsTab.xaml</DependentUpon>
     </Compile>
@@ -165,6 +171,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ResistancesWindow.xaml" />
     <Page Include="Views\SettingsTab.xaml" />
     <Page Include="Views\UtilityTab.xaml">
       <SubType>Designer</SubType>

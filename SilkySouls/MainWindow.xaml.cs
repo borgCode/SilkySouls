@@ -101,7 +101,6 @@ namespace SilkySouls
                 }
                 
                 _utilityViewModel.TryRestoreAttachedFeatures();
-                _enemyService.TryInstallTargetHook();
                 
                 if (_memoryIo.IsGameLoaded())
                 {
@@ -120,7 +119,6 @@ namespace SilkySouls
             else
             {
                 _hookManager.ClearHooks();
-                _enemyService.ResetHooks();
                 DisableButtons();
                 _utilityViewModel.ResetAttached();
                 _settingsViewModel.ResetAttached();
@@ -188,6 +186,5 @@ namespace SilkySouls
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
         
-     
     }
 }
