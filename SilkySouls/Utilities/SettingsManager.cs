@@ -12,7 +12,8 @@ namespace SilkySouls.Utilities
         public string HotkeyActionIds { get; set; } = "";
         public string HotkeyValues { get; set; } = "";
         public bool EnableHotkeys { get; set; }
-        public bool StutterFix { get; set; }
+        public bool FastQuitout { get; set; }
+        public bool GuaranteedBkh { get; set; }
         public bool AlwaysOnTop { get; set; }
         public double WindowLeft { get; set; }
         public double WindowTop { get; set; }
@@ -28,7 +29,7 @@ namespace SilkySouls.Utilities
         private static string SettingsPath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "SilkySouls",
-            "settings.json");
+            "settings.txt");
         
        public void Save()
         {
@@ -41,14 +42,14 @@ namespace SilkySouls.Utilities
                     $"HotkeyActionIds={HotkeyActionIds}",
                     $"HotkeyValues={HotkeyValues}",
                     $"EnableHotkeys={EnableHotkeys}",
-                    $"StutterFix={StutterFix}",
+                    $"FastQuitout={FastQuitout}",
+                    $"GuaranteedBkh={GuaranteedBkh}",
                     $"AlwaysOnTop={AlwaysOnTop}",
                     $"WindowLeft={WindowLeft}",
                     $"WindowTop={WindowTop}",
                     $"ResistancesWindowScaleX={ResistancesWindowScaleX}",
                     $"ResistancesWindowScaleY={ResistancesWindowScaleY}",
                     $"ResistancesWindowWidth={ResistancesWindowWidth}",
-                    $"ResistancesWindowHeight={ResistancesWindowHeight}",
                     $"ResistancesWindowLeft={ResistancesWindowLeft}",
                     $"ResistancesWindowTop={ResistancesWindowTop}",
                 };
@@ -84,10 +85,14 @@ namespace SilkySouls.Utilities
                                 case "EnableHotkeys":
                                     bool.TryParse(value, out bool eh);
                                     settings.EnableHotkeys = eh;
-                                    break;
-                                case "StutterFix":
-                                    bool.TryParse(value, out bool sf);
-                                    settings.StutterFix = sf;
+                                    break;  
+                                case "FastQuitout":
+                                    bool.TryParse(value, out bool fq);
+                                    settings.FastQuitout = fq;
+                                    break; 
+                                case "GuaranteedBkh":
+                                    bool.TryParse(value, out bool gb);
+                                    settings.GuaranteedBkh = gb;
                                     break;
                                 case "AlwaysOnTop":
                                     bool.TryParse(value, out bool aot);

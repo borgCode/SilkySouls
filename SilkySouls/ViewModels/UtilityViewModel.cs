@@ -45,7 +45,7 @@ namespace SilkySouls.ViewModels
                 var firstLocation = _warpLocations.First();
                 _selectedLocation = new KeyValuePair<string, string>(firstLocation.Key, firstLocation.Value.Name);
             }
-
+            
             RegisterHotkeys();
         }
 
@@ -274,8 +274,22 @@ namespace SilkySouls.ViewModels
         public void RingGargBell() => _utilityService.RingGargBell();
 
         public void RingQuelaggBell() => _utilityService.RingQuelaagBell();
-
-        public void OpenSens() => _utilityService.OpenSensGate(GameIds.EventFlags.Sens);
+        public void OpenSens() => _ = _utilityService.OpenSensGate(GameIds.EventFlags.Sens);
+        public void PlaceLordVessel() => _ = _utilityService.PlaceLordVessel();
         public void OpenShop(ulong[] shopParams) => _utilityService.OpenRegularShop(shopParams);
+
+        public void NewLondoNoWater() => _utilityService.SetEvent(GameIds.EventFlags.NewLondoWater);
+
+        public void LaurentiusToFirelink() => _utilityService.SetEvent(GameIds.EventFlags.LaurentiusToFirelink);
+
+        public void LoganToFirelink() => _utilityService.SetMultipleEvents(GameIds.EventFlags.LoganToFirelink);
+
+        public void GriggsToFirelink() => _utilityService.SetMultipleEvents(GameIds.EventFlags.GriggsToFirelink);
+
+        public void OpenFeedMenu()=> _utilityService.ShowMenu(MenuMan.MenuManData.Feed);
+        
+        public void OpenWarpMenu()=> _utilityService.ShowMenu(MenuMan.MenuManData.Warp);
+
+        public void OpenBottomlessBox() => _utilityService.ShowMenu(MenuMan.MenuManData.BottomlessBox);
     }
 }

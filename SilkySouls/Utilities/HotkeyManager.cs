@@ -33,7 +33,7 @@ namespace SilkySouls.Utilities
             
             LoadHotkeys();
 
-            if (Properties.Settings.Default.EnableHotkeys) _keyboardHook.Start();
+            if (SettingsManager.Default.EnableHotkeys) _keyboardHook.Start();
         }
 
         public void Start()
@@ -104,18 +104,18 @@ namespace SilkySouls.Utilities
         {
             try
             {
-                Properties.Settings.Default.HotkeyActionIds = "";
-                Properties.Settings.Default.HotkeyValues = "";
+                SettingsManager.Default.HotkeyActionIds = "";
+                SettingsManager.Default.HotkeyValues = "";
                 
                 if (_hotkeyMappings.Count > 0)
                 {
-                    Properties.Settings.Default.HotkeyActionIds = string.Join(";", _hotkeyMappings.Keys);
+                    SettingsManager.Default.HotkeyActionIds = string.Join(";", _hotkeyMappings.Keys);
                     
                     var hotkeyStrings = _hotkeyMappings.Values.Select(k => k.ToString());
-                    Properties.Settings.Default.HotkeyValues = string.Join(";", hotkeyStrings);
+                    SettingsManager.Default.HotkeyValues = string.Join(";", hotkeyStrings);
                 }
                 
-                Properties.Settings.Default.Save();
+                SettingsManager.Default.Save();
             }
             catch (Exception ex)
             {
@@ -127,8 +127,8 @@ namespace SilkySouls.Utilities
         {
             try
             {
-                string actionIdsString = Properties.Settings.Default.HotkeyActionIds;
-                string hotkeyValuesString = Properties.Settings.Default.HotkeyValues;
+                string actionIdsString = SettingsManager.Default.HotkeyActionIds;
+                string hotkeyValuesString = SettingsManager.Default.HotkeyValues;
                 
                 if (!string.IsNullOrEmpty(actionIdsString) && !string.IsNullOrEmpty(hotkeyValuesString))
                 {

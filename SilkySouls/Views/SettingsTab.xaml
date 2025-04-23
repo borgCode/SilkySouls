@@ -28,12 +28,15 @@
                           IsChecked="{Binding IsFastQuitoutEnabled}"
                           Margin="0,0,10,0" />
 
-                <CheckBox Grid.Column="1" Content="Enable Hotkeys"
+                <CheckBox Grid.Row="0" Grid.Column="1" Content="Enable Hotkeys"
                           IsChecked="{Binding IsEnableHotkeysEnabled}"
                           Margin="0,0,0,0" />
 
                 <CheckBox Grid.Column="0" Grid.Row="1" Content="100% BKH drop"
                           IsChecked="{Binding IsGuaranteedBkhEnabled}"
+                          Margin="0,5,0,0" />
+                <CheckBox Grid.Column="1" Grid.Row="1" Content="Always on top"
+                          IsChecked="{Binding IsAlwaysOnTopEnabled}"
                           Margin="0,5,0,0" />
             </Grid>
 

@@ -186,5 +186,45 @@ namespace SilkySouls.Views
         {
             _utilityViewModel.OpenShop(GameIds.ShopParams.Gough);
         }
+
+        private void LordVessel_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.PlaceLordVessel();
+        }
+
+        private void NewLondo_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.NewLondoNoWater();
+        }
+
+        private void LaurentiusToFirelink_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.LaurentiusToFirelink();
+        }
+
+        private void LoganToFirelink_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.LoganToFirelink();
+        }
+
+        private void GriggsToFirelink_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.GriggsToFirelink();
+        }
+
+        private void Feed_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenFeedMenu();
+        }
+
+        private void Travel_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenWarpMenu();
+        }
+
+        private void Bottomless_Click(object sender, RoutedEventArgs e)
+        {
+            _utilityViewModel.OpenBottomlessBox();
+        }
     }
 }

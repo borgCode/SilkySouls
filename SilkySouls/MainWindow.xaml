@@ -4,7 +4,6 @@
         Title="SilkySouls"
         Height="600"
         Width="520"
-        WindowStartupLocation="CenterScreen"
         Background="{StaticResource BackgroundBrush}"
         Foreground="{StaticResource TextBrush}"
         BorderBrush="{StaticResource BorderBrush}"

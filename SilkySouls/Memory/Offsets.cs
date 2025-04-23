@@ -147,6 +147,9 @@ namespace SilkySouls.memory
             {
                 LevelUpMenu = 0x8C,
                 AttunementMenu = 0x94,
+                BottomlessBox = 0x98,
+                Warp = 0xC0,
+                Feed = 0x130,
                 Quitout = 0x24C,
                 LoadedFlag = 0x258
             }

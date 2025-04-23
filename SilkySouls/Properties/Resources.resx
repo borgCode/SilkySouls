@@ -1495,4 +1495,18 @@ f3 0f 6f 05 00 00 00    movdqu xmm0,XMMWORD PTR [rip+0x0]        # 108 &lt;_main
 ba 01 00 00 00          mov    edx,0x1
 e9 00 00 00 00          jmp    12d &lt;executeOriginal+0xa&gt;</value>
   </data>
+  <data name="SetEventOff" xml:space="preserve">
+    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
+00 00 00
+48 ba 00 00 00 00 00    movabs rdx,0x0
+00 00 00
+41 b8 00 00 00 00       mov    r8d,0x0
+41 b9 00 00 00 00       mov    r9d,0x0
+48 83 ec 48             sub    rsp,0x48
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 48             add    rsp,0x48
+c3                      ret</value>
+  </data>
 </root>

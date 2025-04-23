@@ -579,6 +579,26 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 48 b9 00 00 00 00 00    movabs rcx,0x0
+        ///00 00 00
+        ///48 ba 00 00 00 00 00    movabs rdx,0x0
+        ///00 00 00
+        ///41 b8 00 00 00 00       mov    r8d,0x0
+        ///41 b9 00 00 00 00       mov    r9d,0x0
+        ///48 83 ec 48             sub    rsp,0x48
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
+        ///00 00 00
+        ///ff d0                   call   rax
+        ///48 83 c4 48             add    rsp,0x48
+        ///c3                      ret.
+        /// </summary>
+        internal static string SetEventOff {
+            get {
+                return ResourceManager.GetString("SetEventOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 5050,99,0,Miracle: Bountiful Sunlight
         ///5910,99,0,Miracle: Darkmoon Blade
         ///5320,99,0,Miracle: Emit Force

@@ -9,6 +9,10 @@
             public const ulong QuelaagBell = 0xADF408;
             public const ulong Sens = 0xAF7AA8;
             public const ulong PlaceLordVessel = 0xB40E24;
+            public const ulong NewLondoWater = 0xB100E5;
+            public const ulong LaurentiusToFirelink = 0x4E3;
+            public static readonly ulong[] GriggsToFirelink = {0x458, 0xA82996};
+            public static readonly ulong[] LoganToFirelink = {0x443, 0xAF7C32};
         }
 
         public static class ShopParams
@@ -34,10 +38,23 @@
             public static readonly ulong[] Gough = { 0x19C8, 0x1A2B };
         }
 
-        public static class EmevdCommandParams
+        public static class EmevdCommands
         {
             public static readonly int[] ReproduceObjectAnimation = { 0x7D5, 0x7 };
+            public static readonly int[] DeactiveObject = { 0x7D5, 0x3 };
+            public static readonly int[] DeleteMapSfx = { 0x7D6, 0x1 };
+
+        }
+
+        public static class EmevdCommandParams
+        {
             public static readonly int[] SensDoor = { 0x16E748, 0x0 };
+            public static readonly int[] DukesFogDeactiveObject = { 0x19F74E, 0x0 };
+            public static readonly int[] DukesFogDeleteMapSfx = { 0x19F74F, 0x0 };
+            public static readonly int[] DemonRuinsFogDeactiveObject = { 0x158A7E, 0x0 };
+            public static readonly int[] DemonRuinsFogDeleteMapSfx = { 0x158A7F, 0x0 };
+            public static readonly int[] NitoFogDeactiveObject = { 0x1403DE, 0x0 };
+            public static readonly int[] NitoFogDeleteMapSfx = { 0x1403DF, 0x0 };
         }
     }
 }

@@ -38,6 +38,12 @@ namespace SilkySouls
             _memoryIo.StartAutoAttach();
 
             InitializeComponent();
+            if (SettingsManager.Default.WindowLeft != 0 || SettingsManager.Default.WindowTop != 0)
+            {
+                Left = SettingsManager.Default.WindowLeft;
+                Top = SettingsManager.Default.WindowTop;
+            }
+            else WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             _hookManager = new HookManager(_memoryIo);
             var hotkeyManager = new HotkeyManager(_memoryIo);
@@ -67,6 +73,7 @@ namespace SilkySouls
             MainTabControl.Items.Add(new TabItem { Header = "Settings", Content = settingsTab });
 
             _settingsViewModel.ApplyStartUpOptions();
+            Closing += MainWindow_Closing;
             
             _gameLoadedTimer = new DispatcherTimer
             {
@@ -177,6 +184,14 @@ namespace SilkySouls
             {
                 DragMove();
             }
+        }
+        
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+      
+            SettingsManager.Default.WindowLeft = Left;
+            SettingsManager.Default.WindowTop = Top;
+            SettingsManager.Default.Save();
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)

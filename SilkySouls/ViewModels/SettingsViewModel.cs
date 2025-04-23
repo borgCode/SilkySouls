@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using H.Hooks;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
@@ -12,6 +13,7 @@ namespace SilkySouls.ViewModels
         private bool _isFastQuitoutEnabled;
         private bool _isEnableHotkeysEnabled;
         private bool _isGuaranteedBkhEnabled;
+        private bool _isAlwaysOnTopEnabled;
         private bool _isLoaded;
 
         private readonly HotkeyManager _hotkeyManager;
@@ -403,13 +405,26 @@ namespace SilkySouls.ViewModels
             {
                 if (SetProperty(ref _isFastQuitoutEnabled, value))
                 {
-                    Properties.Settings.Default.FastQuitout = value;
-                    Properties.Settings.Default.Save();
+                    SettingsManager.Default.FastQuitout = value;
+                    SettingsManager.Default.Save();
                     if (_isLoaded)
                     {
                         _settingsService.ToggleFastQuitout(_isFastQuitoutEnabled ? 1 : 0);
                     }
                 }
+            }
+        }
+        
+        public bool IsAlwaysOnTopEnabled
+        {
+            get => _isAlwaysOnTopEnabled;
+            set
+            {
+                if (!SetProperty(ref _isAlwaysOnTopEnabled, value)) return;
+                SettingsManager.Default.AlwaysOnTop = value;
+                SettingsManager.Default.Save();
+                var mainWindow = Application.Current.MainWindow;
+                if (mainWindow != null) mainWindow.Topmost = _isAlwaysOnTopEnabled;
             }
         }
 
@@ -420,8 +435,8 @@ namespace SilkySouls.ViewModels
             {
                 if (SetProperty(ref _isEnableHotkeysEnabled, value))
                 {
-                    Properties.Settings.Default.EnableHotkeys = value;
-                    Properties.Settings.Default.Save();
+                    SettingsManager.Default.EnableHotkeys = value;
+                    SettingsManager.Default.Save();
                     if (_isEnableHotkeysEnabled) _hotkeyManager.Start();
                     else _hotkeyManager.Stop();
                 }
@@ -435,8 +450,8 @@ namespace SilkySouls.ViewModels
             {
                 if (SetProperty(ref _isGuaranteedBkhEnabled, value))
                 {
-                    Properties.Settings.Default.GuaranteedBkh = value;
-                    Properties.Settings.Default.Save();
+                    SettingsManager.Default.GuaranteedBkh = value;
+                    SettingsManager.Default.Save();
                     if (_isLoaded)
                     {
                         _settingsService.SetGuaranteedBkhDrop(_isGuaranteedBkhEnabled);
@@ -454,14 +469,15 @@ namespace SilkySouls.ViewModels
 
         public void ApplyStartUpOptions()
         {
-            _isEnableHotkeysEnabled = Properties.Settings.Default.EnableHotkeys;
+            _isEnableHotkeysEnabled = SettingsManager.Default.EnableHotkeys;
             if (_isEnableHotkeysEnabled) _hotkeyManager.Start();
             else _hotkeyManager.Stop();
             OnPropertyChanged(nameof(IsEnableHotkeysEnabled));
-            _isGuaranteedBkhEnabled = Properties.Settings.Default.GuaranteedBkh;
+            _isGuaranteedBkhEnabled = SettingsManager.Default.GuaranteedBkh;
             OnPropertyChanged(nameof(IsGuaranteedBkhEnabled));
-            _isFastQuitoutEnabled = Properties.Settings.Default.FastQuitout;
+            _isFastQuitoutEnabled = SettingsManager.Default.FastQuitout;
             OnPropertyChanged(nameof(IsFastQuitoutEnabled));
+            IsAlwaysOnTopEnabled = SettingsManager.Default.AlwaysOnTop;
         }
 
         public void ResetAttached()
