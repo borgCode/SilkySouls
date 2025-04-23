@@ -115,8 +115,14 @@
                     <CheckBox Content="Visible Tomb of the Giants"
                               IsChecked="{Binding IsFilterRemoveEnabled}"
                               Margin="0,2" />
-                    
-
+                    <CheckBox Content="Death Cam"
+                              IsChecked="{Binding IsDeathCamEnabled}"
+                              IsEnabled="{Binding AreButtonsEnabled}"
+                              Margin="0,2" />
+                    <CheckBox Content="Disable Events"
+                              IsChecked="{Binding IsDisableEventsEnabled}"
+                              IsEnabled="{Binding AreButtonsEnabled}"
+                              Margin="0,2" />
                 </UniformGrid>
             </StackPanel>
         </Border>
@@ -137,10 +143,12 @@
 
                 <ComboBox ItemsSource="{Binding WarpLocations}"
                           DisplayMemberPath="Value"
-                          SelectedItem="{Binding SelectedWarp, Mode=TwoWay}"
+                          SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
                           IsEnabled="{Binding AreButtonsEnabled}"
                           Grid.Column="1"
                           VerticalAlignment="Center"
+                          PreviewMouseDown="WarpLocationsCombo_PreviewMouseDown"
+                          TextSearch.TextPath="Value"
                           Margin="0,0,15,0" />
 
                 <Button Content="Warp"

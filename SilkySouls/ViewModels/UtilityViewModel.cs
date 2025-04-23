@@ -17,7 +17,8 @@ namespace SilkySouls.ViewModels
         private bool _isDrawEventEnabled;
         private bool _isTargetingViewEnabled;
         private bool _isNoClipEnabled;
-        private bool _isNoRollEnabled;
+        private bool _isDeathCamEnabled;
+        private bool _isDisableEventsEnabled;
         private bool _isFilterRemoveEnabled;
 
         private bool _areButtonsEnabled;
@@ -25,18 +26,20 @@ namespace SilkySouls.ViewModels
         private bool _areAttachedOptionsRestored;
 
         private bool _wasNoDeathEnabled;
+        private bool _wasNoDmgEnabled;
 
         private readonly UtilityService _utilityService;
-        private readonly PlayerService _playerService;
+        private readonly PlayerViewModel _playerViewModel;
         private readonly HotkeyManager _hotkeyManager;
 
         private readonly Dictionary<string, Location> _warpLocations;
         private KeyValuePair<string, string> _selectedLocation;
 
-        public UtilityViewModel(UtilityService utilityService, PlayerService playerService, HotkeyManager hotkeyManager)
+        public UtilityViewModel(UtilityService utilityService, HotkeyManager hotkeyManager,
+            PlayerViewModel playerViewModel)
         {
             _utilityService = utilityService;
-            _playerService = playerService;
+            _playerViewModel = playerViewModel;
             _warpLocations = DataLoader.GetLocationDict();
             _hotkeyManager = hotkeyManager;
 
@@ -176,25 +179,41 @@ namespace SilkySouls.ViewModels
                 if (_isNoClipEnabled)
                 {
                     _utilityService.EnableNoClip();
-                    if (_playerService.IsNoDeathOn()) _wasNoDeathEnabled = true;
-                    else _playerService.ToggleNoDeath(1);
+                    _wasNoDeathEnabled = _playerViewModel.IsNoDeathEnabled;
+                    _wasNoDmgEnabled = _playerViewModel.IsNoDamageEnabled;
+                    _playerViewModel.IsNoDeathEnabled = true;
+                    _playerViewModel.IsNoDamageEnabled = true;
+                    _playerViewModel.IsSilentEnabled = true;
+                    _playerViewModel.IsInvisibleEnabled = true;
                 }
                 else
                 {
                     _utilityService.DisableNoClip();
-                    if (_wasNoDeathEnabled) _wasNoDeathEnabled = false;
-                    else _playerService.ToggleNoDeath(0);
+                    _playerViewModel.IsNoDeathEnabled = _wasNoDeathEnabled;
+                    _playerViewModel.IsNoDamageEnabled = _wasNoDmgEnabled;
+                    _playerViewModel.IsSilentEnabled = false;
+                    _playerViewModel.IsInvisibleEnabled = false;
                 }
             }
         }
 
-        public bool IsNoRollEnabled
+        public bool IsDeathCamEnabled
         {
-            get => _isNoRollEnabled;
+            get => _isDeathCamEnabled;
             set
             {
-                if (!SetProperty(ref _isNoRollEnabled, value)) return;
-                _utilityService.ToggleNoRoll(_isNoRollEnabled);
+                if (!SetProperty(ref _isDeathCamEnabled, value)) return;
+                _utilityService.ToggleDeathCam(_isDeathCamEnabled);
+            }
+        }
+        
+        public bool IsDisableEventsEnabled
+        {
+            get => _isDisableEventsEnabled;
+            set
+            {
+                if (!SetProperty(ref _isDisableEventsEnabled, value)) return;
+                _utilityService.ToggleDisableEvents(_isDisableEventsEnabled);
             }
         }
 
@@ -222,6 +241,7 @@ namespace SilkySouls.ViewModels
         public void DisableButtons()
         {
             IsNoClipEnabled = false;
+            IsDisableEventsEnabled = false;
             AreButtonsEnabled = false;
         }
 
@@ -237,9 +257,8 @@ namespace SilkySouls.ViewModels
                 _utilityService.EnableTargetingView();
             if (IsFilterRemoveEnabled)
                 _utilityService.ToggleFilter(IsFilterRemoveEnabled);
-            if (IsNoRollEnabled)
-                _utilityService.ToggleNoRoll(IsNoRollEnabled);
-
+            if (IsDeathCamEnabled)
+                _utilityService.ToggleDeathCam(IsDeathCamEnabled);
             AreButtonsEnabled = true;
         }
 
@@ -247,7 +266,7 @@ namespace SilkySouls.ViewModels
         {
             IsNoClipEnabled = false;
             _areAttachedOptionsRestored = false;
-            _utilityService.ResetHook();
+            _utilityService.ResetBools();
         }
 
         public void TryRestoreAttachedFeatures()

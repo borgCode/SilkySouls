@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using SilkySouls.Memory;
@@ -12,6 +13,7 @@ namespace SilkySouls.Views
     public partial class UtilityTab
     {
         private readonly UtilityViewModel _utilityViewModel;
+        private string _lastValidText;
 
         public UtilityTab(UtilityViewModel utilityViewModel)
         {
@@ -40,12 +42,7 @@ namespace SilkySouls.Views
                 MessageBoxImage.Information
             );
         }
-
-        private void NoClipInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            MessageBox.Show("Vertical movement with Ctrl/Space or L2/R2 on controller", "Info", MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
+        
 
         private void LevelUpMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -225,6 +222,37 @@ namespace SilkySouls.Views
         private void Bottomless_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.OpenBottomlessBox();
+        }
+
+        private void WarpLocationsCombo_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!(sender is ComboBox combo)) return;
+            _lastValidText = combo.Text;
+            
+            combo.PreviewMouseDown -= WarpLocationsCombo_PreviewMouseDown;
+            combo.DropDownClosed += WarpLocationsCombo_DropDownClosed;
+                
+            combo.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                combo.IsEditable = true;
+                combo.Focus();
+                combo.IsDropDownOpen = true;
+            }), System.Windows.Threading.DispatcherPriority.Input);
+            
+        }
+        
+        private void WarpLocationsCombo_DropDownClosed(object sender, EventArgs e)
+        {
+            if (!(sender is ComboBox combo)) return;
+            
+            if (string.IsNullOrWhiteSpace(combo.Text))
+            {
+                combo.Text = _lastValidText;
+            }
+            
+            combo.IsEditable = false;
+            combo.DropDownClosed -= WarpLocationsCombo_DropDownClosed;
+            combo.PreviewMouseDown += WarpLocationsCombo_PreviewMouseDown;
         }
     }
 }

@@ -152,6 +152,8 @@
                 <ComboBox ItemsSource="{Binding WeaponList}"
                           SelectedItem="{Binding SelectedAutoSpawnWeapon}"
                           IsEnabled="{Binding AutoSpawnEnabled}"
+                          TextSearch.TextPath="Name"
+                          PreviewMouseDown="AutoSpawn_PreviewMouseDown"
                           Margin="0,5,0,0">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

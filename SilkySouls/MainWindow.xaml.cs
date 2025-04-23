@@ -28,7 +28,6 @@ namespace SilkySouls
         private readonly EnemyViewModel _enemyViewModel;
         private readonly ItemViewModel _itemViewModel;
         private readonly SettingsViewModel _settingsViewModel;
-        private readonly EnemyService _enemyService;
         private readonly HookManager _hookManager;
         private readonly AoBScanner _aobScanner;
 
@@ -50,13 +49,13 @@ namespace SilkySouls
             _aobScanner = new AoBScanner(_memoryIo);
             var playerService = new PlayerService(_memoryIo);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
-            _enemyService = new EnemyService(_memoryIo, _hookManager, _aobScanner);
+            var enemyService = new EnemyService(_memoryIo, _hookManager, _aobScanner);
             var itemService = new ItemService(_memoryIo, _hookManager);
             var settingsService = new SettingsService(_memoryIo);
 
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
-            _utilityViewModel = new UtilityViewModel(utilityService, playerService, hotkeyManager);
-            _enemyViewModel = new EnemyViewModel(_enemyService, hotkeyManager);
+            _utilityViewModel = new UtilityViewModel(utilityService, hotkeyManager, _playerViewModel);
+            _enemyViewModel = new EnemyViewModel(enemyService, hotkeyManager);
             _itemViewModel = new ItemViewModel(itemService);
             _settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
 

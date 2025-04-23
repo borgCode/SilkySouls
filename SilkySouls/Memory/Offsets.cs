@@ -10,8 +10,9 @@ namespace SilkySouls.memory
             
             public enum BaseOffsets
             {
-                PlayerIns = 0x68,
                 UpdateCoordsBasePtr = 0x40,
+                PlayerIns = 0x68,
+                DeathCam = 0x70
             }
             
             public const int UpdateCoords = 0x28;
@@ -55,6 +56,12 @@ namespace SilkySouls.memory
                 Z = 0x124,
                 Y = 0x128,
             }
+        }
+
+        public static class DebugEventMan
+        {
+            public static IntPtr Base;
+            public const int DisableEvents = 0xDC;
         }
 
         public static class DebugFlags

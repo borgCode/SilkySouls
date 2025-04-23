@@ -209,11 +209,33 @@
                                                 <Setter TargetName="Border" Property="Background"
                                                         Value="{StaticResource HoverBrush}" />
                                             </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-                            <ContentPresenter IsHitTestVisible="False"
+                            <TextBox x:Name="PART_EditableTextBox"
+                                     Margin="3,3,23,3"
+                                     Padding="2"
+                                     Background="{TemplateBinding Background}"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     BorderBrush="Transparent"
+                                     BorderThickness="0"
+                                     IsReadOnly="{TemplateBinding IsReadOnly}"
+                                     Visibility="Hidden"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center">
+                                <TextBox.Template>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border x:Name="PART_ContentHost"
+                                                Background="Transparent"
+                                                Focusable="True" />
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                            </TextBox>
+                            <ContentPresenter x:Name="ContentPresenter" IsHitTestVisible="False"
                                               Margin="5,3,23,3"
                                               HorizontalAlignment="Left"
                                               VerticalAlignment="Center"
@@ -245,6 +267,11 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                            <Trigger Property="IsEditable" Value="True">
+                                <Setter Property="IsTabStop" Value="False" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="ContentPresenter" Property="Visibility" Value="Hidden" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

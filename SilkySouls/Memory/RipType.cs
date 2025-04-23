@@ -4,7 +4,8 @@
     {
         None,       
         Mov64,    
-        Comparison,
+        Cmp,
+        QwordCmp,
         Call
     }
 }

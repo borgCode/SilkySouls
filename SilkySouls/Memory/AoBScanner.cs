@@ -59,6 +59,7 @@ namespace SilkySouls.Memory
             Offsets.OpenEnhanceShopArmor = Offsets.OpenEnhanceShopWeapon - 0x40;
             Offsets.WorldAiMan.Base = FindAddressByPattern(Patterns.WorldAiMan);
             Offsets.EmkEventIns.Base = FindAddressByPattern(Patterns.EmkEventIns);
+            Offsets.DebugEventMan.Base = FindAddressByPattern(Patterns.DebugEventMan);
 
             // Hooks
             TryPatternWithFallback("LastLockedTarget", Patterns.LastLockedTarget,
@@ -141,6 +142,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"FastQuitout: 0x{Offsets.Patches.QuitoutPatch.ToInt64():X}");
             Console.WriteLine($"WorldAiMan: 0x{Offsets.WorldAiMan.Base.ToInt64():X}");
             Console.WriteLine($"EmkEventIns: 0x{Offsets.EmkEventIns.Base.ToInt64():X}");
+            Console.WriteLine($"DebugEventMan: 0x{Offsets.DebugEventMan.Base.ToInt64():X}");
             
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
@@ -196,10 +198,13 @@ namespace SilkySouls.Memory
                     int stdOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
                     return IntPtr.Add(instructionAddress, stdOffset + 7);
 
-                case RipType.Comparison:
+                case RipType.Cmp:
                     // e.g. 80 3D - cmp byte ptr [rip+offset],imm
                     int cmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 2));
                     return IntPtr.Add(instructionAddress, cmpOffset + 7);
+                case RipType.QwordCmp:
+                    int qwordCmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
+                    return IntPtr.Add(instructionAddress, qwordCmpOffset + 7);
                 case RipType.Call:
                     int callOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 1));
                     return IntPtr.Add(instructionAddress, callOffset + 5);

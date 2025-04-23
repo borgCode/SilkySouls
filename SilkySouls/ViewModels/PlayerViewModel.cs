@@ -62,6 +62,8 @@ namespace SilkySouls.ViewModels
         private readonly PlayerService _playerService;
         private readonly HotkeyManager _hotkeyManager;
         private readonly DispatcherTimer _timer;
+        private bool _wasNoDamageEnabled;
+        private bool _wasNoDeathEnabled;
 
         public PlayerViewModel(PlayerService playerService, HotkeyManager hotkeyManager)
         {
@@ -200,7 +202,13 @@ namespace SilkySouls.ViewModels
 
         public void RestorePos(int index)
         {
+            _wasNoDamageEnabled = IsNoDamageEnabled;
+            _wasNoDeathEnabled = IsNoDeathEnabled;
+            IsNoDamageEnabled = true;
+            _isNoDeathEnabled = true;
             _playerService.RestorePos(index);
+            IsNoDamageEnabled = _wasNoDamageEnabled;
+            IsNoDeathEnabled = _wasNoDeathEnabled;
             if (!IsStateIncluded) return;
 
             var state = index == 0 ? _saveState1 : _saveState2;

@@ -268,6 +268,10 @@ namespace SilkySouls.ViewModels
                 }
             }
         }
+        
+        public bool ShowBleedAndNotImmune => ShowBleed && !IsBleedImmune;
+        public bool ShowPoisonAndNotImmune => ShowPoison && !IsPoisonImmune;
+        public bool ShowToxicAndNotImmune => ShowToxic && !IsToxicImmune;
 
         public bool AreOptionsEnabled
         {

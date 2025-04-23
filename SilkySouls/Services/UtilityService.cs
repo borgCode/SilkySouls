@@ -147,9 +147,10 @@ namespace SilkySouls.Services
             _memoryIo.WriteBytes(valueAddr, new byte[] { 0x00 });
         }
 
-        public void ResetHook()
+        public void ResetBools()
         {
             _targetViewIsInstalled = false;
+            _isEmevdCodeWritten = false;
         }
 
         public void EnableNoClip()
@@ -472,26 +473,16 @@ namespace SilkySouls.Services
             }
         }
 
-        public void ToggleNoRoll(bool isNoRollEnabled)
-        {
-            var noRollPatchPtr = Patches.NoRollPatch;
-            var noBackstepPatchPtr = noRollPatchPtr + 0xFF;
-            if (isNoRollEnabled)
-            {
-                _memoryIo.WriteByte(noRollPatchPtr + 0x6, 0);
-                _memoryIo.WriteByte(noRollPatchPtr + 0xD, 0);
-                _memoryIo.WriteByte(noBackstepPatchPtr + 0x6, 0);
-                _memoryIo.WriteByte(noBackstepPatchPtr + 0xD, 0);
-            }
-            else
-            {
-                _memoryIo.WriteByte(noRollPatchPtr + 0x6, 1);
-                _memoryIo.WriteByte(noRollPatchPtr + 0xD, 1);
-                _memoryIo.WriteByte(noBackstepPatchPtr + 0x6, 1);
-                _memoryIo.WriteByte(noBackstepPatchPtr + 0xD, 1);
-            }
-        }
+        public void ToggleDeathCam(bool isDeathCamEnabled) =>
+            _memoryIo.WriteByte((IntPtr)_memoryIo.ReadInt64(WorldChrMan.Base) + (int)WorldChrMan.BaseOffsets.DeathCam,
+                isDeathCamEnabled ? 1 : 0);
 
+
+        public void ToggleDisableEvents(bool isDisableEventsEnabled)
+        {
+            _memoryIo.WriteByte((IntPtr)_memoryIo.ReadInt64(DebugEventMan.Base) + DebugEventMan.DisableEvents,
+                isDisableEventsEnabled ? 1 : 0);
+        }
 
         public void SetEvent(ulong flagId)
         {

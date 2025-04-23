@@ -29,7 +29,7 @@
             new byte[] { 0x80, 0x3D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x8F },
             "xx????xxxx",
             0,
-            RipType.Comparison
+            RipType.Cmp
         );
 
         public static readonly Pattern CamBase = new Pattern(
@@ -85,6 +85,14 @@
             9,
             RipType.Mov64
         );
+
+        public static readonly Pattern DebugEventMan = new Pattern(
+            new byte[] { 0x48, 0x8D, 0x77, 0x54, 0xF3 },
+            "xxxxx",
+            0xC,
+            RipType.QwordCmp
+        );
+
 
         public static readonly Pattern EmkEventIns = new Pattern(
             new byte[] { 0x48, 0x8B, 0x3D, 0x00, 0x00, 0x00, 0x00, 0x48, 0x85, 0xFF, 0x0F, 0x84, 0xB0 },
