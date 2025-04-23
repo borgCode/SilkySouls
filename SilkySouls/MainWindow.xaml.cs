@@ -80,6 +80,8 @@ namespace SilkySouls
             };
             _gameLoadedTimer.Tick += Timer_Tick;
             _gameLoadedTimer.Start();
+            
+            VersionChecker.CheckForUpdates(AppVersion, this);
         }
 
         private bool _loaded;

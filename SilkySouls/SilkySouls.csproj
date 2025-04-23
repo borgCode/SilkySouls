@@ -126,6 +126,7 @@
     <Compile Include="Utilities\DataLoader.cs" />
     <Compile Include="Utilities\SettingsManager.cs" />
     <Compile Include="Utilities\User32.cs" />
+    <Compile Include="Utilities\VersionChecker.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />

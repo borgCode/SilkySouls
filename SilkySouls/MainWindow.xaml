@@ -97,8 +97,12 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <TextBlock x:Name="AppVersion" Text=""
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Width="100"
+                       Margin="10,0,0,0" />
             
-            <TextBlock x:Name="IsAttachedText" Text=""
+            <TextBlock Grid.Column="1" x:Name="IsAttachedText" Text=""
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0,0,10,0" />
         </Grid>
