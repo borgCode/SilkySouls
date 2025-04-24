@@ -9,6 +9,7 @@
             public const ulong QuelaagBell = 0xADF408;
             public const ulong Sens = 0xAF7AA8;
             public const ulong PlaceLordVessel = 0xB40E24;
+            public const ulong DukesAfterLordVessel = 0xB28776;
             public const ulong NewLondoWater = 0xB100E5;
             public const ulong LaurentiusToFirelink = 0x4E3;
             public static readonly ulong[] GriggsToFirelink = {0x458, 0xA82996};

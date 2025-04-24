@@ -572,6 +572,7 @@ namespace SilkySouls.Services
                 _memoryIo.WriteInt32(commandParamsLoc + 0x4, commandParams[1]);
                 _memoryIo.WriteInt32(funcParamsLoc, funcParams[0]);
                 _memoryIo.WriteInt32(funcParamsLoc + 0x4, funcParams[1]);
+                _memoryIo.WriteByte(flag, 0);
             }
             else
             {
@@ -631,6 +632,7 @@ namespace SilkySouls.Services
         public async Task PlaceLordVessel()
         {
             SetEvent(GameIds.EventFlags.PlaceLordVessel);
+            SetEvent(GameIds.EventFlags.DukesAfterLordVessel);
             ExecuteEmevdCommand(GameIds.EmevdCommands.DeactiveObject, GameIds.EmevdCommandParams.DukesFogDeactiveObject);
             await Task.Delay(5);
             ExecuteEmevdCommand(GameIds.EmevdCommands.DeleteMapSfx, GameIds.EmevdCommandParams.DukesFogDeleteMapSfx);
