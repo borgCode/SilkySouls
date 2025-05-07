@@ -201,6 +201,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE.txt" />
     <Resource Include="Assets\Silky.ico" />
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
