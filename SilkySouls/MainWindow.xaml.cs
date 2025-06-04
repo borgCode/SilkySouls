@@ -81,7 +81,12 @@ namespace SilkySouls
             _gameLoadedTimer.Tick += Timer_Tick;
             _gameLoadedTimer.Start();
             
-            VersionChecker.CheckForUpdates(AppVersion, this);
+            VersionChecker.UpdateVersionText(AppVersion);
+            
+            if (SettingsManager.Default.EnableUpdateChecks)
+            {
+                VersionChecker.CheckForUpdates(this);
+            }
         }
 
         private bool _loaded;
@@ -201,6 +206,7 @@ namespace SilkySouls
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
-        
+
+        private void CheckUpdate_Click(object sender, RoutedEventArgs e) => VersionChecker.CheckForUpdates(this, true);
     }
 }

@@ -92,17 +92,25 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1" Margin="0,5,0,10">
+        <Grid Grid.Row="1" Margin="0,5,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="AppVersion" Text=""
                        HorizontalAlignment="Left" VerticalAlignment="Center"
-                       Width="100"
+                       Width="40"
                        Margin="10,0,0,0" />
             
-            <TextBlock Grid.Column="1" x:Name="IsAttachedText" Text=""
+            <Button x:Name="CheckUpdateButton" Content="Check for Updates"
+                    Grid.Column="1"
+                    Click="CheckUpdate_Click"
+                    Margin="5,0,5,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"/>
+            
+            <TextBlock Grid.Column="2" x:Name="IsAttachedText" Text=""
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0,0,10,0" />
         </Grid>

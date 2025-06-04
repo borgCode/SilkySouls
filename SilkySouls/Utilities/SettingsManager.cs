@@ -23,6 +23,7 @@ namespace SilkySouls.Utilities
         public double ResistancesWindowHeight { get; set; }
         public double ResistancesWindowLeft { get; set; }
         public double ResistancesWindowTop { get; set; }
+        public bool EnableUpdateChecks { get; set; } = true;
         
         
         
@@ -52,6 +53,7 @@ namespace SilkySouls.Utilities
                     $"ResistancesWindowWidth={ResistancesWindowWidth}",
                     $"ResistancesWindowLeft={ResistancesWindowLeft}",
                     $"ResistancesWindowTop={ResistancesWindowTop}",
+                    $"EnableUpdateChecks={EnableUpdateChecks}",
                 };
 
                 File.WriteAllLines(SettingsPath, lines);
@@ -129,6 +131,10 @@ namespace SilkySouls.Utilities
                                 case "ResistancesWindowHeight":
                                     double.TryParse(value, out double rwh);
                                     settings.ResistancesWindowHeight = rwh;
+                                    break;
+                                case "EnableUpdateChecks":
+                                    bool.TryParse(value, out bool euc);
+                                    settings.EnableUpdateChecks = euc;
                                     break;
                             }
                         }
