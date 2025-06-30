@@ -585,5 +585,10 @@ namespace SilkySouls.ViewModels
         {
             _playerService.GiveSouls();
         }
+
+        public void BreakWep()
+        {
+            _playerService.BreakWeapon();
+        }
     }
 }

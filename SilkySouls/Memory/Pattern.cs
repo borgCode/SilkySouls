@@ -367,6 +367,14 @@
             RipType.None
         );
 
+        public static readonly Pattern GetInventoryIndexByCatAndId = new Pattern(
+            new byte[] { 0x78, 0x27, 0x3B, 0x9F },
+            "xxxx",
+            -0x74,
+            RipType.None
+        );
+
+
 
         public static readonly Pattern ProcessEmevdCommand = new Pattern(
             new byte[] { 0x49, 0x8B, 0x80, 0xB0, 0x00, 0x00, 0x00, 0x8B },

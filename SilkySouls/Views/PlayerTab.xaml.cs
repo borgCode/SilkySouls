@@ -187,5 +187,10 @@ namespace SilkySouls.Views
         {
             _playerViewModel.GiveSouls();
         }
+
+        private void BreakWep_Click(object sender, RoutedEventArgs e)
+        {
+            _playerViewModel.BreakWep();
+        }
     }
 }

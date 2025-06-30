@@ -1484,4 +1484,22 @@ ff d0                   call   rax
 48 83 c4 20             add    rsp,0x20
 c3                      ret</value>
   </data>
+  <data name="BreakRightHandWep" xml:space="preserve">
+    <value>49 bf 00 00 00 00 00    movabs r15,0x0
+00 00 00
+4c 89 f9                mov    rcx,r15
+ba 00 00 00 00          mov    edx,0x0
+49 b8 00 00 00 00 00    movabs r8,0x0
+00 00 00
+48 83 ec 20             sub    rsp,0x20
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 20             add    rsp,0x20
+49 8b 8f 58 01 00 00    mov    rcx,QWORD PTR [r15+0x158]
+48 6b c0 1c             imul   rax,rax,0x1c
+48 01 c1                add    rcx,rax
+c7 41 14 00 00 00 00    mov    DWORD PTR [rcx+0x14],0x0
+c3                      ret</value>
+  </data>
 </root>

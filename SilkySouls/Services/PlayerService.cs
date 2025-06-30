@@ -461,5 +461,25 @@ namespace SilkySouls.Services
 
         public void SetAxis(WorldChrMan.Coords coords, float value) =>
             _memoryIo.WriteFloat(GetPlayerCoordinatePtr(coords), value);
+
+        public void BreakWeapon()
+        {
+            var playerGameData = _memoryIo.ReadInt64((IntPtr)_memoryIo.ReadInt64(GameDataMan.Base) +
+                                                     (int)GameDataMan.GameDataOffsets.PlayerGameData);
+            int equippedWep = _memoryIo.ReadInt32((IntPtr)playerGameData + (int)GameDataMan.PlayerGameData.RightHandWeapon);
+
+            var equipGameData = _memoryIo.ReadInt64((IntPtr)playerGameData + (int)GameDataMan.PlayerGameData.EquipGameData);
+            var bytes = AsmLoader.GetAsmBytes("BreakRightHandWep");
+            AsmHelper.WriteAbsoluteAddresses64(bytes, new []
+            {
+                (equipGameData, 0x0 + 2),
+                (equippedWep, 0x12 + 2),
+                (Funcs.GetInventoryIndexByCatAndId, 0x20 + 2)
+            });
+            
+            _memoryIo.AllocateAndExecute(bytes);
+        }
     }
+    
+    
 }

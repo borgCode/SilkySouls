@@ -147,6 +147,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
@@ -186,12 +187,21 @@
                     <CheckBox Content="Infinite Poise" 
                               IsChecked="{Binding IsInfinitePoiseEnabled}"
                               Margin="0,2"/>
-                    <Button
-                            Content="Restore spell casts" 
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <Button Content="Restore spell casts" 
                             Height="25" Width="150"
-                        
                             FontSize="14"
                             Click="Restore_Spell_Click"
+                            IsEnabled="{Binding AreOptionsEnabled}"
+                            VerticalAlignment="Center"
+                            Margin="0,5,0,0"/>
+                    
+                    <Button Content="Break Weapon" 
+                            Height="25" Width="150"
+                            FontSize="14"
+                            Click="BreakWep_Click"
                             IsEnabled="{Binding AreOptionsEnabled}"
                             VerticalAlignment="Center"
                             Margin="0,5,0,0"/>
