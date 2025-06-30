@@ -1509,4 +1509,19 @@ ff d0                   call   rax
 48 83 c4 48             add    rsp,0x48
 c3                      ret</value>
   </data>
+  <data name="OpenAttunement" xml:space="preserve">
+    <value>b9 10 27 00 00          mov    ecx,0x2710
+ba 73 27 00 00          mov    edx,0x2773
+48 83 ec 20             sub    rsp,0x20
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 20             add    rsp,0x20
+48 83 ec 20             sub    rsp,0x20
+48 b8 00 00 00 00 00    movabs rax,0x0
+00 00 00
+ff d0                   call   rax
+48 83 c4 20             add    rsp,0x20
+c3                      ret</value>
+  </data>
 </root>

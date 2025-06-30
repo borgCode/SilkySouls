@@ -353,6 +353,21 @@
             RipType.None
         );
 
+        public static readonly Pattern OpenAttunement = new Pattern(
+            new byte[] { 0x74, 0x1B, 0x48, 0x8B, 0x8A, 0x18 },
+            "xxxxxx",
+            -0x3A,
+            RipType.None
+        );
+
+        public static readonly Pattern AttunementWindowPrep = new Pattern(
+            new byte[] { 0x89, 0x88, 0xD8, 0x0D },
+            "xxxx",
+            -0x7,
+            RipType.None
+        );
+
+
         public static readonly Pattern ProcessEmevdCommand = new Pattern(
             new byte[] { 0x49, 0x8B, 0x80, 0xB0, 0x00, 0x00, 0x00, 0x8B },
             "xxxxxxxx",

@@ -403,6 +403,27 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to b9 10 27 00 00          mov    ecx,0x2710
+        ///ba 73 27 00 00          mov    edx,0x2773
+        ///48 83 ec 20             sub    rsp,0x20
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
+        ///00 00 00
+        ///ff d0                   call   rax
+        ///48 83 c4 20             add    rsp,0x20
+        ///48 83 ec 20             sub    rsp,0x20
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
+        ///00 00 00
+        ///ff d0                   call   rax
+        ///48 83 c4 20             add    rsp,0x20
+        ///c3                      ret.
+        /// </summary>
+        internal static string OpenAttunement {
+            get {
+                return ResourceManager.GetString("OpenAttunement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 48 b9 00 00 00 00 00    movabs rcx,0x0
         ///00 00 00
         ///48 83 ec 28             sub    rsp,0x28

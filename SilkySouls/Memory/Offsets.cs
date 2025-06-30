@@ -312,6 +312,8 @@ namespace SilkySouls.memory
             public static long ShopParamSave;
             public static long OpenRegularShop;
             public static long ProcessEmevdCommand;
+            public static long OpenAttunement;
+            public static long AttunementWindowPrep;
 
         }
     }

@@ -117,6 +117,8 @@ namespace SilkySouls.Memory
             Offsets.Funcs.ShopParamSave = FindAddressByPattern(Patterns.ShopParamSave).ToInt64();
             Offsets.Funcs.OpenRegularShop = FindAddressByPattern(Patterns.OpenRegularShop).ToInt64();
             Offsets.Funcs.ProcessEmevdCommand = FindAddressByPattern(Patterns.ProcessEmevdCommand).ToInt64();
+            Offsets.Funcs.OpenAttunement = FindAddressByPattern(Patterns.OpenAttunement).ToInt64();
+            Offsets.Funcs.AttunementWindowPrep = FindAddressByPattern(Patterns.AttunementWindowPrep).ToInt64();
             
             
             #if DEBUG
@@ -145,7 +147,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"DebugEventMan: 0x{Offsets.DebugEventMan.Base.ToInt64():X}");
             
             Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopWeapon:X}");
-            Console.WriteLine($"Weapon: 0x{Offsets.OpenEnhanceShopArmor:X}");
+            Console.WriteLine($"Armor: 0x{Offsets.OpenEnhanceShopArmor:X}");
             
             Console.WriteLine($"Hooks.LastLockedTarget: 0x{Offsets.Hooks.LastLockedTarget:X}");
             Console.WriteLine($"Hooks.AllNoDamage: 0x{Offsets.Hooks.AllNoDamage:X}");
@@ -165,6 +167,8 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Funcs.ShopParamSave: 0x{Offsets.Funcs.ShopParamSave:X}");
             Console.WriteLine($"Funcs.OpenRegularShop: 0x{Offsets.Funcs.OpenRegularShop:X}");
             Console.WriteLine($"Funcs.ProcessEmevdCommand: 0x{Offsets.Funcs.ProcessEmevdCommand:X}");
+            Console.WriteLine($"Funcs.OpenAttunement: 0x{Offsets.Funcs.OpenAttunement:X}");
+            Console.WriteLine($"Funcs.AttunementWindowPrep: 0x{Offsets.Funcs.AttunementWindowPrep:X}");
 #endif
         }
         

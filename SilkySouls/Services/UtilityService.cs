@@ -647,5 +647,15 @@ namespace SilkySouls.Services
             await Task.Delay(500);
             _hookManager.UninstallHook(_emevdCodeLoc.ToInt64());
         }
+
+        public void OpenAttunement()
+        {
+            var codeBytes = AsmLoader.GetAsmBytes("OpenAttunement");
+            var bytes = BitConverter.GetBytes(Funcs.AttunementWindowPrep);
+            Array.Copy(bytes, 0, codeBytes, 0xE + 2, 8);
+            bytes = BitConverter.GetBytes(Funcs.OpenAttunement);
+            Array.Copy(bytes, 0, codeBytes, 0x22 + 2, 8);
+            _memoryIo.AllocateAndExecute(codeBytes);
+        }
     }
 }

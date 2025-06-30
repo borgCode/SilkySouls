@@ -282,7 +282,7 @@ namespace SilkySouls.ViewModels
 
         public void ShowLevelUpMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.LevelUpMenu);
         
-        public void ShowAttunementMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.AttunementMenu);
+        public void ShowAttunementMenu() => _utilityService.OpenAttunement();
         
         public void UnlockBonfires() => _utilityService.UnlockBonfireWarps();
 
