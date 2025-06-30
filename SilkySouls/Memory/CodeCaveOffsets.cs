@@ -31,9 +31,13 @@ namespace SilkySouls.Memory
                 ZDirectionR2Check = 0x4F0,
                 UpdateCoords = 0x570,
             }
-            
-            public const int ItemSpawnFlagLoc = 0x6A0;
-            public const int ItemSpawn = 0x6B0;
+
+            public enum ItemSpawn
+            {
+                ShouldExitFlag = 0x6A0,
+                ShouldProcessFlag = 0x6A1,
+                Code = 0x6B0,
+            }
             
             public enum LevelUp 
             {

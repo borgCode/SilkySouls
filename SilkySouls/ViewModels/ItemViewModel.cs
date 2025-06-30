@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using SilkySouls.Models;
 using SilkySouls.Services;
@@ -96,6 +98,7 @@ namespace SilkySouls.ViewModels
             _itemsByCategory.Add("Weapons", new ObservableCollection<Item>(DataLoader.GetItemList("Weapons")));
 
             SelectedCategory = Categories.FirstOrDefault();
+            SelectedMassSpawnCategory = Categories.FirstOrDefault().Name;
             SelectedAutoSpawnWeapon = _itemsByCategory["Weapons"].FirstOrDefault();
         }
 
@@ -141,6 +144,7 @@ namespace SilkySouls.ViewModels
 
                 Items = _itemsByCategory[_selectedCategory.Name];
                 SelectedItem = Items.FirstOrDefault();
+                SelectedMassSpawnCategory = SelectedCategory.Name; 
             }
         }
 
@@ -393,7 +397,6 @@ namespace SilkySouls.ViewModels
         public void DisableButtons()
         {
             AreOptionsEnabled = false;
-            _itemService.UninstallHook();
         }
 
         public void TryEnableActiveOptions()
@@ -412,6 +415,40 @@ namespace SilkySouls.ViewModels
                     0x00000000, 
                     1);
             }
+        }
+        
+        private string _selectedMassSpawnCategory;
+
+        public string SelectedMassSpawnCategory
+        {
+            get => _selectedMassSpawnCategory;
+            set => SetProperty(ref _selectedMassSpawnCategory, value);
+        }
+        
+        public void MassSpawn()
+        {
+            Task.Run(() =>
+            {
+                if (SelectedMassSpawnCategory == "Weapons")
+                {
+                    foreach (var weapon in _itemsByCategory[SelectedMassSpawnCategory])
+                    {
+                        int itemId = weapon.Id;
+                        _itemService.ItemSpawn(itemId, 0x00000000, 1);
+                        Thread.Sleep(10);
+                    }
+                }
+                else
+                {
+                    foreach (var item in _itemsByCategory[SelectedMassSpawnCategory])
+                    {
+                        int itemId = item.Id;
+                        ItemCategory category = Categories.First(c => c.Name == SelectedMassSpawnCategory);
+                        _itemService.ItemSpawn(itemId, category.Id, item.StackSize);
+                        Thread.Sleep(10);
+                    }
+                }
+            });
         }
         
     }

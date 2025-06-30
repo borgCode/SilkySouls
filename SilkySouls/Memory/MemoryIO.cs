@@ -379,5 +379,20 @@ namespace SilkySouls.Memory
         {
             return Kernel32.QueryMemory(ProcessHandle, address).AllocationBase;
         }
+        
+        public IntPtr GetProcAddress(string moduleName, string procName)
+        {
+            IntPtr moduleHandle = Kernel32.GetModuleHandle(moduleName);
+            if (moduleHandle == IntPtr.Zero)
+                return IntPtr.Zero;
+
+            return Kernel32.GetProcAddress(moduleHandle, procName);
+        }
+        
+        public void RunPersistentThread(IntPtr address)
+        {
+            IntPtr thread = Kernel32.CreateRemoteThread(ProcessHandle, IntPtr.Zero, 0, address, IntPtr.Zero, 0, IntPtr.Zero);
+            Kernel32.CloseHandle(thread); 
+        }
     }
 }

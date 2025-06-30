@@ -16,7 +16,7 @@ namespace SilkySouls.Memory
         public static byte[] GetRelOffsetBytes(long srcInstrAddr, long targetAddr, int instrLength = 0)
             => BitConverter.GetBytes(GetRelOffset(srcInstrAddr, targetAddr, instrLength));
 
-        public static void WriteRelativeOffsets(byte[] bytes, (long baseAddr, long targetAddr, int size, int offset)[] offsets)
+        public static void WriteRelativeOffsets(byte[] bytes, (long baseAddr, long targetAddr, int size, int destinationIndex)[] offsets)
         {
             foreach (var (baseAddr, targetAddr, size, offset) in offsets)
             {
@@ -26,5 +26,17 @@ namespace SilkySouls.Memory
         }
         public static byte[] GetJmpOriginOffsetBytes(long hookLocation, int originalInstrLen, IntPtr customCodeAddr)
             => BitConverter.GetBytes((int)(hookLocation + originalInstrLen - customCodeAddr.ToInt64()));
+        
+        public static byte[] GetAbsAddressBytes(long address)
+            => BitConverter.GetBytes(address);
+        
+        public static void WriteAbsoluteAddresses64(byte[] bytes, (long address, int destinationIndex)[] addresses)
+        {
+            foreach (var (address, destinationIndex) in addresses)
+            {
+                var addressBytes = GetAbsAddressBytes(address);
+                Array.Copy(addressBytes, 0, bytes, destinationIndex, 8);
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using SilkySouls.memory;
+﻿using SilkySouls.memory;
 using SilkySouls.Memory;
 using SilkySouls.Utilities;
 
@@ -9,11 +8,7 @@ namespace SilkySouls.Services
     {
         private readonly MemoryIo _memoryIo;
         private readonly HookManager _hookManager;
-        private IntPtr _itemSpawnBlock;
-        private IntPtr _flagLoc;
-        private long _origin;
-        private bool _hasSetupCave;
-        private bool _isHookInstalled;
+        private bool _codeIsWritten;
         
         public ItemService(MemoryIo memoryIo, HookManager hookManager)
         {
@@ -23,75 +18,61 @@ namespace SilkySouls.Services
 
         public void ItemSpawn(int itemId, int category, int quantity)
         {
-            _flagLoc = CodeCaveOffsets.Base + CodeCaveOffsets.ItemSpawnFlagLoc;
-            _itemSpawnBlock = CodeCaveOffsets.Base + CodeCaveOffsets.ItemSpawn;
-            
-            _origin = Offsets.Hooks.ItemSpawn;
-            if (!_hasSetupCave)
+            var shouldProcessFlag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.ItemSpawn.ShouldProcessFlag;
+            var code = CodeCaveOffsets.Base + (int)CodeCaveOffsets.ItemSpawn.Code;
+            if (!_codeIsWritten)
             {
-                _memoryIo.WriteBytes(_itemSpawnBlock, GetItemSpawnBytes());
-                _hasSetupCave = true;
+                
+                var shouldExitFlag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.ItemSpawn.ShouldExitFlag;
+               
+                var gameDataMan = _memoryIo.ReadInt64(Offsets.GameDataMan.Base);
+                var sleepAddr = _memoryIo.GetProcAddress("kernel32.dll", "Sleep");
+            
+                var itemGetMenuMan = _memoryIo.ReadInt64(Offsets.ItemGetMenuMan);
+
+                byte[] spawnBytes = AsmLoader.GetAsmBytes("ItemSpawn");
+                AsmHelper.WriteRelativeOffsets(spawnBytes, new []
+                {
+                    (code.ToInt64(), shouldProcessFlag.ToInt64(), 7, 0x0 + 2),
+                    (code.ToInt64() + 0xD, shouldProcessFlag.ToInt64(), 7, 0xD + 2),
+                    (code.ToInt64() + 0xA9, shouldExitFlag.ToInt64(), 7, 0xA9 + 2)
+                });
+                
+                AsmHelper.WriteAbsoluteAddresses64(spawnBytes, new []
+                {
+                    (gameDataMan, 0x2B + 2),
+                    (Offsets.ItemGet, 0x54 + 2),
+                    (itemGetMenuMan, 0x64 + 2),
+                    (Offsets.ItemDlgFunc, 0x86 + 2),
+                    (sleepAddr.ToInt64(), 0x96 + 2)
+                });
+                
+                _memoryIo.WriteBytes(code, spawnBytes);
+                _codeIsWritten = true;
+                _memoryIo.RunPersistentThread(code);
             }
 
-            PopulateItemDetails(itemId, category, quantity);
+            _memoryIo.WriteInt32(code + 0x14 + 1, category);
+            _memoryIo.WriteInt32(code + 0x19 + 2, quantity);
+            _memoryIo.WriteInt32(code + 0x1F + 2, itemId);
 
-            byte[] spawnFlag = { 1 };
-            _memoryIo.WriteBytes(_flagLoc, spawnFlag);
-
-            if (_isHookInstalled) return;
-
-            _hookManager.InstallHook(_itemSpawnBlock.ToInt64(),_origin,
-                new byte[] { 0xC6, 0x05, 0xEE, 0x12, 0x88, 0x01, 0x00 });
-            _isHookInstalled = true;
-        }
-
-        private byte[] GetItemSpawnBytes()
-        {
-            ulong gameDataMan = _memoryIo.ReadUInt64(Offsets.GameDataMan.Base);
+            _memoryIo.WriteInt32(code + 0x71 + 1, category);
+            _memoryIo.WriteInt32(code + 0x76 + 2, quantity);
+            _memoryIo.WriteInt32(code + 0x7C + 2, itemId);
             
-            ulong itemGetMenuMan = _memoryIo.ReadUInt64(Offsets.ItemGetMenuMan);
-
-            byte[] spawnBytes = AsmLoader.GetAsmBytes("ItemSpawn");
-
-            long originalInstruction = _origin + 7 + _memoryIo.ReadInt32((IntPtr)_origin + 2);
-
-            byte[] bytes = BitConverter.GetBytes(originalInstruction);
-            Array.Copy(bytes, 0, spawnBytes, 68, 8);
-                bytes = BitConverter.GetBytes(_flagLoc.ToInt64());
-            Array.Copy(bytes, 0, spawnBytes, 81, 8);
-            bytes = BitConverter.GetBytes(130);
-            Array.Copy(bytes, 0, spawnBytes, 94, 4);
-            bytes = BitConverter.GetBytes(gameDataMan);
-            Array.Copy(bytes, 0, spawnBytes, 123, 8);
-            bytes = BitConverter.GetBytes(Offsets.ItemGet);
-            Array.Copy(bytes, 0, spawnBytes, 164, 8);
-            bytes = BitConverter.GetBytes(itemGetMenuMan);
-            Array.Copy(bytes, 0, spawnBytes, 180, 8);
-            bytes = BitConverter.GetBytes(Offsets.ItemDlgFunc);
-            Array.Copy(bytes, 0, spawnBytes, 214, 8);
-            bytes = BitConverter.GetBytes(_flagLoc.ToInt64());
-            Array.Copy(bytes, 0, spawnBytes, 230, 8);
-            bytes = BitConverter.GetBytes(_origin + 7 - (_itemSpawnBlock.ToInt64() + 312));
-            Array.Copy(bytes, 0, spawnBytes, 308, 4);
-            return spawnBytes;
+            _memoryIo.WriteByte(shouldProcessFlag, 1);
+            
+        }
+        
+        
+        public void Reset()
+        {
+            _codeIsWritten = false;
         }
 
-        private void PopulateItemDetails(int itemId, int category, int quantity)
+        public void SignalClose()
         {
-            _memoryIo.WriteInt32(_itemSpawnBlock + 99, category);
-            _memoryIo.WriteInt32(_itemSpawnBlock + 105, quantity);
-            _memoryIo.WriteInt32(_itemSpawnBlock + 111, itemId);
-
-            _memoryIo.WriteInt32(_itemSpawnBlock + 192, category);
-            _memoryIo.WriteInt32(_itemSpawnBlock + 198, quantity);
-            _memoryIo.WriteInt32(_itemSpawnBlock + 204, itemId);
-        }
-
-        public void UninstallHook()
-        {
-            _hookManager.UninstallHook(_itemSpawnBlock.ToInt64());
-            _isHookInstalled = false;
-            _hasSetupCave = false;
+            _memoryIo.WriteByte(CodeCaveOffsets.Base + (int)CodeCaveOffsets.ItemSpawn.ShouldExitFlag, 1);
         }
     }
 }

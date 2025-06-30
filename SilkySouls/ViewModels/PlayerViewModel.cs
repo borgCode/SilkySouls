@@ -191,6 +191,7 @@ namespace SilkySouls.ViewModels
             if (index == 0) IsPos1Saved = true;
             else IsPos2Saved = true;
 
+            state.IncludesState = IsStateIncluded;
             if (IsStateIncluded)
             {
                 state.Hp = CurrentHp;
@@ -212,6 +213,7 @@ namespace SilkySouls.ViewModels
             if (!IsStateIncluded) return;
 
             var state = index == 0 ? _saveState1 : _saveState2;
+            if (!IsStateIncluded || !state.IncludesState) return;
             _playerService.SetHp(state.Hp);
             _playerService.SetSp(state.Sp);
         }

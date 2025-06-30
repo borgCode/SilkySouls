@@ -621,37 +621,13 @@ e9 00 00 00 00          jmp    aa &lt;_main+0xaa&gt;</value>
 </value>
   </data>
   <data name="ItemSpawn" xml:space="preserve">
-    <value>48 81 ec a0 00 00 00    sub    rsp,0xa0
-0f 29 84 24 80 00 00    movaps XMMWORD PTR [rsp+0x80],xmm0
-00
-0f 29 8c 24 90 00 00    movaps XMMWORD PTR [rsp+0x90],xmm1
-00
-0f 29 94 24 a0 00 00    movaps XMMWORD PTR [rsp+0xa0],xmm2
-00
-0f 29 9c 24 b0 00 00    movaps XMMWORD PTR [rsp+0xb0],xmm3
-00
-0f 29 a4 24 c0 00 00    movaps XMMWORD PTR [rsp+0xc0],xmm4
-00
-0f 29 ac 24 d0 00 00    movaps XMMWORD PTR [rsp+0xd0],xmm5
-00
-50                      push   rax
-51                      push   rcx
-52                      push   rdx
-41 50                   push   r8
-41 51                   push   r9
-41 52                   push   r10
-41 53                   push   r11
-48 b8 00 00 00 00 00    movabs rax,0x0
-00 00 00
-c6 00 00                mov    BYTE PTR [rax],0x0
-48 b8 00 00 00 00 00    movabs rax,0x0
-00 00 00
-80 38 00                cmp    BYTE PTR [rax],0x0
-0f 84 80 00 00 00       je     0xe2
-ba fe fe fe fe          mov    edx,0xfefefefe
-41 b9 fe fe fe fe       mov    r9d,0xfefefefe
-41 b8 fe fe fe fe       mov    r8d,0xfefefefe
-41 bc fe fe fe fe       mov    r12d,0xfefefefe
+    <value>80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
+0f 85 89 00 00 00       jne    96 &lt;nothing_to_process&gt;
+c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 14 &lt;_main+0x14&gt;
+ba 00 00 00 00          mov    edx,0x0
+41 b9 00 00 00 00       mov    r9d,0x0
+41 b8 00 00 00 00       mov    r8d,0x0
+41 bc 00 00 00 00       mov    r12d,0x0
 48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
@@ -667,38 +643,22 @@ ff d0                   call   rax
 48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 48 89 c1                mov    rcx,rax
-ba fe fe fe fe          mov    edx,0xfefefefe
-41 b9 fe fe fe fe       mov    r9d,0xfefefefe
-41 b8 fe fe fe fe       mov    r8d,0xfefefefe
+ba 00 00 00 00          mov    edx,0x0
+41 b9 00 00 00 00       mov    r9d,0x0
+41 b8 00 00 00 00       mov    r8d,0x0
 48 83 ec 28             sub    rsp,0x28
 48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
 ff d0                   call   rax
 48 83 c4 28             add    rsp,0x28
+000000000096 &lt;nothing_to_process&gt;:
 48 b8 00 00 00 00 00    movabs rax,0x0
 00 00 00
-c6 00 00                mov    BYTE PTR [rax],0x0
-41 5b                   pop    r11
-41 5a                   pop    r10
-41 59                   pop    r9
-41 58                   pop    r8
-5a                      pop    rdx
-59                      pop    rcx
-58                      pop    rax
-0f 28 ac 24 d0 00 00    movaps xmm5,XMMWORD PTR [rsp+0xd0]
-00
-0f 28 a4 24 c0 00 00    movaps xmm4,XMMWORD PTR [rsp+0xc0]
-00
-0f 28 9c 24 b0 00 00    movaps xmm3,XMMWORD PTR [rsp+0xb0]
-00
-0f 28 94 24 a0 00 00    movaps xmm2,XMMWORD PTR [rsp+0xa0]
-00
-0f 28 8c 24 90 00 00    movaps xmm1,XMMWORD PTR [rsp+0x90]
-00
-0f 28 84 24 80 00 00    movaps xmm0,XMMWORD PTR [rsp+0x80]
-00
-48 81 c4 a0 00 00 00    add    rsp,0xa0
-e9 00 00 00 00          jmp    0x138</value>
+48 c7 c1 05 00 00 00    mov    rcx,0x5
+ff d0                   call   rax
+80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # b0 &lt;nothing_to_process+0x1a&gt;
+0f 85 4a ff ff ff       jne    0 &lt;_main&gt;
+c3                      ret</value>
   </data>
   <data name="Ammo" xml:space="preserve">
     <value>2007000,999,0,Dragonslayer Arrow

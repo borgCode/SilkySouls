@@ -61,5 +61,11 @@ namespace SilkySouls.memory
             VirtualQueryEx(hProcess, address, out var info, (uint)Marshal.SizeOf(typeof(MemoryBasicInformation)));
             return info;
         }
+        
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
     }
 }

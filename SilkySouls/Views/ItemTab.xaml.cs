@@ -51,5 +51,10 @@ namespace SilkySouls.Views
             combo.DropDownClosed -= AutoSpawn_DropDownClosed;
             combo.PreviewMouseDown += AutoSpawn_PreviewMouseDown;
         }
+
+        private void MassSpawn_Click(object sender, RoutedEventArgs e)
+        {
+            _itemViewModel.MassSpawn();
+        }
     }
 }

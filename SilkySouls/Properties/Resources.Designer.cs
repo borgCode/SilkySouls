@@ -199,22 +199,17 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 48 81 ec a0 00 00 00    sub    rsp,0xa0
-        ///0f 29 84 24 80 00 00    movaps XMMWORD PTR [rsp+0x80],xmm0
-        ///00
-        ///0f 29 8c 24 90 00 00    movaps XMMWORD PTR [rsp+0x90],xmm1
-        ///00
-        ///0f 29 94 24 a0 00 00    movaps XMMWORD PTR [rsp+0xa0],xmm2
-        ///00
-        ///0f 29 9c 24 b0 00 00    movaps XMMWORD PTR [rsp+0xb0],xmm3
-        ///00
-        ///0f 29 a4 24 c0 00 00    movaps XMMWORD PTR [rsp+0xc0],xmm4
-        ///00
-        ///0f 29 ac 24 d0 00 00    movaps XMMWORD PTR [rsp+0xd0],xmm5
-        ///00
-        ///50                      push   rax
-        ///51                      push   rcx
-        ///52              [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to 80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
+        ///0f 85 89 00 00 00       jne    96 &lt;nothing_to_process&gt;
+        ///c6 05 00 00 00 00 00    mov    BYTE PTR [rip+0x0],0x0        # 14 &lt;_main+0x14&gt;
+        ///ba 00 00 00 00          mov    edx,0x0
+        ///41 b9 00 00 00 00       mov    r9d,0x0
+        ///41 b8 00 00 00 00       mov    r8d,0x0
+        ///41 bc 00 00 00 00       mov    r12d,0x0
+        ///48 b8 00 00 00 00 00    movabs rax,0x0
+        ///00 00 00
+        ///c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
+        ///40 88 7c 24 30          mov     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ItemSpawn {
             get {

@@ -30,6 +30,7 @@ namespace SilkySouls
         private readonly SettingsViewModel _settingsViewModel;
         private readonly HookManager _hookManager;
         private readonly AoBScanner _aobScanner;
+        private readonly ItemService _itemService;
 
         public MainWindow()
         {
@@ -50,13 +51,13 @@ namespace SilkySouls
             var playerService = new PlayerService(_memoryIo);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
             var enemyService = new EnemyService(_memoryIo, _hookManager, _aobScanner);
-            var itemService = new ItemService(_memoryIo, _hookManager);
+            _itemService = new ItemService(_memoryIo, _hookManager);
             var settingsService = new SettingsService(_memoryIo);
 
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
             _utilityViewModel = new UtilityViewModel(utilityService, hotkeyManager, _playerViewModel);
             _enemyViewModel = new EnemyViewModel(enemyService, hotkeyManager);
-            _itemViewModel = new ItemViewModel(itemService);
+            _itemViewModel = new ItemViewModel(_itemService);
             _settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
 
             var playerTab = new PlayerTab(_playerViewModel);
@@ -137,6 +138,7 @@ namespace SilkySouls
                 _settingsViewModel.ResetAttached();
                 _hasAllocatedMemory = false;
                 _loaded = false;
+                _itemService.Reset();
                 IsAttachedText.Text = "Not attached";
                 IsAttachedText.Foreground = (SolidColorBrush)Application.Current.Resources["NotAttachedBrush"];
             }
@@ -198,6 +200,8 @@ namespace SilkySouls
             SettingsManager.Default.WindowLeft = Left;
             SettingsManager.Default.WindowTop = Top;
             SettingsManager.Default.Save();
+            _itemService.SignalClose();
+            _hookManager.UninstallAllHooks();
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
