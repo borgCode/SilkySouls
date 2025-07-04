@@ -36,10 +36,10 @@ namespace SilkySouls.ViewModels
         private ObservableCollection<ItemCategory> _categories;
         private ObservableCollection<Item> _items;
         private ObservableCollection<string> _availableInfusions;
-        
+
         private bool _autoSpawnEnabled;
         private Item _selectedAutoSpawnWeapon;
-        
+
         private string _preSearchCategory;
         private bool _isSearchActive;
         private readonly ObservableCollection<Item> _searchResultsCollection = new ObservableCollection<Item>();
@@ -69,7 +69,6 @@ namespace SilkySouls.ViewModels
             _infusionTypes.Add("Magic", new InfusionType(400, 10, false));
             _infusionTypes.Add("Occult", new InfusionType(700, 5, true));
             _infusionTypes.Add("Raw", new InfusionType(300, 5, true));
-            
         }
 
 
@@ -144,7 +143,7 @@ namespace SilkySouls.ViewModels
 
                 Items = _itemsByCategory[_selectedCategory.Name];
                 SelectedItem = Items.FirstOrDefault();
-                SelectedMassSpawnCategory = SelectedCategory.Name; 
+                SelectedMassSpawnCategory = SelectedCategory.Name;
             }
         }
 
@@ -177,7 +176,7 @@ namespace SilkySouls.ViewModels
             get => _maxQuantity;
             private set => SetProperty(ref _maxQuantity, value);
         }
-        
+
         public bool IsSearchActive
         {
             get => _isSearchActive;
@@ -205,7 +204,6 @@ namespace SilkySouls.ViewModels
                         SelectedItem = Items.FirstOrDefault();
                         _preSearchCategory = null;
                     }
-                    
                 }
                 else
                 {
@@ -214,7 +212,7 @@ namespace SilkySouls.ViewModels
                         _preSearchCategory = SelectedCategory.Name;
                         _isSearchActive = true;
                     }
-                    
+
                     ApplyFilter();
                 }
             }
@@ -222,10 +220,9 @@ namespace SilkySouls.ViewModels
 
         private void ApplyFilter()
         {
-            
             _searchResultsCollection.Clear();
             var searchTextLower = SearchText.ToLower();
-            
+
             foreach (var category in _itemsByCategory)
             {
                 foreach (var item in category.Value)
@@ -237,8 +234,10 @@ namespace SilkySouls.ViewModels
                     }
                 }
             }
+
             Items = _searchResultsCollection;
         }
+
         public Item SelectedItem
         {
             get => _selectedItem;
@@ -369,9 +368,17 @@ namespace SilkySouls.ViewModels
                 itemId += _infusionTypes[SelectedInfusionType].Offset;
             }
 
-            if (CanUpgrade)
+            if (CanUpgrade && SelectedUpgrade > 0)
             {
-                itemId += SelectedUpgrade;
+                if (SelectedItem.UpgradeType == UpgradeType.PyromancyFlame ||
+                    SelectedItem.UpgradeType == UpgradeType.PyromancyAscended)
+                {
+                    itemId += (SelectedUpgrade * 100);
+                }
+                else
+                {
+                    itemId += SelectedUpgrade;
+                }
             }
 
             _itemService.ItemSpawn(
@@ -379,7 +386,7 @@ namespace SilkySouls.ViewModels
                 SelectedCategory.Id,
                 SelectedQuantity);
         }
-        
+
         public bool AutoSpawnEnabled
         {
             get => _autoSpawnEnabled;
@@ -391,7 +398,7 @@ namespace SilkySouls.ViewModels
             get => _selectedAutoSpawnWeapon;
             set => SetProperty(ref _selectedAutoSpawnWeapon, value);
         }
-        
+
         public ObservableCollection<Item> WeaponList => new ObservableCollection<Item>(_itemsByCategory["Weapons"]);
 
         public void DisableButtons()
@@ -409,14 +416,14 @@ namespace SilkySouls.ViewModels
             if (AutoSpawnEnabled && SelectedAutoSpawnWeapon != null)
             {
                 int itemId = SelectedAutoSpawnWeapon.Id;
-                
+
                 _itemService.ItemSpawn(
                     itemId,
-                    0x00000000, 
+                    0x00000000,
                     1);
             }
         }
-        
+
         private string _selectedMassSpawnCategory;
 
         public string SelectedMassSpawnCategory
@@ -424,7 +431,7 @@ namespace SilkySouls.ViewModels
             get => _selectedMassSpawnCategory;
             set => SetProperty(ref _selectedMassSpawnCategory, value);
         }
-        
+
         public void MassSpawn()
         {
             Task.Run(() =>
@@ -450,6 +457,5 @@ namespace SilkySouls.ViewModels
                 }
             });
         }
-        
     }
 }
