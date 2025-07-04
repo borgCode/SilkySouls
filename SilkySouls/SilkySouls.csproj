@@ -109,7 +109,6 @@
     <Compile Include="Memory\GameIds.cs" />
     <Compile Include="Memory\HookManager.cs" />
     <Compile Include="Memory\Pattern.cs" />
-    <Compile Include="Memory\RipType.cs" />
     <Compile Include="Models\CharacterState.cs" />
     <Compile Include="Models\EquippedWeapon.cs" />
     <Compile Include="Models\InfusionType.cs" />
@@ -117,6 +116,7 @@
     <Compile Include="Models\ItemCategory.cs" />
     <Compile Include="Models\WarpLocation.cs" />
     <Compile Include="Models\UpgradeType.cs" />
+    <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\ItemService.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\EnemyService.cs" />
@@ -130,12 +130,16 @@
     <Compile Include="Utilities\User32.cs" />
     <Compile Include="Utilities\VersionChecker.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\EventViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\EnemyViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TravelViewModel.cs" />
     <Compile Include="ViewModels\UtilityViewModel.cs" />
+    <Compile Include="Views\EventTab.xaml.cs">
+      <DependentUpon>EventTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ItemTab.xaml.cs">
       <DependentUpon>ItemTab.xaml</DependentUpon>
     </Compile>
@@ -169,6 +173,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\EventTab.xaml" />
     <Page Include="Views\ItemTab.xaml" />
     <Page Include="Views\PlayerTab.xaml">
       <SubType>Designer</SubType>

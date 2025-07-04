@@ -14,7 +14,6 @@ namespace SilkySouls.ViewModels
         private bool _isTargetingViewEnabled;
         private bool _isNoClipEnabled;
         private bool _isDeathCamEnabled;
-        private bool _isDisableEventsEnabled;
         private bool _isFilterRemoveEnabled;
 
         private bool _areButtonsEnabled;
@@ -184,16 +183,6 @@ namespace SilkySouls.ViewModels
             }
         }
         
-        public bool IsDisableEventsEnabled
-        {
-            get => _isDisableEventsEnabled;
-            set
-            {
-                if (!SetProperty(ref _isDisableEventsEnabled, value)) return;
-                _utilityService.ToggleDisableEvents(_isDisableEventsEnabled);
-            }
-        }
-
         public bool IsFilterRemoveEnabled
         {
             get => _isFilterRemoveEnabled;
@@ -207,7 +196,6 @@ namespace SilkySouls.ViewModels
         public void DisableButtons()
         {
             IsNoClipEnabled = false;
-            IsDisableEventsEnabled = false;
             AreButtonsEnabled = false;
         }
 
@@ -249,26 +237,13 @@ namespace SilkySouls.ViewModels
         public void ShowLevelUpMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.LevelUpMenu);
         
         public void ShowAttunementMenu() => _utilityService.OpenAttunement();
-
-        public void UnlockKalameet() => _utilityService.SetMultipleEvents(GameIds.EventFlags.UnlockKalameet);
+        
 
         public void ShowUpgradeMenu(bool isWeapon) => _utilityService.ShowUpgradeMenu(isWeapon);
 
-        public void RingGargBell() => _utilityService.RingGargBell();
-
-        public void RingQuelaggBell() => _utilityService.RingQuelaagBell();
-        public void OpenSens() => _ = _utilityService.OpenSensGate(GameIds.EventFlags.Sens);
-        public void PlaceLordVessel() => _ = _utilityService.PlaceLordVessel();
+       
         public void OpenShop(ulong[] shopParams) => _utilityService.OpenRegularShop(shopParams);
-
-        public void NewLondoNoWater() => _utilityService.SetEvent(GameIds.EventFlags.NewLondoWater);
-
-        public void LaurentiusToFirelink() => _utilityService.SetEvent(GameIds.EventFlags.LaurentiusToFirelink);
-
-        public void LoganToFirelink() => _utilityService.SetMultipleEvents(GameIds.EventFlags.LoganToFirelink);
-
-        public void GriggsToFirelink() => _utilityService.SetMultipleEvents(GameIds.EventFlags.GriggsToFirelink);
-
+        
         public void OpenFeedMenu()=> _utilityService.ShowMenu(MenuMan.MenuManData.Feed);
         
         public void OpenWarpMenu()=> _utilityService.ShowMenu(MenuMan.MenuManData.Warp);

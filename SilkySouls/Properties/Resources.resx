@@ -978,9 +978,9 @@ c3                      ret</value>
 1602961,0,Darkroot,Darkroot Basin
 1202961,161.66|-32.03|-153.44|1.29,Darkroot,Hydra
 1202961,0,Darkroot,Darkroot Garden
-1412961,0,Demon Ruins,1st Bonfire
-1412963,0,Demon Ruins,2nd Bonfire
-1412962,0,Demon Ruins,3rd Bonfire
+1412961,0,Demon Ruins,Bonfire before Ceaseless
+1412963,0,Demon Ruins,Bonfire before Firesage
+1412962,0,Demon Ruins,Bonfire before Centipede
 1002960,0,Depths,Bonfire
 1000999,0,Depths,Entrance
 1022960,0,Firelink Shrine,Firelink Shrine
@@ -1463,20 +1463,6 @@ f3 0f 6f 05 00 00 00    movdqu xmm0,XMMWORD PTR [rip+0x0]        # 108 &lt;_main
 00000123 &lt;executeOriginal&gt;:
 ba 01 00 00 00          mov    edx,0x1
 e9 00 00 00 00          jmp    12d &lt;executeOriginal+0xa&gt;</value>
-  </data>
-  <data name="SetEventOff" xml:space="preserve">
-    <value>48 b9 00 00 00 00 00    movabs rcx,0x0
-00 00 00
-48 ba 00 00 00 00 00    movabs rdx,0x0
-00 00 00
-41 b8 00 00 00 00       mov    r8d,0x0
-41 b9 00 00 00 00       mov    r9d,0x0
-48 83 ec 48             sub    rsp,0x48
-48 b8 00 00 00 00 00    movabs rax,0x0
-00 00 00
-ff d0                   call   rax
-48 83 c4 48             add    rsp,0x48
-c3                      ret</value>
   </data>
   <data name="OpenAttunement" xml:space="preserve">
     <value>b9 10 27 00 00          mov    ecx,0x2710

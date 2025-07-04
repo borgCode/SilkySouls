@@ -59,26 +59,6 @@ namespace SilkySouls.Views
         }
         
 
-        private void UnlockKalameet_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.UnlockKalameet();
-        }
-
-        private void GargBell_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.RingGargBell();
-        }
-
-        private void QuelaggBell_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.RingQuelaggBell();
-        }
-
-        private void Sens_Click(object sender, RoutedEventArgs e)
-        {
-             _utilityViewModel.OpenSens();
-        }
-
         private void MaleUdMerchant_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.OpenShop(GameIds.ShopParams.MaleUdMerchant);
@@ -173,32 +153,7 @@ namespace SilkySouls.Views
         {
             _utilityViewModel.OpenShop(GameIds.ShopParams.Gough);
         }
-
-        private void LordVessel_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.PlaceLordVessel();
-        }
-
-        private void NewLondo_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.NewLondoNoWater();
-        }
-
-        private void LaurentiusToFirelink_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.LaurentiusToFirelink();
-        }
-
-        private void LoganToFirelink_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.LoganToFirelink();
-        }
-
-        private void GriggsToFirelink_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.GriggsToFirelink();
-        }
-
+        
         private void Feed_Click(object sender, RoutedEventArgs e)
         {
             _utilityViewModel.OpenFeedMenu();

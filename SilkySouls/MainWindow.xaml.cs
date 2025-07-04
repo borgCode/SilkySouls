@@ -25,6 +25,7 @@ namespace SilkySouls
 
         private readonly PlayerViewModel _playerViewModel;
         private readonly TravelViewModel _travelViewModel;
+        private readonly EventViewModel _eventViewModel;
         private readonly UtilityViewModel _utilityViewModel;
         private readonly EnemyViewModel _enemyViewModel;
         private readonly ItemViewModel _itemViewModel;
@@ -51,6 +52,7 @@ namespace SilkySouls
             _aobScanner = new AoBScanner(_memoryIo);
             var playerService = new PlayerService(_memoryIo);
             var travelService = new TravelService(_memoryIo, _hookManager);
+            var eventService = new EventService(_memoryIo, _hookManager);
             var utilityService = new UtilityService(_memoryIo, _hookManager);
             var enemyService = new EnemyService(_memoryIo, _hookManager, _aobScanner);
             _itemService = new ItemService(_memoryIo, _hookManager);
@@ -59,12 +61,14 @@ namespace SilkySouls
             _playerViewModel = new PlayerViewModel(playerService, hotkeyManager);
             _utilityViewModel = new UtilityViewModel(utilityService, hotkeyManager, _playerViewModel);
             _travelViewModel = new TravelViewModel(travelService, hotkeyManager, _utilityViewModel);
+            _eventViewModel = new EventViewModel(eventService);
             _enemyViewModel = new EnemyViewModel(enemyService, hotkeyManager);
             _itemViewModel = new ItemViewModel(_itemService);
             _settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager);
 
             var playerTab = new PlayerTab(_playerViewModel);
             var travelTab = new TravelTab(_travelViewModel);
+            var eventTab = new EventTab(_eventViewModel);
             var utilityTab = new UtilityTab(_utilityViewModel);
             var enemyTab = new EnemyTab(_enemyViewModel);
             var itemTab = new ItemTab(_itemViewModel);
@@ -72,6 +76,7 @@ namespace SilkySouls
 
             MainTabControl.Items.Add(new TabItem { Header = "Player", Content = playerTab });
             MainTabControl.Items.Add(new TabItem { Header = "Travel", Content = travelTab });
+            MainTabControl.Items.Add(new TabItem { Header = "Event", Content = eventTab });
             MainTabControl.Items.Add(new TabItem { Header = "Utility", Content = utilityTab });
             MainTabControl.Items.Add(new TabItem { Header = "Enemies", Content = enemyTab });
             MainTabControl.Items.Add(new TabItem { Header = "Items", Content = itemTab });
@@ -152,10 +157,21 @@ namespace SilkySouls
         private void TryEnableFeatures()
         {
             _playerViewModel.TryEnableActiveOptions();
+            _eventViewModel.TryEnableActiveOptions();
             _utilityViewModel.TryEnableActiveOptions();
             _enemyViewModel.TryEnableActiveOptions();
             _itemViewModel.TryEnableActiveOptions();
             _travelViewModel.TryEnableFeatures();
+        }
+
+        private void DisableFeatures()
+        {
+            _travelViewModel.DisableFeatures();
+            _eventViewModel.DisableFeatures();
+            _playerViewModel.DisableButtons();
+            _utilityViewModel.DisableButtons();
+            _enemyViewModel.DisableButtons();
+            _itemViewModel.DisableButtons();
         }
 
         private void TrySetGameStartPrefs()
@@ -168,15 +184,6 @@ namespace SilkySouls
                 _playerViewModel.TrySetNgPref();
                 _itemViewModel.TrySpawnWeaponPref();
             }
-        }
-
-        private void DisableFeatures()
-        {
-            _travelViewModel.DisableFeatures();
-            _playerViewModel.DisableButtons();
-            _utilityViewModel.DisableButtons();
-            _enemyViewModel.DisableButtons();
-            _itemViewModel.DisableButtons();
         }
 
         protected override void OnClosing(CancelEventArgs e)

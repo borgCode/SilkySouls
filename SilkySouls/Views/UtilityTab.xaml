@@ -119,10 +119,6 @@
                               IsChecked="{Binding IsDeathCamEnabled}"
                               IsEnabled="{Binding AreButtonsEnabled}"
                               Margin="0,2" />
-                    <CheckBox Content="Disable Events"
-                              IsChecked="{Binding IsDisableEventsEnabled}"
-                              IsEnabled="{Binding AreButtonsEnabled}"
-                              Margin="0,2" />
                 </UniformGrid>
             </StackPanel>
         </Border>
@@ -307,69 +303,7 @@
                     </TabItem>
                 </TabControl>
             </Border>
-
-            <Border Grid.Column="1"
-                    BorderThickness="1"
-                    BorderBrush="#333"
-                    CornerRadius="3"
-                    Margin="5,0,0,0">
-
-                <TabControl Margin="5">
-                    <TabItem Header="Events">
-                        <StackPanel Margin="5">
-                            <Button Content="Unlock Kalameet"
-                                    Click="UnlockKalameet_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Ring Gargoyles Bell"
-                                    Click="GargBell_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Ring Quelaag Bell"
-                                    Click="QuelaggBell_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Open Sen's Fortress"
-                                    Click="Sens_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Place Lord Vessel"
-                                    Click="LordVessel_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="No Water New Londo"
-                                    Click="NewLondo_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                        </StackPanel>
-                    </TabItem>
-                    <TabItem Header="NPCs">
-                        <StackPanel Margin="5">
-                            <Button Content="Laurentius to Firelink"
-                                    Click="LaurentiusToFirelink_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Logan to Firelink"
-                                    Click="LoganToFirelink_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Griggs to Firelink"
-                                    Click="GriggsToFirelink_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                        </StackPanel>
-                    </TabItem>
-                </TabControl>
-            </Border>
+            
         </Grid>
     </Grid>
 </UserControl>
