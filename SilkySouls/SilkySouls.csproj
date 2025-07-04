@@ -111,6 +111,7 @@
     <Compile Include="Memory\Pattern.cs" />
     <Compile Include="Memory\RipType.cs" />
     <Compile Include="Models\CharacterState.cs" />
+    <Compile Include="Models\EquippedWeapon.cs" />
     <Compile Include="Models\InfusionType.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />

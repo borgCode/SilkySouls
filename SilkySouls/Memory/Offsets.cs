@@ -112,7 +112,6 @@ namespace SilkySouls.memory
                 SoulLevel = 0x90,
                 Souls = 0x94,
                 TotalSouls = 0x98,
-                RightHandWeapon = 0x328,
                 EquipMagicData = 0x418,
                 EquipGameData = 0x430,
             }

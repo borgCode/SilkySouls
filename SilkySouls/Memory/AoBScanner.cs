@@ -163,6 +163,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Hooks.WarpCoords: 0x{Offsets.Hooks.WarpCoords:X}");
             Console.WriteLine($"Hooks.LuaIfElse: 0x{Offsets.Hooks.LuaIfCase:X}");
             Console.WriteLine($"Hooks.Emevd: 0x{Offsets.Hooks.Emevd:X}");
+            Console.WriteLine($"Hooks.Draw: 0x{Offsets.Hooks.Draw:X}");
             Console.WriteLine($"Patches.InfiniteDurabilityPatch: 0x{Offsets.Patches.InfiniteDurabilityPatch.ToInt64():X}");
             
             Console.WriteLine($"Funcs.SetEvent: 0x{Offsets.Funcs.SetEvent:X}");

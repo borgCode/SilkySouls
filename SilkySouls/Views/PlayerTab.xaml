@@ -195,16 +195,19 @@
                             FontSize="14"
                             Click="Restore_Spell_Click"
                             IsEnabled="{Binding AreOptionsEnabled}"
-                            VerticalAlignment="Center"
-                            Margin="0,5,0,0"/>
-                    
+                            Margin="0,0,0,15"/>
+    
+                    <ComboBox
+                              Width="150" Height="25"
+                              ItemsSource="{Binding EquippedWeapons}"
+                              SelectedItem="{Binding SelectedWeaponSlot}"
+                              DisplayMemberPath="DisplayName"
+                              Margin="0,0,0,5"/>
                     <Button Content="Break Weapon" 
                             Height="25" Width="150"
                             FontSize="14"
                             Click="BreakWep_Click"
-                            IsEnabled="{Binding AreOptionsEnabled}"
-                            VerticalAlignment="Center"
-                            Margin="0,5,0,0"/>
+                            IsEnabled="{Binding AreOptionsEnabled}"/>
                 </StackPanel>
             </Grid>
             <TextBlock Grid.Row="3" Text="{Binding SoulLevel, StringFormat='Soul Level: {0}'}" FontWeight="Bold" Margin="0,0,0,5" />

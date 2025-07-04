@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Threading;
 using SilkySouls.Models;
 using SilkySouls.Services;
@@ -36,6 +38,9 @@ namespace SilkySouls.ViewModels
         private bool _isInfinitePoiseEnabled;
         private bool _isAutoSetNewGameSixEnabled;
         private bool _isNoRollEnabled;
+        
+        private List<EquippedWeapon> _equippedWeapons;
+        private EquippedWeapon _selectedWeaponSlot;
 
         private bool _areOptionsEnabled;
 
@@ -74,6 +79,15 @@ namespace SilkySouls.ViewModels
 
             LoadStats();
 
+            EquippedWeapons = new List<EquippedWeapon>
+            {
+                new EquippedWeapon("Right hand 1", 0x328),
+                new EquippedWeapon("Right hand 2", 0x32C),
+                new EquippedWeapon("Left hand 1", 0x324),
+                new EquippedWeapon("Left hand 2", 0x330),
+            };
+            SelectedWeaponSlot = EquippedWeapons.FirstOrDefault();
+            
             _timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(100)
@@ -585,10 +599,23 @@ namespace SilkySouls.ViewModels
         {
             _playerService.GiveSouls();
         }
+        
+        
+        public List<EquippedWeapon> EquippedWeapons
+        {
+            get => _equippedWeapons;
+            set => SetProperty(ref _equippedWeapons, value);
+        }
+
+        public EquippedWeapon SelectedWeaponSlot
+        {
+            get => _selectedWeaponSlot;
+            set => SetProperty(ref _selectedWeaponSlot, value);
+        }
 
         public void BreakWep()
         {
-            _playerService.BreakWeapon();
+            _playerService.BreakWeapon(SelectedWeaponSlot.SlotOffset);
         }
     }
 }
