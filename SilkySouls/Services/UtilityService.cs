@@ -505,6 +505,21 @@ namespace SilkySouls.Services
             }
         }
 
+        public bool GetEvent(ulong eventId)
+        {
+            var getEventBytes = AsmLoader.GetAsmBytes("GetEvent");
+            AsmHelper.WriteAbsoluteAddresses64(getEventBytes, new []
+            {
+                (_memoryIo.ReadInt64(EventFlagMan.Base), 0x0 + 2),
+                ((long)eventId, 0xA + 2),
+                (Funcs.GetEvent, 0x14 + 2),
+                (CodeCaveOffsets.Base.ToInt64() + CodeCaveOffsets.GetEventResult, 0x28 + 2)
+            });
+            
+            _memoryIo.AllocateAndExecute(getEventBytes);
+            return _memoryIo.ReadUInt8(CodeCaveOffsets.Base + CodeCaveOffsets.GetEventResult) == 1;
+        }
+
         public void OpenRegularShop(ulong[] shopParams)
         {
             var openRegularShopBytes = AsmLoader.GetAsmBytes("OpenRegularShop");
@@ -522,31 +537,12 @@ namespace SilkySouls.Services
         public void RingGargBell()
         {
             SetEvent(GameIds.EventFlags.GargBell);
-
-            var quelaagBellCheckPtr = _memoryIo.FollowPointers(EventFlagMan.Base, new[]
-            {
-                EventFlagMan.QuelaagBellPtr1,
-                EventFlagMan.QuelaagBellPtr2,
-                EventFlagMan.QuelaagBellPtr3,
-            }, false);
-            Console.WriteLine(_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.QuelaagBellBit));
-            if (_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.QuelaagBellBit))
-                SetEvent(GameIds.EventFlags.Sens);
-            _hookManager.UninstallHook((CodeCaveOffsets.Base + (int)CodeCaveOffsets.EmevdCommand.Code).ToInt64());
+            if (GetEvent(GameIds.EventFlags.QuelaagBell))SetEvent(GameIds.EventFlags.Sens);
         }
-
         public void RingQuelaagBell()
         {
             SetEvent(GameIds.EventFlags.QuelaagBell);
-
-            var quelaagBellCheckPtr = _memoryIo.FollowPointers(EventFlagMan.Base, new[]
-            {
-                EventFlagMan.FlagPtr,
-                EventFlagMan.GargOffset,
-            }, false);
-
-            Console.WriteLine(_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.GargBellBit));
-            if (_memoryIo.IsBit32Set(quelaagBellCheckPtr, EventFlagMan.GargBellBit)) SetEvent(GameIds.EventFlags.Sens);
+            if (GetEvent(GameIds.EventFlags.GargBell))SetEvent(GameIds.EventFlags.Sens);
         }
 
         public async Task OpenSensGate(ulong sens)

@@ -310,6 +310,7 @@ namespace SilkySouls.memory
         public static class Funcs
         {
             public static long SetEvent;
+            public static long GetEvent;
             public static long ShopParamSave;
             public static long OpenRegularShop;
             public static long ProcessEmevdCommand;

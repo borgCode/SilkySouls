@@ -74,6 +74,8 @@ namespace SilkySouls.Memory
                 ParamStruct = 0x10B0,
                 Code = 0x11B0,
             }
-            
+
+            public const int GetEventResult = 0x13B0;
+
     }
 }

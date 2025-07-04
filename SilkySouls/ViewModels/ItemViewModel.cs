@@ -373,7 +373,7 @@ namespace SilkySouls.ViewModels
                 if (SelectedItem.UpgradeType == UpgradeType.PyromancyFlame ||
                     SelectedItem.UpgradeType == UpgradeType.PyromancyAscended)
                 {
-                    itemId += (SelectedUpgrade * 100);
+                    itemId += SelectedUpgrade * 100;
                 }
                 else
                 {

@@ -114,6 +114,7 @@ namespace SilkySouls.Memory
             
             
             Offsets.Funcs.SetEvent = FindAddressByPattern(Patterns.SetEvent).ToInt64();
+            Offsets.Funcs.GetEvent = FindAddressByPattern(Patterns.GetEvent).ToInt64();
             Offsets.Funcs.ShopParamSave = FindAddressByPattern(Patterns.ShopParamSave).ToInt64();
             Offsets.Funcs.OpenRegularShop = FindAddressByPattern(Patterns.OpenRegularShop).ToInt64();
             Offsets.Funcs.ProcessEmevdCommand = FindAddressByPattern(Patterns.ProcessEmevdCommand).ToInt64();
@@ -172,6 +173,7 @@ namespace SilkySouls.Memory
             Console.WriteLine($"Funcs.ProcessEmevdCommand: 0x{Offsets.Funcs.ProcessEmevdCommand:X}");
             Console.WriteLine($"Funcs.OpenAttunement: 0x{Offsets.Funcs.OpenAttunement:X}");
             Console.WriteLine($"Funcs.AttunementWindowPrep: 0x{Offsets.Funcs.AttunementWindowPrep:X}");
+            Console.WriteLine($"Funcs.GetEvent: 0x{Offsets.Funcs.GetEvent:X}");
 #endif
         }
         
@@ -189,36 +191,86 @@ namespace SilkySouls.Memory
 
         public IntPtr FindAddressByPattern(Pattern pattern)
         {
-            IntPtr patternAddress = PatternScan(pattern.Bytes, pattern.Mask);
-            if (patternAddress == IntPtr.Zero)
-                return IntPtr.Zero;
+            var results = FindAddressesByPattern(pattern, 1);
+            return results.Count > 0 ? results[0] : IntPtr.Zero;
+        }
 
-            IntPtr instructionAddress = IntPtr.Add(patternAddress, pattern.InstructionOffset);
+        public List<IntPtr> FindAddressesByPattern(Pattern pattern, int size)
+        {
+            List<IntPtr> addresses = PatternScanMultiple(pattern.Bytes, pattern.Mask, size);
 
-            switch (pattern.RipType)
+            for (int i = 0; i < addresses.Count; i++)
             {
-                case RipType.None:
-                    return instructionAddress;
+                IntPtr instructionAddress = IntPtr.Add(addresses[i], pattern.InstructionOffset);
 
-                case RipType.Mov64:
-                    // e.g. 48 8B 05/0D - Standard mov rax/rcx,[rip+offset]
-                    int stdOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
-                    return IntPtr.Add(instructionAddress, stdOffset + 7);
-
-                case RipType.Cmp:
-                    // e.g. 80 3D - cmp byte ptr [rip+offset],imm
-                    int cmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 2));
-                    return IntPtr.Add(instructionAddress, cmpOffset + 7);
-                case RipType.QwordCmp:
-                    int qwordCmpOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 3));
-                    return IntPtr.Add(instructionAddress, qwordCmpOffset + 7);
-                case RipType.Call:
-                    int callOffset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, 1));
-                    return IntPtr.Add(instructionAddress, callOffset + 5);
-
-                default:
-                    return IntPtr.Zero;
+                switch (pattern.AddressingMode)
+                {
+                    case AddressingMode.Absolute:
+                        addresses[i] = instructionAddress;
+                        break;
+                    // case AddressingMode.Direct32:
+                    // {
+                    //     uint absoluteAddr = _memoryIo.ReadUInt32(IntPtr.Add(instructionAddress, pattern.OffsetLocation));
+                    //     addresses[i] = (IntPtr)absoluteAddr;
+                    //     break;
+                    // }
+                    default:
+                    {
+                        int offset = _memoryIo.ReadInt32(IntPtr.Add(instructionAddress, pattern.OffsetLocation));
+                        addresses[i] = IntPtr.Add(instructionAddress, offset + pattern.InstructionLength);
+                        break;
+                    }
+                }
             }
+
+            return addresses;
+        }
+        
+        private List<IntPtr> PatternScanMultiple(byte[] pattern, string mask, int size)
+        {
+            const int chunkSize = 4096 * 16;
+            byte[] buffer = new byte[chunkSize];
+
+            IntPtr currentAddress = _memoryIo.BaseAddress;
+            IntPtr endAddress = IntPtr.Add(currentAddress, 0x3200000);
+
+            List<IntPtr> addresses = new List<IntPtr>();
+
+            while (currentAddress.ToInt64() < endAddress.ToInt64())
+            {
+                int bytesRemaining = (int)(endAddress.ToInt64() - currentAddress.ToInt64());
+                int bytesToRead = Math.Min(bytesRemaining, buffer.Length);
+
+                if (bytesToRead < pattern.Length)
+                    break;
+
+                buffer = _memoryIo.ReadBytes(currentAddress, bytesToRead);
+
+                for (int i = 0; i <= bytesToRead - pattern.Length; i++)
+                {
+                    bool found = true;
+
+                    for (int j = 0; j < pattern.Length; j++)
+                    {
+                        if (j < mask.Length && mask[j] == '?')
+                            continue;
+
+                        if (buffer[i + j] != pattern[j])
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                        addresses.Add(IntPtr.Add(currentAddress, i));
+                    if (addresses.Count == size) break;
+                }
+
+                currentAddress = IntPtr.Add(currentAddress, bytesToRead - pattern.Length + 1);
+            }
+
+            return addresses;
         }
 
         public IntPtr PatternScan(byte[] pattern, string mask)
