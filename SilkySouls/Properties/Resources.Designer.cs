@@ -762,19 +762,16 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1512960,0,Anor Londo (1st Bonfire)
-        ///1512961,440.74|132.00|227.13|1.24,Anor Londo (Archers)
-        ///1512962,0,Anor Londo (Gwyndolin)
-        ///1512961,0,Anor Londo (Interior)
-        ///1512961,532.77|142.60|254.83|-1.60,Anor Londo (O&amp;S)
-        ///1512960,265.49|129.20|301.03|-2.04,Anor Londo (Rafters)
-        ///1322960,0,Ash Lake (Covenant)
-        ///1322961,0,Ash Lake (Entrance)
-        ///1602951,-90.09|-138.74|17.78|2.11,Blighttown (Back Entrance)
-        ///1402962,0,Blighttown (Bridge)
-        ///1402963,0,Blighttown (Entrance)
-        ///1402961,0,Blighttown (Swamp)
-        ///1602961,0,Darkroot Basin        /// [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to 1212961,1023.09|-328.60|807.80|-1.85,Boss,Artorias
+        ///1412960,450.79|-361.68|335.68|-2.18,Boss,Bed of Chaos
+        ///1012961,17.18|47.79|70.81|2.99,Boss,Bell Gargoyles
+        ///1202961,182.12|6.69|27.69|2.15,Boss,Butterfly
+        ///1012962,-64.31|-47.08|-13.41|1.07,Boss,Capra Demon
+        ///1412961,243.66|-283.15|66.65|-2.17,Boss,Ceaseless
+        ///1412963,161.81|-383.20|87.48|-0.69,Boss,Centipede
+        ///1412962,171.86|-341.16|82.85|1.61,Boss,Firesage
+        ///1602960,87.87|-148.00|-28.19|1.54,Boss,Four Kings
+        ///1002960,-151.83|-94.77|-8.23|1.03,Boss,Gaping Dragon [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WarpLocations {
             get {

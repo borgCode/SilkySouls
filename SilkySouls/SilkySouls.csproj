@@ -115,12 +115,13 @@
     <Compile Include="Models\InfusionType.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemCategory.cs" />
-    <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\WarpLocation.cs" />
     <Compile Include="Models\UpgradeType.cs" />
     <Compile Include="Services\ItemService.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\EnemyService.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\TravelService.cs" />
     <Compile Include="Services\UtilityService.cs" />
     <Compile Include="Utilities\AsmLoader.cs" />
     <Compile Include="Utilities\HotkeyManager.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\EnemyViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\TravelViewModel.cs" />
     <Compile Include="ViewModels\UtilityViewModel.cs" />
     <Compile Include="Views\ItemTab.xaml.cs">
       <DependentUpon>ItemTab.xaml</DependentUpon>
@@ -148,6 +150,9 @@
     </Compile>
     <Compile Include="Views\SettingsTab.xaml.cs">
       <DependentUpon>SettingsTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TravelTab.xaml.cs">
+      <DependentUpon>TravelTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UtilityTab.xaml.cs">
       <DependentUpon>UtilityTab.xaml</DependentUpon>
@@ -175,6 +180,7 @@
     </Page>
     <Page Include="Views\ResistancesWindow.xaml" />
     <Page Include="Views\SettingsTab.xaml" />
+    <Page Include="Views\TravelTab.xaml" />
     <Page Include="Views\UtilityTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

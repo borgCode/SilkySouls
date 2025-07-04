@@ -126,42 +126,9 @@
                 </UniformGrid>
             </StackPanel>
         </Border>
+        
 
-         <Border Grid.Row="2" BorderThickness="1" BorderBrush="#333" CornerRadius="3">
-            <Grid Margin="10,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Text="Warp Locations"
-                           FontWeight="Bold"
-                           Grid.Column="0"
-                           VerticalAlignment="Center"
-                           Margin="0,0,15,0" />
-
-                <ComboBox ItemsSource="{Binding WarpLocations}"
-                          DisplayMemberPath="Value"
-                          SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
-                          IsEnabled="{Binding AreButtonsEnabled}"
-                          Grid.Column="1"
-                          VerticalAlignment="Center"
-                          PreviewMouseDown="WarpLocationsCombo_PreviewMouseDown"
-                          TextSearch.TextPath="Value"
-                          Margin="0,0,15,0" />
-
-                <Button Content="Warp"
-                        Width="80"
-                        Click="Warp_Click"
-                        IsEnabled="{Binding AreButtonsEnabled}"
-                        Height="25"
-                        Grid.Column="2"
-                        Padding="5,0" />
-            </Grid>
-        </Border>
-
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -352,11 +319,6 @@
                         <StackPanel Margin="5">
                             <Button Content="Unlock Kalameet"
                                     Click="UnlockKalameet_Click"
-                                    IsEnabled="{Binding AreButtonsEnabled}"
-                                    Height="25"
-                                    Margin="0,2" />
-                            <Button Content="Unlock All Bonfire Warps"
-                                    Click="UnlockBonfires_Click"
                                     IsEnabled="{Binding AreButtonsEnabled}"
                                     Height="25"
                                     Margin="0,2" />

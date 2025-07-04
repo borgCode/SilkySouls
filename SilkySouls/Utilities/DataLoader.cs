@@ -40,17 +40,14 @@ namespace SilkySouls.Utilities
             return items;
         }
         
-        public static Dictionary<string, Location> GetLocationDict()
+        public static Dictionary<string, List<WarpLocation>> GetLocationDict()
         {
-            Dictionary<string, Location> locations = new Dictionary<string, Location>();
+            Dictionary<string, List<WarpLocation>> warpDict = new Dictionary<string, List<WarpLocation>>();
 
             string csvData = Properties.Resources.WarpLocations;
-            
-            if (string.IsNullOrEmpty(csvData))
-            {
-                
-                return new Dictionary<string, Location>();
-            }
+    
+            if (string.IsNullOrWhiteSpace(csvData))
+                return warpDict;
 
             using (StringReader reader = new StringReader(csvData))
             {
@@ -60,41 +57,46 @@ namespace SilkySouls.Utilities
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
                     string[] parts = line.Split(',');
-                    if (parts.Length >= 3)
+                    if (parts.Length >= 4)
                     {
                         int id = int.Parse(parts[0]);
-                        
+
                         float[] coords = null;
                         float angle = 0f;
                         if (parts[1] != "0")
                         {
                             string[] coordsString = parts[1].Split('|');
-                            
+
                             angle = float.Parse(coordsString[coordsString.Length - 1], System.Globalization.CultureInfo.InvariantCulture);
-                            
+
                             coords = new float[coordsString.Length];
                             for (int i = 0; i < coordsString.Length; i++)
                             {
                                 coords[i] = float.Parse(coordsString[i], System.Globalization.CultureInfo.InvariantCulture);
                             }
                         }
-                        
-                        string name = parts[2];
-                        
-                        string key = id + "," + parts[1];
-                        locations.Add(
-                            key,
-                            new Location
+
+                        string mainArea = parts[2];
+                        string name = parts[3];
+
+                        WarpLocation location = new WarpLocation
                         {
                             Id = id,
                             Coords = coords,
                             Angle = angle,
+                            MainArea = mainArea,
                             Name = name
-                        });
+                        };
+
+                        if (!warpDict.ContainsKey(mainArea))
+                        {
+                            warpDict[mainArea] = new List<WarpLocation>();
+                        }
+                        warpDict[mainArea].Add(location);
                     }
                 }
             }
-            return locations;
+            return warpDict;
         }
     }
 }

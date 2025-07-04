@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SilkySouls.Memory;
-using SilkySouls.Models;
+﻿using SilkySouls.Memory;
 using SilkySouls.Services;
 using SilkySouls.Utilities;
 using static SilkySouls.memory.Offsets;
@@ -32,22 +28,13 @@ namespace SilkySouls.ViewModels
         private readonly PlayerViewModel _playerViewModel;
         private readonly HotkeyManager _hotkeyManager;
 
-        private readonly Dictionary<string, Location> _warpLocations;
-        private KeyValuePair<string, string> _selectedLocation;
 
         public UtilityViewModel(UtilityService utilityService, HotkeyManager hotkeyManager,
             PlayerViewModel playerViewModel)
         {
             _utilityService = utilityService;
             _playerViewModel = playerViewModel;
-            _warpLocations = DataLoader.GetLocationDict();
             _hotkeyManager = hotkeyManager;
-
-            if (_warpLocations.Any())
-            {
-                var firstLocation = _warpLocations.First();
-                _selectedLocation = new KeyValuePair<string, string>(firstLocation.Key, firstLocation.Value.Name);
-            }
             
             RegisterHotkeys();
         }
@@ -55,19 +42,9 @@ namespace SilkySouls.ViewModels
         private void RegisterHotkeys()
         {
             _hotkeyManager.RegisterAction("NoClip", () => { IsNoClipEnabled = !IsNoClipEnabled; });
-            _hotkeyManager.RegisterAction("Warp", Warp);
+            
         }
-
-        public IEnumerable<KeyValuePair<string, string>> WarpLocations =>
-            _warpLocations.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.Name));
-
-        public KeyValuePair<string, string> SelectedLocation
-        {
-            get => _selectedLocation;
-            set => SetProperty(ref _selectedLocation, value);
-        }
-
-
+        
         public bool AreButtonsEnabled
         {
             get => _areButtonsEnabled;
@@ -226,18 +203,7 @@ namespace SilkySouls.ViewModels
                 _utilityService.ToggleFilter(_isFilterRemoveEnabled);
             }
         }
-
-        public void Warp()
-        {
-            if (_isNoClipEnabled)
-            {
-                _utilityService.DisableNoClip();
-                IsNoClipEnabled = false;
-            }
-
-            _ = Task.Run(() => _utilityService.Warp(_warpLocations[SelectedLocation.Key]));
-        }
-
+        
         public void DisableButtons()
         {
             IsNoClipEnabled = false;
@@ -283,8 +249,6 @@ namespace SilkySouls.ViewModels
         public void ShowLevelUpMenu() => _utilityService.ShowMenu(MenuMan.MenuManData.LevelUpMenu);
         
         public void ShowAttunementMenu() => _utilityService.OpenAttunement();
-        
-        public void UnlockBonfires() => _utilityService.UnlockBonfireWarps();
 
         public void UnlockKalameet() => _utilityService.SetMultipleEvents(GameIds.EventFlags.UnlockKalameet);
 
@@ -310,5 +274,11 @@ namespace SilkySouls.ViewModels
         public void OpenWarpMenu()=> _utilityService.ShowMenu(MenuMan.MenuManData.Warp);
 
         public void OpenBottomlessBox() => _utilityService.ShowMenu(MenuMan.MenuManData.BottomlessBox);
+
+        public void DisableNoClip()
+        {
+            _utilityService.DisableNoClip();
+            IsNoClipEnabled = false;
+        }
     }
 }

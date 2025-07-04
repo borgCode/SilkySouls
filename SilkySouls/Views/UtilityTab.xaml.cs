@@ -21,13 +21,7 @@ namespace SilkySouls.Views
             _utilityViewModel = utilityViewModel;
             DataContext = utilityViewModel;
         }
-
-
-        private void Warp_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.Warp();
-        }
-
+        
         private void DrawInfoBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MessageBox.Show(
@@ -63,11 +57,7 @@ namespace SilkySouls.Views
         {
             _utilityViewModel.ShowUpgradeMenu(isWeapon: false);
         }
-
-        private void UnlockBonfires_Click(object sender, RoutedEventArgs e)
-        {
-            _utilityViewModel.UnlockBonfires();
-        }
+        
 
         private void UnlockKalameet_Click(object sender, RoutedEventArgs e)
         {

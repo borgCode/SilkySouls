@@ -939,73 +939,82 @@ ff d0                   call   rax
 c3                      ret</value>
   </data>
   <data name="WarpLocations" xml:space="preserve">
-    <value>1512960,0,Anor Londo (1st Bonfire)
-1512961,440.74|132.00|227.13|1.24,Anor Londo (Archers)
-1512962,0,Anor Londo (Gwyndolin)
-1512961,0,Anor Londo (Interior)
-1512961,532.77|142.60|254.83|-1.60,Anor Londo (O&amp;S)
-1512960,265.49|129.20|301.03|-2.04,Anor Londo (Rafters)
-1322960,0,Ash Lake (Covenant)
-1322961,0,Ash Lake (Entrance)
-1602951,-90.09|-138.74|17.78|2.11,Blighttown (Back Entrance)
-1402962,0,Blighttown (Bridge)
-1402963,0,Blighttown (Entrance)
-1402961,0,Blighttown (Swamp)
-1602961,0,Darkroot Basin
-1202961,182.12|6.69|27.69|2.15,Darkroot Garden (Butterfly)
-1202961,161.66|-32.03|-153.44|1.29,Darkroot Garden (Hydra)
-1202961,292.66|-18.37|-225.22|0.39,Darkroot Garden (Sif)
-1202961,0,Darkroot Garden Bonfire
-1412961,0,Demon Ruins (Ceaseless)
-1412963,0,Demon Ruins (Centipede)
-1412962,0,Demon Ruins (Firesage)
-1002960,0,Depths Bonfire
-1000999,0,Depths Entrance
-1022960,0,Firelink Shrine
-1322962,0,Great Hollow
-1802130,422.48|-115.82|166.68|2.12,Gwyn
-1412960,450.79|-361.68|335.68|-2.18,Lost Izalith (BoC)
-1412960,0,Lost Izalith (Dinos)
-1412960,305.44|-360.18|214.23|-2.28,Lost Izalith (Titanite Demon)
-1412964,0,Lost Izalith Bonfire 1
-1602951,0,New Londo Ruins (Entrance)
-1602960,0,New Londo Ruins (Ingward)
-1602960,87.87|-148.00|-28.19|1.54,New Londo Ruins (4 Kings)
-1812960,0,Northern Undead Asylum Bonfire 1
-1812961,0,Northern Undead Asylum Bonfire 2
-1812900,0,Northern Undead Asylum (Start)
-1812900,3.41|207.41|-74.73|3.12,Northern Undead Asylum (Stray Demon)
-1212961,0,Oolacile Sanctuary
-1212961,1023.09|-328.60|807.80|-1.85,Oolacile Sanctuary (Artorias)
-1212961,878.08|-344.66|751.87|0.75,Oolacile Sanctuary (Kalameet)
-1212962,0,Oolacile Township
-1212964,0,Oolacile Township Dungeon
-1212964,865.48|-536.76|884.27|0.74,Oolacile Township Dungeon (Manus)
-1102960,-22.82|58.62|719.24|-0.01,Painted World (Pricilla)
-1102960,0,Painted World Bonfire
-1402960,0,Quelaag's Domain (Covenant)
-1402960,11.06|-236.86|112.53|-1.71,Quelaag's Domain (Quelagg)
-1212963,0,Sanctuary Garden
-1702960,180.81|146.31|790.53|2.14,Seath
-1502961,0,Sen's Fortress (Bonfire)
-1502961,80.35|82.25|255.39|-1.52,Sen's Fortress (Iron Golem)
-1302961,0,The Catacombs (Patches)
-1302962,0,The Catacombs (Vamos)
-1302960,0,The Catacombs Bonfire 
-1702960,0,The Duke's Archives (Balcony)
-1702962,0,The Duke's Archives (Boar)
-1702961,0,The Duke's Archives (Cell)
-1702962,296.09|288.62|551.54|-0.70,The Duke's Archives (Duke Skip)
-1312960,0,Tomb of the Giants Bonfire 1
-1312961,0,Tomb of the Giants Bonfire 2
-1312961,-110.95|-249.05|-33.80|1.82,Tomb of the Giants (Nito)
-1302950,0,Tomb of the Giants Entrance
-1012961,0,Undead Burg (Below Hellkite)
-1012960,0,Undead Burg (Dragon Event)
-1012962,0,Undead Burg Bonfire
-1012964,0,Undead Parish (Andre)
-1012965,0,Undead Parish (Boar)
-1012966,0,Undead Parish (Lautrec)</value>
+    <value>1212961,1023.09|-328.60|807.80|-1.85,Boss,Artorias
+1412960,450.79|-361.68|335.68|-2.18,Boss,Bed of Chaos
+1012961,17.18|47.79|70.81|2.99,Boss,Bell Gargoyles
+1202961,182.12|6.69|27.69|2.15,Boss,Butterfly
+1012962,-64.31|-47.08|-13.41|1.07,Boss,Capra Demon
+1412961,243.66|-283.15|66.65|-2.17,Boss,Ceaseless
+1412963,161.81|-383.20|87.48|-0.69,Boss,Centipede
+1412962,171.86|-341.16|82.85|1.61,Boss,Firesage
+1602960,87.87|-148.00|-28.19|1.54,Boss,Four Kings
+1002960,-151.83|-94.77|-8.23|1.03,Boss,Gaping Dragon
+1512962,432.13|60.20|254.97|-1.57,Boss,Gwyndolin
+1802130,422.48|-115.82|166.68|2.12,Boss,Gwyn
+1502961,80.35|82.25|255.39|-1.52,Boss,Iron Golem
+1212961,878.08|-344.66|751.87|0.75,Boss,Kalameet
+1212964,865.48|-536.76|884.27|0.74,Boss,Manus
+1312961,-110.95|-249.05|-33.80|1.82,Boss,Nito
+1512961,532.77|142.60|254.83|-1.60,Boss,Ornstein and Smough
+1302960,49.66|-158.44|191.43|-0.42,Boss,Pinwheel
+1102960,-22.82|58.62|719.24|-0.01,Boss,Pricilla
+1402960,11.06|-236.86|112.53|-1.71,Boss,Quelagg
+1702960,180.81|146.31|790.53|2.14,Boss,Seath
+1202961,292.66|-18.37|-225.22|0.39,Boss,Sif
+1812900,3.41|207.41|-74.73|3.12,Boss,Stray Demon
+1012962,58.21|17.22|-117.31|1.35,Boss,Taurus Demon
+1512960,0,Anor Londo,1st Bonfire
+1512961,440.74|132.00|227.13|1.24,Anor Londo,Archers
+1512961,0,Anor Londo,Interior
+1512960,265.49|129.20|301.03|-2.04,Anor Londo,Rafters
+1512962,0,Anor Londo,Gwyndolin Bonfire
+1322960,0,Ash Lake,Covenant
+1322961,0,Ash Lake,Entrance
+1602951,-90.09|-138.74|17.78|2.11,Blighttown,Back Entrance
+1402962,0,Blighttown,Bridge
+1402963,0,Blighttown,Entrance
+1402961,0,Blighttown,Swamp
+1402960,0,Blighttown,Quelaag's Domain
+1602961,0,Darkroot,Darkroot Basin
+1202961,161.66|-32.03|-153.44|1.29,Darkroot,Hydra
+1202961,0,Darkroot,Darkroot Garden
+1412961,0,Demon Ruins,1st Bonfire
+1412963,0,Demon Ruins,2nd Bonfire
+1412962,0,Demon Ruins,3rd Bonfire
+1002960,0,Depths,Bonfire
+1000999,0,Depths,Entrance
+1022960,0,Firelink Shrine,Firelink Shrine
+1322962,0,Great Hollow,Great Hollow
+1412960,0,Lost Izalith,Dinos
+1412960,305.44|-360.18|214.23|-2.28,Lost Izalith,Titanite Demon
+1412964,0,Lost Izalith,Bonfire 1
+1602951,0,New Londo Ruins,Entrance
+1602960,0,New Londo Ruins,Ingward
+1812960,0,Northern Undead Asylum,Bonfire 1
+1812961,0,Northern Undead Asylum,Bonfire 2
+1812900,0,Northern Undead Asylum,Start
+1212963,0,Oolacile,Sanctuary Garden
+1212961,0,Oolacile,Oolacile Sanctuary
+1212962,0,Oolacile,Oolacile Township
+1212964,0,Oolacile,Township Dungeon
+1102960,0,Painted World,Bonfire
+1502961,0,Sen's Fortress,Bonfire
+1302960,0,The Catacombs,Bonfire 
+1302961,0,The Catacombs,Patches
+1302962,0,The Catacombs,Vamos
+1702960,0,The Duke's Archives,Balcony
+1702962,0,The Duke's Archives,Boar
+1702961,0,The Duke's Archives,Cell
+1702962,296.09|288.62|551.54|-0.70,The Duke's Archives,Duke Skip
+1302950,0,Tomb of the Giants,Entrance
+1312960,0,Tomb of the Giants,Bonfire 1
+1312961,0,Tomb of the Giants,Bonfire 2
+1012960,0,Undead Burg,Dragon Event
+1012962,0,Undead Burg,Bonfire
+1012961,0,Undead Burg,Bonfire below Hellkite
+1012964,0,Undead Parish,Andre
+1012965,0,Undead Parish,Boar
+1012966,0,Undead Parish,Lautrec</value>
   </data>
   <data name="NoClip_InAirTimer" xml:space="preserve">
     <value>f3 0f 58 9b b0 01 00    addss  xmm3,DWORD PTR [rbx+0x1b0]
