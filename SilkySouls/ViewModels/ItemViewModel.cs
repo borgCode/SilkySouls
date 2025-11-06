@@ -363,6 +363,17 @@ namespace SilkySouls.ViewModels
 
 
             int itemId = _selectedItem.Id;
+            int categoryId;
+            if (_isSearchActive && _selectedItem.CategoryName != null)
+            {
+                var correctCategory = Categories.FirstOrDefault(c => c.Name == _selectedItem.CategoryName);
+                categoryId = correctCategory?.Id ?? _selectedCategory.Id;
+            }
+            else
+            {
+                categoryId = _selectedCategory.Id;
+            }
+            
             if (CanInfuse)
             {
                 itemId += _infusionTypes[SelectedInfusionType].Offset;
@@ -383,7 +394,7 @@ namespace SilkySouls.ViewModels
 
             _itemService.ItemSpawn(
                 itemId,
-                SelectedCategory.Id,
+                categoryId,
                 SelectedQuantity);
         }
 
