@@ -250,10 +250,10 @@ namespace SilkySouls.Properties {
         ///41 b9 00 00 00 00       mov    r9d,0x0
         ///41 b8 00 00 00 00       mov    r8d,0x0
         ///41 bc 00 00 00 00       mov    r12d,0x0
-        ///48 b8 00 00 00 00 00    movabs rax,0x0
+        ///48 a1 00 00 00 00 00    movabs rax,[0x0]
         ///00 00 00
         ///c6 44 24 38 01          mov    BYTE PTR [rsp+0x38],0x1
-        ///40 88 7c 24 30          mov     [rest of string was truncated]&quot;;.
+        ///40 88 7c 24 30          mov   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ItemSpawn {
             get {

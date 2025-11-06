@@ -24,12 +24,9 @@ namespace SilkySouls.Services
             {
                 
                 var shouldExitFlag = CodeCaveOffsets.Base + (int)CodeCaveOffsets.ItemSpawn.ShouldExitFlag;
-               
-                var gameDataMan = _memoryIo.ReadInt64(Offsets.GameDataMan.Base);
+                
                 var sleepAddr = _memoryIo.GetProcAddress("kernel32.dll", "Sleep");
-            
-                var itemGetMenuMan = _memoryIo.ReadInt64(Offsets.ItemGetMenuMan);
-
+                
                 byte[] spawnBytes = AsmLoader.GetAsmBytes("ItemSpawn");
                 AsmHelper.WriteRelativeOffsets(spawnBytes, new []
                 {
@@ -40,9 +37,9 @@ namespace SilkySouls.Services
                 
                 AsmHelper.WriteAbsoluteAddresses64(spawnBytes, new []
                 {
-                    (gameDataMan, 0x2B + 2),
+                    (Offsets.GameDataMan.Base.ToInt64(), 0x2B + 2),
                     (Offsets.ItemGet, 0x54 + 2),
-                    (itemGetMenuMan, 0x64 + 2),
+                    (Offsets.ItemGetMenuMan.ToInt64(), 0x64 + 2),
                     (Offsets.ItemDlgFunc, 0x86 + 2),
                     (sleepAddr.ToInt64(), 0x96 + 2)
                 });
