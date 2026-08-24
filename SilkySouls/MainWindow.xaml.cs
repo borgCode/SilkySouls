@@ -34,10 +34,13 @@ namespace SilkySouls
             _stateService = new StateService(_memoryService);
 
             InitializeComponent();
-            if (SettingsManager.Default.WindowLeft != 0 || SettingsManager.Default.WindowTop != 0)
+            
+            var savedLeft = SettingsManager.Default.WindowLeft;
+            var savedTop = SettingsManager.Default.WindowTop;
+            if ((savedLeft != 0 || savedTop != 0) && IsOnVisibleScreen(savedLeft, savedTop))
             {
-                Left = SettingsManager.Default.WindowLeft;
-                Top = SettingsManager.Default.WindowTop;
+                Left = savedLeft;
+                Top = savedTop;
             }
             else WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
@@ -221,5 +224,19 @@ namespace SilkySouls
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
         private void CheckUpdate_Click(object sender, RoutedEventArgs e) => VersionChecker.CheckForUpdates(this, true);
+        
+        private static bool IsOnVisibleScreen(double left, double top)
+        {
+            const double minVisibleX = 100;
+            const double minVisibleY = 30;
+            var vLeft = SystemParameters.VirtualScreenLeft;
+            var vTop = SystemParameters.VirtualScreenTop;
+            var vRight = vLeft + SystemParameters.VirtualScreenWidth;
+            var vBottom = vTop + SystemParameters.VirtualScreenHeight;
+            return left + minVisibleX > vLeft
+                   && left < vRight - minVisibleX
+                   && top + minVisibleY > vTop
+                   && top < vBottom - minVisibleY;
+        }
     }
 }
