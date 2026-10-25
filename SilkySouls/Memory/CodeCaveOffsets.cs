@@ -76,5 +76,9 @@ namespace SilkySouls.Memory
             public const int EnableFlag = 0x2400;
             public const int LoadedEnableDraw = 0x2410;
 
+            public const int NegateEnemyHitsFlag = 0x2500;
+            public const int LastAttackerPtr = 0x2510;
+            public const int HitCode = 0x2600;
+
     }
 }

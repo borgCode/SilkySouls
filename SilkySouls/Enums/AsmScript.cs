@@ -4,6 +4,7 @@ namespace SilkySouls.Enums;
 
 public enum AsmScript
 {
+    DSRHit,
     LevelUp,
     RestoreSpellCasts,
     BreakRightHandWep,

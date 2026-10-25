@@ -44,6 +44,11 @@ namespace SilkySouls.memory
 
             public const int PlayerIns = 0x68;
 
+            public const int ChrSet = 0x30;
+            public const int ChrSetCount = 0x130;
+            public const int ChrSetEntries = 0x138;
+            public const int ChrSetEntrySize = 0x38;
+
             public static readonly int[] CurrentBlockId = [0x370, 0x10, 0x288];
 
             public enum BaseOffsets
@@ -71,6 +76,8 @@ namespace SilkySouls.memory
             public const int Handle = 0x8;
 
             public const int ChrCtrl = 0x68;
+
+            public const int ChrId = 0xC8;
 
             public const int CurrentPoise = 0x250;
             public const int MaxPoise = 0x254;
@@ -314,6 +321,7 @@ namespace SilkySouls.memory
         {
             public static nint LastLockedTarget;
             public static nint AllNoDamage;
+            public static nint Hit;
             public static nint Draw;
             public static nint InAirTimer;
             public static nint Keyboard;
@@ -550,6 +558,16 @@ namespace SilkySouls.memory
                 // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
                 Version1_0_3_0 => 0x3206C9,
                 Version1_0_3_1 => 0x322919,
+                _ => 0
+            };
+
+            Hooks.Hit = moduleBase + Version switch
+            {
+                Version1_0_1_0 => 0x28065C5,
+                Version1_0_1_1 => 0x210131E,
+                Version1_0_1_2 => 0x2B90267,
+                Version1_0_3_0 => 0x2305994,
+                Version1_0_3_1 => 0x395221,
                 _ => 0
             };
 
