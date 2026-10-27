@@ -71,7 +71,9 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         }
 
         hookManager.InstallHook(coordsCode, Hooks.WarpCoords, [0x66, 0x0F, 0x7F, 0x80, 0x80, 0x0A, 0x00, 0x00]);
-        hookManager.InstallHook(angleCode, Hooks.WarpAngle, [0x66, 0x0F, 0x7F, 0x80, 0x90, 0x0A, 0x00, 0x00]);
+        var hasAngleHook = Hooks.WarpAngle != memoryService.BaseAddress;
+        if (hasAngleHook)
+            hookManager.InstallHook(angleCode, Hooks.WarpAngle, [0x66, 0x0F, 0x7F, 0x80, 0x90, 0x0A, 0x00, 0x00]);
 
 
         if (!WaitForLoadingFlag(loadingFlagAddr, 1))
@@ -79,7 +81,8 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         }
 
         hookManager.UninstallHook(coordsCode);
-        hookManager.UninstallHook(angleCode);
+        if (hasAngleHook)
+            hookManager.UninstallHook(angleCode);
     }
 
     private bool WaitForLoadingFlag(IntPtr loadingFlagAddr, int expectedValue)

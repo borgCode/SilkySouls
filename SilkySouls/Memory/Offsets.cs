@@ -697,7 +697,8 @@ namespace SilkySouls.memory
 
             Hooks.WarpAngle = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1
+                // No match found for 1.0.1.0 and 1.0.1.1: they have no setter for the 0xA90 field (the warp
+                // then keeps the angle the game gives it).
                 Version1_0_1_2 => 0x2C277A,
                 Version1_0_3_0 => 0x2C735A,
                 Version1_0_3_1 => 0x2C8E5A,
@@ -765,17 +766,22 @@ namespace SilkySouls.memory
             };
 
             
+            // The immediate of the `mov BYTE PTR [rax+0x49],0` that starts the bytes C6 40 49 00 80 79 19 00 75 48.
             Patches.DrawEvent = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x491707,
+                Version1_0_1_1 => 0x4914B7,
+                Version1_0_1_2 => 0x4949E7,
                 Version1_0_3_0 => 0x49B6B7,
-                Version1_0_3_1 => 0x49c1b4,
+                Version1_0_3_1 => 0x49C1B7,
                 _ => 0
             };
 
             Patches.DrawSoundView = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x618309,
+                Version1_0_1_1 => 0x618069,
+                Version1_0_1_2 => 0x61B559,
                 Version1_0_3_0 => 0x622289,
                 Version1_0_3_1 => 0x624b89,
                 _ => 0
