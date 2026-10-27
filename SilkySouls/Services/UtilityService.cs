@@ -58,6 +58,7 @@ public class UtilityService(IMemoryService memoryService, HookManager hookManage
     private void WriteInAirTimer(nint code)
     {
         var codeBytes = AsmLoader.GetAsmBytes(AsmScript.NoClip_InAirTimer);
+        codeBytes[0x21] = (byte)ChrIns.ChrCtrl; // the second mov rax,[rax+0x68]: player -> ChrCtrl
         AsmHelper.WriteRelativeOffsets(codeBytes, [
             (code + 0x9, WorldChrMan.Base, 7, 0x9 + 3),
             (code + 0x31, Hooks.InAirTimer + 8, 5, 0x31 + 1)
@@ -113,6 +114,7 @@ public class UtilityService(IMemoryService memoryService, HookManager hookManage
     private void WriteUpdateCoordsCode(nint code)
     {
         var codeBytes = AsmLoader.GetAsmBytes(AsmScript.NoClip_UpdateCoords);
+        codeBytes[0x24] = (byte)ChrIns.ChrCtrl; // the second mov rax,[rax+0x68]: player -> ChrCtrl
         var zDirection = CodeCaveOffsets.Base + CodeCaveOffsets.ZDirection;
         var speedScale = CodeCaveOffsets.Base + CodeCaveOffsets.SpeedScale;
 

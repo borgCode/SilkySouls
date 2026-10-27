@@ -79,54 +79,85 @@ namespace SilkySouls.memory
         {
             public const int Handle = 0x8;
 
-            public const int ChrCtrl = 0x68;
+            // The offsets below differ between game versions: on 1.0.1.x the lower part of the struct sits 0x20
+            // lower than on 1.0.3.x, and the part from about 0x380 up sits 0x10 lower. SetLayout fills them in
+            // for the running version; they default to the 1.0.3.x layout, like the rest of the code does for a
+            // version it does not recognise.
+            public static int ChrCtrl;
+            public static int ChrId;
 
-            public const int ChrId = 0xC8;
+            public static int CurrentPoise;
+            public static int MaxPoise;
+            public static int PoiseTimer;
+            public static int ReadOnlyCoords;
+            public static int Health;
+            public static int MaxHealth;
+            public static int Stamina;
+            public static int PoisonCurrent;
+            public static int ToxicCurrent;
+            public static int BleedCurrent;
+            public static int PoisonMax;
+            public static int ToxicMax;
+            public static int BleedMax;
 
-            public const int CurrentPoise = 0x250;
-            public const int MaxPoise = 0x254;
-            public const int PoiseTimer = 0x25C;
-            public const int ReadOnlyCoords = 0x2C0;
-            public const int Health = 0x3E8;
-            public const int MaxHealth = 0x3EC;
-            public const int Stamina = 0x3F8;
-            public const int PoisonCurrent = 0x418;
-            public const int ToxicCurrent = 0x41C;
-            public const int BleedCurrent = 0x420;
-            public const int PoisonMax = 0x428;
-            public const int ToxicMax = 0x42C;
-            public const int BleedMax = 0x430;
+            public static BitFlag NoGravity;
+            public static BitFlag InfinitePoise;
+            public static BitFlag NoDamage;
+            public static BitFlag InfiniteStam;
+            public static BitFlag NoUpdate;
+            public static BitFlag NoGoodsConsume;
 
-            
-            public static readonly BitFlag NoGravity = new(0x2A5, 1 << 5);
-            public static readonly BitFlag InfinitePoise = new(0x2A6, 1 << 0);
-            public static readonly BitFlag NoDamage = new(0x524, 1 << 6);
-            public static readonly BitFlag InfiniteStam = new(0x525, 1 << 2);
-            public static readonly BitFlag NoUpdate = new(0x525, 1 << 7);
-            public static readonly BitFlag NoGoodsConsume = new(0x527, 1 << 0);
+            public static int[] AnimSpeed;
+            public static int[] NpcParam;
 
-            public static readonly int[] AnimSpeed = [ChrCtrl, 0x18, 0xA8];
-            public static readonly int[] NpcParam = [0x580, 0x8];
-
-            public static readonly int[] PhysicsModule = [ChrCtrl, 0x28];
+            public static int[] PhysicsModule;
             public const int Angle = 0x4;
             public const int Coords = 0x10;
             public static readonly int[] HavokCoords = [0x38, 0x80, 0x30, 0x30];
-            
 
             public enum NpcParamOffsets
             {
                 AuxImmunitySpEffect = 0x50,
             }
-        }
 
-        // ChrIns offsets that differ between game versions: 1.0.1.x lays the struct out differently from 1.0.3.x.
-        // Defaults to the 1.0.3.x layout, like the rest of the code does for a version it does not recognise.
-        public static class ChrInsLayout
-        {
-            public static int Health = ChrIns.Health;
-            public static int MaxHealth = ChrIns.MaxHealth;
-            public static int ChrId = ChrIns.ChrId;
+            static ChrIns() => SetLayout(false);
+
+            // Measured in game on 1.0.1.2: the values of all 36 characters in the starting area match at these
+            // positions, the pointer chains through ChrCtrl and NpcParam lead to the right data, and the tests of
+            // these flag bytes in the game's code line up with 1.0.3.1's instruction for instruction.
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var low = isOlderLayout ? 0x20 : 0;
+                var high = isOlderLayout ? 0x10 : 0;
+
+                ChrCtrl = 0x68 - low;
+                ChrId = 0xC8 - low;
+
+                CurrentPoise = 0x250 - low;
+                MaxPoise = 0x254 - low;
+                PoiseTimer = 0x25C - low;
+                ReadOnlyCoords = 0x2C0 - low;
+                Health = 0x3E8 - high;
+                MaxHealth = 0x3EC - high;
+                Stamina = 0x3F8 - high;
+                PoisonCurrent = 0x418 - high;
+                ToxicCurrent = 0x41C - high;
+                BleedCurrent = 0x420 - high;
+                PoisonMax = 0x428 - high;
+                ToxicMax = 0x42C - high;
+                BleedMax = 0x430 - high;
+
+                NoGravity = new(0x2A5 - low, 1 << 5);
+                InfinitePoise = new(0x2A6 - low, 1 << 0);
+                NoDamage = new(0x524 - high, 1 << 6);
+                InfiniteStam = new(0x525 - high, 1 << 2);
+                NoUpdate = new(0x525 - high, 1 << 7);
+                NoGoodsConsume = new(0x527 - high, 1 << 0);
+
+                AnimSpeed = [ChrCtrl, 0x18, 0xA8];
+                NpcParam = [0x580 - high, 0x8];
+                PhysicsModule = [ChrCtrl, 0x28];
+            }
         }
 
         public static class DebugEventMan
@@ -386,11 +417,8 @@ namespace SilkySouls.memory
         
         private static void InitializeBaseAddresses(nint moduleBase)
         {
-            // Measured in game on every version: 1.0.1.x differs from 1.0.3.x.
-            var isOlderChrInsLayout = Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2;
-            ChrInsLayout.Health = isOlderChrInsLayout ? 0x3D8 : ChrIns.Health;
-            ChrInsLayout.MaxHealth = isOlderChrInsLayout ? 0x3DC : ChrIns.MaxHealth;
-            ChrInsLayout.ChrId = isOlderChrInsLayout ? 0xA8 : ChrIns.ChrId;
+            // 1.0.1.x lays ChrIns out differently from 1.0.3.x (measured in game on every version).
+            ChrIns.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
 
             WorldChrMan.Base = moduleBase + Version switch
             {

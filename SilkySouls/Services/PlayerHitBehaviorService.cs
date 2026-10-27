@@ -74,18 +74,18 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
         if (vtable < moduleStart || vtable >= moduleStart + memoryService.ModuleMemorySize)
             return;
 
-        var hp = memoryService.Read<int>(chr + ChrInsLayout.Health);
-        var maxHp = memoryService.Read<int>(chr + ChrInsLayout.MaxHealth);
+        var hp = memoryService.Read<int>(chr + ChrIns.Health);
+        var maxHp = memoryService.Read<int>(chr + ChrIns.MaxHealth);
         if (hp <= 0 || maxHp <= 1)
             return;
 
-        var chrId = memoryService.Read<int>(chr + ChrInsLayout.ChrId);
+        var chrId = memoryService.Read<int>(chr + ChrIns.ChrId);
         var restoreHp = chrId == SecondBellGargoyleChrId
             ? Math.Min(maxHp, SecondBellGargoyleSpawnHp)
             : maxHp;
 
         if (hp < restoreHp)
-            memoryService.Write(chr + ChrInsLayout.Health, restoreHp);
+            memoryService.Write(chr + ChrIns.Health, restoreHp);
     }
 
     private void UpdateHitHook()
@@ -104,8 +104,8 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
             var displacedBytes = RelocateJump(originalBytes, Hooks.Hit, code + 0xC7);
 
             // The offsets of ChrIns.Health (the player's alive check) and ChrIns.ChrId (Seath's exemption).
-            BitConverter.GetBytes(ChrInsLayout.Health).CopyTo(bytes, 0x20);
-            BitConverter.GetBytes(ChrInsLayout.ChrId).CopyTo(bytes, 0x48);
+            BitConverter.GetBytes(ChrIns.Health).CopyTo(bytes, 0x20);
+            BitConverter.GetBytes(ChrIns.ChrId).CopyTo(bytes, 0x48);
             Array.Copy(displacedBytes, 0, bytes, 0xC7, displacedBytes.Length);
             AsmHelper.WriteRelativeOffsets(bytes, [
                 (code + 0x1, WorldChrMan.Base, 7, 0x1 + 3),
