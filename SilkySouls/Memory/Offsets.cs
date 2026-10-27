@@ -53,7 +53,8 @@ namespace SilkySouls.memory
             public const int ChrSetEntries = 0x138;
             public const int ChrSetEntrySize = 0x38;
 
-            public static readonly int[] CurrentBlockId = [0x370, 0x10, 0x288];
+            // From the player's ChrIns; the first offset is part of ChrIns's per-version layout (see ChrIns.SetLayout).
+            public static int[] CurrentBlockId;
 
             public enum BaseOffsets
             {
@@ -163,6 +164,8 @@ namespace SilkySouls.memory
 
                 // Measured in game on 1.0.1.2: the AI object (it holds a pointer back to its ChrIns at +0x28)
                 // moved by 0x70, while its contents, including the row pointer at +0xC0, did not.
+                WorldChrMan.CurrentBlockId = [0x370 - low, 0x10, 0x288];
+
                 AiPtr = isOlderLayout ? 0xA60 : 0xAD0;
                 NpcThinkParam = [AiPtr, 0xC0];
                 PhysicsModule = [ChrCtrl, 0x28];
@@ -245,7 +248,20 @@ namespace SilkySouls.memory
         public static class GameMan
         {
             public static nint Base;
-            public const int LastBonfire = 0xB34;
+            public static int LastBonfire = 0xB34;
+
+            // The fields the warp writes its destination into; the game stores them at 0xA80 / 0xA90 (the hooked
+            // setters write them), and they sit 0x10 lower on the first two versions.
+            public static int WarpCoords = 0xA80;
+            public static int WarpAngle = 0xA90;
+
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var shift = isOlderLayout ? 0x10 : 0;
+                LastBonfire = 0xB34 - shift;
+                WarpCoords = 0xA80 - shift;
+                WarpAngle = 0xA90 - shift;
+            }
         }
 
         public static class PadMan
@@ -421,6 +437,7 @@ namespace SilkySouls.memory
         {
             // 1.0.1.x lays ChrIns out differently from 1.0.3.x (measured in game on every version).
             ChrIns.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
+            GameMan.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1);
 
             WorldChrMan.Base = moduleBase + Version switch
             {
@@ -486,7 +503,8 @@ namespace SilkySouls.memory
             
             GameMan.Base = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1
+                Version1_0_1_0 => 0x1CEA4B8,
+                Version1_0_1_1 => 0x1C7A4A8,
                 Version1_0_1_2 => 0x1CFDC48,
                 Version1_0_3_0 => 0x1D10E18,
                 Version1_0_3_1 => 0x1C74E08,
@@ -495,7 +513,9 @@ namespace SilkySouls.memory
             
             EventMan.Base = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x1CF1BB0,
+                Version1_0_1_1 => 0x1C81B80,
+                Version1_0_1_2 => 0x1D05320,
                 Version1_0_3_0 => 0x1D18530,
                 Version1_0_3_1 => 0x1C7B1B0,
                 _ => 0
@@ -687,8 +707,8 @@ namespace SilkySouls.memory
 
             Hooks.WarpCoords = moduleBase + Version switch
             {
-                Version1_0_1_0 => 0x2BF58A,
-                Version1_0_1_1 => 0x2BF28A,
+                Version1_0_1_0 => 0x2BF54A,
+                Version1_0_1_1 => 0x2BF24A,
                 Version1_0_1_2 => 0x2C273A,
                 Version1_0_3_0 => 0x2C731A,
                 Version1_0_3_1 => 0x2C8E1A,
@@ -697,8 +717,8 @@ namespace SilkySouls.memory
 
             Hooks.WarpAngle = moduleBase + Version switch
             {
-                // No match found for 1.0.1.0 and 1.0.1.1: they have no setter for the 0xA90 field (the warp
-                // then keeps the angle the game gives it).
+                Version1_0_1_0 => 0x2BF58A,
+                Version1_0_1_1 => 0x2BF28A,
                 Version1_0_1_2 => 0x2C277A,
                 Version1_0_3_0 => 0x2C735A,
                 Version1_0_3_1 => 0x2C8E5A,
