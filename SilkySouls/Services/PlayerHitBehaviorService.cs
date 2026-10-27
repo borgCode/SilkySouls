@@ -7,7 +7,8 @@ using static SilkySouls.memory.Offsets;
 
 namespace SilkySouls.Services;
 
-public class PlayerHitBehaviorService : IPlayerHitBehaviorService
+public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager hookManager)
+    : IPlayerHitBehaviorService
 {
     private const int MaxChrCount = 1024;
 
@@ -15,100 +16,47 @@ public class PlayerHitBehaviorService : IPlayerHitBehaviorService
     private const int SecondBellGargoyleChrId = 535001;
     private const int SecondBellGargoyleSpawnHp = 480;
 
-    private readonly IMemoryService _memoryService;
-    private readonly HookManager _hookManager;
-
     private bool _isNegateEnemyHitsEnabled;
-    private bool _isHealEnemiesOnPlayerHitEnabled;
+    private bool _isHealEnemiesOnHitEnabled;
 
-    public bool IsNegateEnemyHitsEnabled => _isNegateEnemyHitsEnabled;
-    public bool IsHealEnemiesOnPlayerHitEnabled => _isHealEnemiesOnPlayerHitEnabled;
-
-    public PlayerHitBehaviorService(
-        IMemoryService memoryService,
-        HookManager hookManager,
-        IGameTickService gameTickService,
-        IStateService stateService)
+    public void ToggleNegateEnemyHits(bool isEnabled)
     {
-        _memoryService = memoryService;
-        _hookManager = hookManager;
-
-        stateService.Subscribe(State.Loaded, OnLoaded);
-        gameTickService.Subscribe(OnTick);
-    }
-
-    public void SetNegateEnemyHitsEnabled(bool isEnabled)
-    {
-        if (_isNegateEnemyHitsEnabled == isEnabled)
-            return;
-
         _isNegateEnemyHitsEnabled = isEnabled;
-        if (isEnabled)
-            Enable();
-        WriteNegateFlag();
+        memoryService.Write(CodeCaveOffsets.Base + CodeCaveOffsets.NegateEnemyHitsFlag, isEnabled);
+        UpdateHitHook();
     }
 
-    public void SetHealEnemiesOnPlayerHitEnabled(bool isEnabled)
+    public void ToggleHealEnemiesOnHit(bool isEnabled)
     {
-        if (_isHealEnemiesOnPlayerHitEnabled == isEnabled)
-            return;
-
-        _isHealEnemiesOnPlayerHitEnabled = isEnabled;
-        if (isEnabled)
-            Enable();
+        _isHealEnemiesOnHitEnabled = isEnabled;
+        memoryService.Write(CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr, IntPtr.Zero);
+        UpdateHitHook();
     }
 
-    private void Enable()
+    public bool ConsumeEnemyHit()
     {
-        WriteLastAttacker(IntPtr.Zero);
-        InstallHitHook();
+        var lastAttacker = CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr;
+        if (memoryService.Read<nint>(lastAttacker) == IntPtr.Zero)
+            return false;
+
+        memoryService.Write(lastAttacker, IntPtr.Zero);
+        return true;
     }
 
-    private void OnLoaded()
+    public void HealEnemies()
     {
-        WriteLastAttacker(IntPtr.Zero);
-        if (_isNegateEnemyHitsEnabled || _isHealEnemiesOnPlayerHitEnabled)
-            InstallHitHook();
-        WriteNegateFlag();
-    }
+        var worldChrMan = memoryService.Read<nint>(WorldChrMan.Base);
+        var player = memoryService.Read<nint>(worldChrMan + WorldChrMan.PlayerIns);
 
-    private void OnTick()
-    {
-        if (!_isNegateEnemyHitsEnabled && !_isHealEnemiesOnPlayerHitEnabled)
-            return;
-
-        if (!IsHitHookInstalled())
-            InstallHitHook();
-
-        if (!_isHealEnemiesOnPlayerHitEnabled)
-            return;
-
-        if (ReadLastAttacker() == IntPtr.Zero)
-            return;
-        WriteLastAttacker(IntPtr.Zero);
-
-        HealEnemies();
-    }
-
-    private void HealEnemies()
-    {
-        try
+        for (int slot = 0; slot < WorldChrMan.ChrSetSlots; slot++)
         {
-            var worldChrMan = _memoryService.Read<nint>(WorldChrMan.Base);
-            if (worldChrMan == IntPtr.Zero)
-                return;
+            var chrSet = worldChrMan + WorldChrMan.ChrSets + slot * WorldChrMan.ChrSetSize;
+            var count = memoryService.Read<int>(chrSet + WorldChrMan.ChrSetCount);
+            var entries = memoryService.Read<nint>(chrSet + WorldChrMan.ChrSetEntries);
+            if (count <= 0 || count > MaxChrCount)
+                continue;
 
-            var player = _memoryService.Read<nint>(worldChrMan + WorldChrMan.PlayerIns);
-            var chrSet = _memoryService.Read<nint>(worldChrMan + WorldChrMan.ChrSet);
-            if (chrSet == IntPtr.Zero)
-                return;
-
-            var count = _memoryService.Read<int>(chrSet + WorldChrMan.ChrSetCount);
-            var entries = _memoryService.Read<nint>(chrSet + WorldChrMan.ChrSetEntries);
-            if (entries == IntPtr.Zero || count <= 0 || count > MaxChrCount)
-                return;
-
-            var raw = _memoryService.ReadBytes(entries, count * WorldChrMan.ChrSetEntrySize);
+            var raw = memoryService.ReadBytes(entries, count * WorldChrMan.ChrSetEntrySize);
             for (int i = 0; i < count; i++)
             {
                 var chr = (nint)BitConverter.ToInt64(raw, i * WorldChrMan.ChrSetEntrySize);
@@ -116,91 +64,49 @@ public class PlayerHitBehaviorService : IPlayerHitBehaviorService
                     HealEnemy(chr);
             }
         }
-        catch
-        {
-        }
     }
 
     private void HealEnemy(nint chr)
     {
-        try
-        {
-            var hp = _memoryService.Read<int>(chr + ChrIns.Health);
-            var maxHp = _memoryService.Read<int>(chr + ChrIns.MaxHealth);
-            if (hp <= 0 || maxHp <= 1)
-                return;
+        // Only touch real game objects: their vtable pointer lies inside the game module.
+        var vtable = (long)memoryService.Read<nint>(chr);
+        var moduleStart = (long)memoryService.BaseAddress;
+        if (vtable < moduleStart || vtable >= moduleStart + memoryService.ModuleMemorySize)
+            return;
 
-            var chrId = _memoryService.Read<int>(chr + ChrIns.ChrId);
-            var restoreHp = chrId == SecondBellGargoyleChrId
-                ? Math.Min(maxHp, SecondBellGargoyleSpawnHp)
-                : maxHp;
+        var hp = memoryService.Read<int>(chr + ChrInsLayout.Health);
+        var maxHp = memoryService.Read<int>(chr + ChrInsLayout.MaxHealth);
+        if (hp <= 0 || maxHp <= 1)
+            return;
 
-            if (hp < restoreHp)
-                _memoryService.Write(chr + ChrIns.Health, restoreHp);
-        }
-        catch
-        {
-        }
+        var chrId = memoryService.Read<int>(chr + ChrInsLayout.ChrId);
+        var restoreHp = chrId == SecondBellGargoyleChrId
+            ? Math.Min(maxHp, SecondBellGargoyleSpawnHp)
+            : maxHp;
+
+        if (hp < restoreHp)
+            memoryService.Write(chr + ChrInsLayout.Health, restoreHp);
     }
 
-    private nint ReadLastAttacker()
+    private void UpdateHitHook()
     {
-        try
-        {
-            return _memoryService.Read<nint>(CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr);
-        }
-        catch
-        {
-            return IntPtr.Zero;
-        }
-    }
+        // The address is unset for a game version the offset tables do not cover.
+        if (Hooks.Hit == IntPtr.Zero || Hooks.Hit == memoryService.BaseAddress)
+            return;
 
-    private void WriteLastAttacker(nint value)
-    {
-        try
-        {
-            _memoryService.Write(CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr, value);
-        }
-        catch
-        {
-        }
-    }
-
-    private void WriteNegateFlag()
-    {
-        try
-        {
-            _memoryService.Write<byte>(CodeCaveOffsets.Base + CodeCaveOffsets.NegateEnemyHitsFlag,
-                (byte)(_isNegateEnemyHitsEnabled ? 1 : 0));
-        }
-        catch
-        {
-        }
-    }
-
-    private bool IsHitHookInstalled()
-    {
-        try
-        {
-            return _memoryService.Read<byte>(Hooks.Hit) == 0xE9;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private void InstallHitHook()
-    {
-        try
+        var code = CodeCaveOffsets.Base + CodeCaveOffsets.HitCode;
+        if (_isNegateEnemyHitsEnabled || _isHealEnemiesOnHitEnabled)
         {
             var bytes = AsmLoader.GetAsmBytes(AsmScript.DSRHit);
             var lastAttacker = CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr;
             var negateFlag = CodeCaveOffsets.Base + CodeCaveOffsets.NegateEnemyHitsFlag;
-            var code = CodeCaveOffsets.Base + CodeCaveOffsets.HitCode;
             var originalBytes = GetHitOriginalBytes();
+            var displacedBytes = RelocateJump(originalBytes, Hooks.Hit, code + 0xC7);
 
-            Array.Copy(originalBytes, 0, bytes, 0xC7, originalBytes.Length);
+            // The offsets of ChrIns.Health (the player's alive check) and ChrIns.ChrId (Seath's exemption).
+            BitConverter.GetBytes(ChrInsLayout.Health).CopyTo(bytes, 0x20);
+            BitConverter.GetBytes(ChrInsLayout.ChrId).CopyTo(bytes, 0x48);
+            Array.Copy(displacedBytes, 0, bytes, 0xC7, displacedBytes.Length);
             AsmHelper.WriteRelativeOffsets(bytes, [
                 (code + 0x1, WorldChrMan.Base, 7, 0x1 + 3),
                 (code + 0x97, lastAttacker, 7, 0x97 + 3),
@@ -208,11 +114,12 @@ public class PlayerHitBehaviorService : IPlayerHitBehaviorService
                 (code + 0xCC, Hooks.Hit + 5, 5, 0xCC + 1),
             ]);
 
-            _memoryService.WriteBytes(code, bytes);
-            _hookManager.InstallHook(code, Hooks.Hit, originalBytes);
+            memoryService.WriteBytes(code, bytes);
+            hookManager.InstallHook(code, Hooks.Hit, originalBytes);
         }
-        catch
+        else
         {
+            hookManager.UninstallHook(code);
         }
     }
 
@@ -220,8 +127,25 @@ public class PlayerHitBehaviorService : IPlayerHitBehaviorService
     {
         return SilkySouls.memory.Offsets.Version switch
         {
-            GameVersion.Version1_0_1_2 or GameVersion.Version1_0_3_1 => [0x48, 0x89, 0x5C, 0x24, 0x08],
-            _ => [0x48, 0x89, 0x6C, 0x24, 0x10],
+            // Relative jmps, which have to be re-aimed to work from the code cave.
+            GameVersion.Version1_0_1_0 => [0xE9, 0xD7, 0xB7, 0xEC, 0x03],
+            GameVersion.Version1_0_1_1 => [0xE9, 0x4D, 0xF8, 0x81, 0x02],
+            GameVersion.Version1_0_1_2 => [0xE9, 0x76, 0x1E, 0xDF, 0x02],
+            GameVersion.Version1_0_3_0 => [0xE9, 0xE9, 0x6D, 0xE6, 0x02],
+            _ => [0x48, 0x89, 0x5C, 0x24, 0x08],
         };
+    }
+
+    // Instructions copied out of their original place keep working unless they are relative; a jmp rel32
+    // has to be re-aimed at its original target from the new location.
+    private static byte[] RelocateJump(byte[] original, nint from, nint to)
+    {
+        if (original[0] != 0xE9)
+            return original;
+
+        var target = from + 5 + BitConverter.ToInt32(original, 1);
+        var relocated = (byte[])original.Clone();
+        BitConverter.GetBytes((int)(target - (to + 5))).CopyTo(relocated, 1);
+        return relocated;
     }
 }

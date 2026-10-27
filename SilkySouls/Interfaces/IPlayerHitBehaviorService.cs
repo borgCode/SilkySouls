@@ -2,8 +2,8 @@ namespace SilkySouls.Interfaces;
 
 public interface IPlayerHitBehaviorService
 {
-    bool IsNegateEnemyHitsEnabled { get; }
-    bool IsHealEnemiesOnPlayerHitEnabled { get; }
-    void SetNegateEnemyHitsEnabled(bool isEnabled);
-    void SetHealEnemiesOnPlayerHitEnabled(bool isEnabled);
+    void ToggleNegateEnemyHits(bool isEnabled);
+    void ToggleHealEnemiesOnHit(bool isEnabled);
+    bool ConsumeEnemyHit();
+    void HealEnemies();
 }

@@ -44,7 +44,11 @@ namespace SilkySouls.memory
 
             public const int PlayerIns = 0x68;
 
-            public const int ChrSet = 0x30;
+            // 17 character sets, ChrSetSize apart. The game fills a different slot depending on the area,
+            // e.g. Undead Burg uses slot 0 and Oolacile slot 4. Each set holds a count and an array of ChrIns.
+            public const int ChrSets = 0x680;
+            public const int ChrSetSize = 0xE8;
+            public const int ChrSetSlots = 17;
             public const int ChrSetCount = 0x130;
             public const int ChrSetEntries = 0x138;
             public const int ChrSetEntrySize = 0x38;
@@ -114,6 +118,15 @@ namespace SilkySouls.memory
             {
                 AuxImmunitySpEffect = 0x50,
             }
+        }
+
+        // ChrIns offsets that differ between game versions: 1.0.1.x lays the struct out differently from 1.0.3.x.
+        // Defaults to the 1.0.3.x layout, like the rest of the code does for a version it does not recognise.
+        public static class ChrInsLayout
+        {
+            public static int Health = ChrIns.Health;
+            public static int MaxHealth = ChrIns.MaxHealth;
+            public static int ChrId = ChrIns.ChrId;
         }
 
         public static class DebugEventMan
@@ -373,6 +386,12 @@ namespace SilkySouls.memory
         
         private static void InitializeBaseAddresses(nint moduleBase)
         {
+            // Measured in game on every version: 1.0.1.x differs from 1.0.3.x.
+            var isOlderChrInsLayout = Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2;
+            ChrInsLayout.Health = isOlderChrInsLayout ? 0x3D8 : ChrIns.Health;
+            ChrInsLayout.MaxHealth = isOlderChrInsLayout ? 0x3DC : ChrIns.MaxHealth;
+            ChrInsLayout.ChrId = isOlderChrInsLayout ? 0xA8 : ChrIns.ChrId;
+
             WorldChrMan.Base = moduleBase + Version switch
             {
                 Version1_0_1_0 => 0x1CEE830,
@@ -561,12 +580,17 @@ namespace SilkySouls.memory
                 _ => 0
             };
 
+            // Entry of the player-hit function: victim in rcx, attacker in rdx, damage struct in r8. The game
+            // splits its code into scattered chunks, so the address differs wildly between versions, and
+            // where the first instruction is a relative jmp the hook has to re-aim it. Found by logging the
+            // arguments of every function on the damage call stack in a running game (1.0.1.0 by the same
+            // layout as 1.0.1.1 and 1.0.1.2), and confirmed by using the options on each version.
             Hooks.Hit = moduleBase + Version switch
             {
-                Version1_0_1_0 => 0x28065C5,
-                Version1_0_1_1 => 0x210131E,
-                Version1_0_1_2 => 0x2B90267,
-                Version1_0_3_0 => 0x2305994,
+                Version1_0_1_0 => 0x31D640,
+                Version1_0_1_1 => 0x31D340,
+                Version1_0_1_2 => 0x320860,
+                Version1_0_3_0 => 0x3267A0,
                 Version1_0_3_1 => 0x395221,
                 _ => 0
             };
@@ -1034,6 +1058,7 @@ namespace SilkySouls.memory
             Console.WriteLine("\n--- Hooks ---");
             PrintOffset("LastLockedTarget", Hooks.LastLockedTarget);
             PrintOffset("AllNoDamage", Hooks.AllNoDamage);
+            PrintOffset("Hit", Hooks.Hit);
             PrintOffset("Draw", Hooks.Draw);
             PrintOffset("InAirTimer", Hooks.InAirTimer);
             PrintOffset("Keyboard", Hooks.Keyboard);

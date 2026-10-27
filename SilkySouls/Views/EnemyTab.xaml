@@ -79,6 +79,7 @@
                                       Margin="0,2" />
 
                             <CheckBox Content="Heal enemies when player hit"
+                                      ToolTip="When an enemy hits you, every living enemy is restored to full health (the second Bell Gargoyle to the health it spawns with)."
                                       IsChecked="{Binding IsHealEnemiesOnPlayerHitEnabled}"
                                       Margin="0,2" />
                         </UniformGrid>
