@@ -245,6 +245,22 @@ namespace SilkySouls.memory
             public const int ChrExFollowCam = 0x60;
         }
 
+        // The fields the game's level-up function reads from the block it is handed (SoulsPtr in the code cave).
+        public static class LevelUpData
+        {
+            public static int NewLevel = 0x294;
+            public static int RequiredSouls = 0x29C;
+            public static int CurrentSouls = 0x2A0;
+
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var shift = isOlderLayout ? 8 : 0;
+                NewLevel = 0x294 - shift;
+                RequiredSouls = 0x29C - shift;
+                CurrentSouls = 0x2A0 - shift;
+            }
+        }
+
         public static class GameMan
         {
             public static nint Base;
@@ -438,6 +454,7 @@ namespace SilkySouls.memory
             // 1.0.1.x lays ChrIns out differently from 1.0.3.x (measured in game on every version).
             ChrIns.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
             GameMan.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1);
+            LevelUpData.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
 
             WorldChrMan.Base = moduleBase + Version switch
             {

@@ -33,9 +33,6 @@ namespace SilkySouls.Memory
                 SoulsPtr = 0x7F0,
                 StatsArray = 0x800,
                 CodeBlock = 0x830,
-                NewLevel = 0xA84,
-                RequiredSouls = 0xA8C,
-                CurrentSouls = 0xA90,
             }
 
             public enum RepeatAct

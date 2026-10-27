@@ -13,6 +13,10 @@ namespace SilkySouls.Services;
 
 public class TravelService(IMemoryService memoryService, HookManager hookManager) : ITravelService
 {
+    // In the WarpCoords / WarpAngle scripts: after the 8-byte `movups xmm15,[rip+x]`, the 4-byte opcode of
+    // `movups [rax+field],xmm15`, then the field's displacement.
+    private const int StoreDisplacement = 8 + 4;
+
     public void Warp(int bonfireId)
     {
         var lastBonfirePtr = memoryService.Read<nint>(GameMan.Base) + GameMan.LastBonfire;
@@ -38,7 +42,7 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         memoryService.Write(coordsAddr + 12, 1.0f);
 
         byte[] bytes = AsmLoader.GetAsmBytes(AsmScript.WarpCoords);
-        BitConverter.GetBytes(GameMan.WarpCoords).CopyTo(bytes, 4); // displacement of the store into the field
+        BitConverter.GetBytes(GameMan.WarpCoords).CopyTo(bytes, StoreDisplacement);
         AsmHelper.WriteRelativeOffsets(bytes, [
         (coordsCode, coordsAddr, 8, 4),
         (coordsCode + 0x14, Hooks.WarpCoords + 8, 5, 0x14 + 1)
@@ -54,7 +58,7 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         memoryService.Write(angleAddr + 8, 0L); 
 
         bytes = AsmLoader.GetAsmBytes(AsmScript.WarpAngle);
-        BitConverter.GetBytes(GameMan.WarpAngle).CopyTo(bytes, 4);
+        BitConverter.GetBytes(GameMan.WarpAngle).CopyTo(bytes, StoreDisplacement);
         
         AsmHelper.WriteRelativeOffsets(bytes, [
             (angleCode, angleAddr, 8, 4),
