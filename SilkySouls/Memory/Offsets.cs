@@ -110,6 +110,10 @@ namespace SilkySouls.memory
             public static int[] AnimSpeed;
             public static int[] NpcParam;
 
+            // The pointer to the enemy's AI object, and the path from the ChrIns to its battle goal's row.
+            public static int AiPtr;
+            public static int[] NpcThinkParam;
+
             public static int[] PhysicsModule;
             public const int Angle = 0x4;
             public const int Coords = 0x10;
@@ -156,6 +160,11 @@ namespace SilkySouls.memory
 
                 AnimSpeed = [ChrCtrl, 0x18, 0xA8];
                 NpcParam = [0x580 - high, 0x8];
+
+                // Measured in game on 1.0.1.2: the AI object (it holds a pointer back to its ChrIns at +0x28)
+                // moved by 0x70, while its contents, including the row pointer at +0xC0, did not.
+                AiPtr = isOlderLayout ? 0xA60 : 0xAD0;
+                NpcThinkParam = [AiPtr, 0xC0];
                 PhysicsModule = [ChrCtrl, 0x28];
             }
         }
@@ -271,14 +280,7 @@ namespace SilkySouls.memory
         }
         
 
-        public enum LockedTarget
-        {
-            ForceActPtr = 0xAD0,
-        }
-
         public const int BattleGoalId = 0x4;
-
-        public static readonly int[] NpcThinkParam = [0xAD0, 0xC0];
 
         public const int ForceActOffset = 0x360;
 
