@@ -69,6 +69,22 @@
                                       IsChecked="{Binding Is4KingsTimerStopped}"
                                       Margin="0,2" />
                         </UniformGrid>
+
+                        <TextBlock Text="Hitless Practice"
+                                   FontWeight="Bold"
+                                   Margin="0,8,0,4" />
+
+                        <UniformGrid Columns="1">
+                            <CheckBox Content="Negate enemy hits on player"
+                                      ToolTip="Damage from enemy attacks is zeroed. Fall, environmental and death plane damage is unaffected."
+                                      IsChecked="{Binding IsNegateEnemyHitsEnabled}"
+                                      Margin="0,2" />
+
+                            <CheckBox Content="Heal enemies when player hit"
+                                      ToolTip="When an enemy hits you, every living enemy is restored to full health (the second Bell Gargoyle to the health it spawns with)."
+                                      IsChecked="{Binding IsHealEnemiesOnPlayerHitEnabled}"
+                                      Margin="0,2" />
+                        </UniformGrid>
                     </StackPanel>
                 </Border>
             </Grid>

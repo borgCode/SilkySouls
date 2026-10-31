@@ -1707,4 +1707,62 @@ c6 05 00 00 00 00 01    mov    BYTE PTR [rip+0x0],0x1        # 203 &lt;exit&gt;
 45 31 ed                xor    r13d,r13d
 e9 00 00 00 00          jmp    228 &lt;early_exit+0xa&gt;</value>
   </data>
+  <data name="PlayerHit" xml:space="preserve">
+    <value>50                      push   rax
+48 8b 05 00 00 00 00    mov    rax,QWORD PTR [rip+0x0]        # 8 &lt;_main+0x8&gt;
+48 85 c0                test   rax,rax
+0f 84 b5 00 00 00       je     c6 &lt;exit&gt;
+48 8b 40 68             mov    rax,QWORD PTR [rax+0x68]
+48 85 c0                test   rax,rax
+0f 84 a8 00 00 00       je     c6 &lt;exit&gt;
+83 b8 e8 03 00 00 00    cmp    DWORD PTR [rax+0x3e8],0x0
+0f 84 9b 00 00 00       je     c6 &lt;exit&gt;
+48 39 c1                cmp    rcx,rax
+0f 85 92 00 00 00       jne    c6 &lt;exit&gt;
+48 39 c2                cmp    rdx,rax
+0f 84 89 00 00 00       je     c6 &lt;exit&gt;
+48 85 d2                test   rdx,rdx
+0f 84 80 00 00 00       je     c6 &lt;exit&gt;
+81 ba c8 00 00 00 69    cmp    DWORD PTR [rdx+0xc8],0x81269
+12 08 00
+74 74                   je     c6 &lt;exit&gt;
+41 81 78 3c 88 13 00    cmp    DWORD PTR [r8+0x3c],0x1388
+00
+74 6a                   je     c6 &lt;exit&gt;
+41 81 78 3c e2 13 00    cmp    DWORD PTR [r8+0x3c],0x13e2
+00
+74 60                   je     c6 &lt;exit&gt;
+41 81 78 3c e3 13 00    cmp    DWORD PTR [r8+0x3c],0x13e3
+00
+74 56                   je     c6 &lt;exit&gt;
+41 83 38 00             cmp    DWORD PTR [r8],0x0
+7f 21                   jg     97 &lt;hit&gt;
+41 83 78 04 00          cmp    DWORD PTR [r8+0x4],0x0
+7f 1a                   jg     97 &lt;hit&gt;
+41 83 78 08 00          cmp    DWORD PTR [r8+0x8],0x0
+7f 13                   jg     97 &lt;hit&gt;
+41 83 78 0c 00          cmp    DWORD PTR [r8+0xc],0x0
+7f 0c                   jg     97 &lt;hit&gt;
+41 0f b6 40 1c          movzx  eax,BYTE PTR [r8+0x1c]
+ff c8                   dec    eax
+83 f8 0a                cmp    eax,0xa
+77 2f                   ja     c6 &lt;exit&gt;
+48 89 15 00 00 00 00    mov    QWORD PTR [rip+0x0],rdx        # 9e &lt;hit+0x7&gt;
+80 3d 00 00 00 00 00    cmp    BYTE PTR [rip+0x0],0x0        # a5 &lt;hit+0xe&gt;
+74 1f                   je     c6 &lt;exit&gt;
+41 c7 00 00 00 00 00    mov    DWORD PTR [r8],0x0
+41 c7 40 04 00 00 00    mov    DWORD PTR [r8+0x4],0x0
+00
+41 c7 40 08 00 00 00    mov    DWORD PTR [r8+0x8],0x0
+00
+41 c7 40 0c 00 00 00    mov    DWORD PTR [r8+0xc],0x0
+00
+58                      pop    rax
+90                      nop
+90                      nop
+90                      nop
+90                      nop
+90                      nop
+e9 00 00 00 00          jmp    d1 &lt;exit+0xb&gt;</value>
+  </data>
 </root>

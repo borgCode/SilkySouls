@@ -13,6 +13,10 @@ namespace SilkySouls.Services;
 
 public class TravelService(IMemoryService memoryService, HookManager hookManager) : ITravelService
 {
+    // In the WarpCoords / WarpAngle scripts: after the 8-byte `movups xmm15,[rip+x]`, the 4-byte opcode of
+    // `movups [rax+field],xmm15`, then the field's displacement.
+    private const int StoreDisplacement = 8 + 4;
+
     public void Warp(int bonfireId)
     {
         var lastBonfirePtr = memoryService.Read<nint>(GameMan.Base) + GameMan.LastBonfire;
@@ -38,6 +42,7 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         memoryService.Write(coordsAddr + 12, 1.0f);
 
         byte[] bytes = AsmLoader.GetAsmBytes(AsmScript.WarpCoords);
+        BitConverter.GetBytes(GameMan.WarpCoords).CopyTo(bytes, StoreDisplacement);
         AsmHelper.WriteRelativeOffsets(bytes, [
         (coordsCode, coordsAddr, 8, 4),
         (coordsCode + 0x14, Hooks.WarpCoords + 8, 5, 0x14 + 1)
@@ -53,6 +58,7 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         memoryService.Write(angleAddr + 8, 0L); 
 
         bytes = AsmLoader.GetAsmBytes(AsmScript.WarpAngle);
+        BitConverter.GetBytes(GameMan.WarpAngle).CopyTo(bytes, StoreDisplacement);
         
         AsmHelper.WriteRelativeOffsets(bytes, [
             (angleCode, angleAddr, 8, 4),
@@ -70,8 +76,8 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
             return;
         }
 
-        hookManager.InstallHook(coordsCode, Hooks.WarpCoords, [0x66, 0x0F, 0x7F, 0x80, 0x80, 0x0A, 0x00, 0x00]);
-        hookManager.InstallHook(angleCode, Hooks.WarpAngle, [0x66, 0x0F, 0x7F, 0x80, 0x90, 0x0A, 0x00, 0x00]);
+        hookManager.InstallHook(coordsCode, Hooks.WarpCoords, StoreIntoField(GameMan.WarpCoords));
+        hookManager.InstallHook(angleCode, Hooks.WarpAngle, StoreIntoField(GameMan.WarpAngle));
 
 
         if (!WaitForLoadingFlag(loadingFlagAddr, 1))
@@ -81,6 +87,10 @@ public class TravelService(IMemoryService memoryService, HookManager hookManager
         hookManager.UninstallHook(coordsCode);
         hookManager.UninstallHook(angleCode);
     }
+
+    // The game's own `movdqa XMMWORD PTR [rax+displacement],xmm0` that the warp hooks replace.
+    private static byte[] StoreIntoField(int displacement) =>
+        [0x66, 0x0F, 0x7F, 0x80, ..BitConverter.GetBytes(displacement)];
 
     private bool WaitForLoadingFlag(IntPtr loadingFlagAddr, int expectedValue)
     {

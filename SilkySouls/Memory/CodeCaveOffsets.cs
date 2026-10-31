@@ -33,9 +33,6 @@ namespace SilkySouls.Memory
                 SoulsPtr = 0x7F0,
                 StatsArray = 0x800,
                 CodeBlock = 0x830,
-                NewLevel = 0xA84,
-                RequiredSouls = 0xA8C,
-                CurrentSouls = 0xA90,
             }
 
             public enum RepeatAct
@@ -75,6 +72,11 @@ namespace SilkySouls.Memory
 
             public const int EnableFlag = 0x2400;
             public const int LoadedEnableDraw = 0x2410;
+
+            // LoadedEnableDraw ends at 0x2638
+            public const int NegateEnemyHitsFlag = 0x2700;
+            public const int LastAttackerPtr = 0x2710;
+            public const int HitCode = 0x2720;
 
     }
 }

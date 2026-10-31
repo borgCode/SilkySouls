@@ -187,7 +187,7 @@ public class TargetService(IMemoryService memoryService, HookManager hookManager
     {
         var enemyBattleIdPtr = memoryService.FollowPointers(
             memoryService.Read<nint>(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr),
-            [..NpcThinkParam, BattleGoalId], false);
+            [..ChrIns.NpcThinkParam, BattleGoalId], false);
         return memoryService.Read<int>(enemyBattleIdPtr);
     }
 
@@ -203,29 +203,29 @@ public class TargetService(IMemoryService memoryService, HookManager hookManager
         var luaSwitchCaseHook = Hooks.LuaVmSwitch;
         var battleActivateHook = Hooks.BattleActivate;
 
+        //For enemies with DbgForceAct 
+        var forceAct = memoryService.FollowPointers(GetChrIns(), [ChrIns.AiPtr, ForceActOffset], false);
+        var hasForceAct = GetChrIns() != IntPtr.Zero && forceAct != ForceActOffset;
+
         if (actLabelIndex == 0)
         {
+            if (hasForceAct)
+                memoryService.Write(forceAct, (byte)0);
             hookManager.UninstallHook(ifManipulationCode);
             _hasWrittenEnemyId = false;
             _isRepeatActHookInstalled = false;
             return;
         }
 
-        //For enemies with DbgForceAct 
-        var forceAct = memoryService.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
-            new[]
-            {
-                (int)LockedTarget.ForceActPtr,
-                ForceActOffset
-            }, false);
-        memoryService.Write(forceAct, (byte)actLabelIndex);
+        if (hasForceAct)
+            memoryService.Write(forceAct, (byte)actLabelIndex);
 
         var enemyIdLoc = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyId;
         var enemyIdLengthPtr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.RepeatAct.EnemyIdLength;
         if (!_hasWrittenEnemyId)
         {
-            var enemyBattleIdPtr = memoryService.FollowPointers(CodeCaveOffsets.Base + CodeCaveOffsets.LockedTargetPtr,
-                [..NpcThinkParam, BattleGoalId], false);
+            var enemyBattleIdPtr = memoryService.FollowPointers(GetChrIns(),
+                [..ChrIns.NpcThinkParam, BattleGoalId], false);
 
             string enemyId = memoryService.Read<int>(enemyBattleIdPtr).ToString();
             byte[] enemyIdBytes = Encoding.ASCII.GetBytes(enemyId);
@@ -336,7 +336,7 @@ public class TargetService(IMemoryService memoryService, HookManager hookManager
     }
 
     private nint GetNpcThinkParamPtr() =>
-        memoryService.FollowPointers(GetChrIns(), NpcThinkParam, true);
+        memoryService.FollowPointers(GetChrIns(), ChrIns.NpcThinkParam, true);
 
     private nint GetNpcParamPtr() =>
         memoryService.FollowPointers(GetChrIns(), ChrIns.NpcParam, true);

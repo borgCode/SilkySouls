@@ -293,12 +293,12 @@ public class PlayerService(IMemoryService memoryService, ITravelService travelSe
         Array.Copy(bytes, 0, codeBytes, 32, 8);
         memoryService.WriteBytes(codeStart, codeBytes);
 
-        var newLevelAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.NewLevel;
+        var newLevelAddr = soulsPtr + LevelUpData.NewLevel;
         memoryService.Write(newLevelAddr, newLevel);
-        var requiredSoulsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.RequiredSouls;
+        var requiredSoulsAddr = soulsPtr + LevelUpData.RequiredSouls;
         memoryService.Write(requiredSoulsAddr, 0);
 
-        var currSoulsAddr = CodeCaveOffsets.Base + (int)CodeCaveOffsets.LevelUp.CurrentSouls;
+        var currSoulsAddr = soulsPtr + LevelUpData.CurrentSouls;
         memoryService.Write(currSoulsAddr, 9999999);
 
         return memoryService.RunThreadAndWaitForCompletion(codeStart);

@@ -65,6 +65,7 @@ namespace SilkySouls
             IParamService paramService = new ParamService(_memoryService);
             IItemService itemService = new ItemService(_memoryService, _stateService);
             ISettingsService settingsService = new SettingsService(_memoryService);
+            IPlayerHitBehaviorService playerHitBehaviorService = new PlayerHitBehaviorService(_memoryService, hookManager);
 
 
             var playerViewModel = new PlayerViewModel(playerService, hotkeyManager, _stateService, gameTickService);
@@ -74,7 +75,8 @@ namespace SilkySouls
                 _stateService, ezStateService, debugDrawService);
             var travelViewModel = new TravelViewModel(travelService, hotkeyManager, utilityViewModel, _stateService);
             var eventViewModel = new EventViewModel(eventService,  _stateService);
-            var enemyViewModel = new EnemyViewModel(enemyService, hotkeyManager, _stateService, emevdService);
+            var enemyViewModel = new EnemyViewModel(enemyService, hotkeyManager, _stateService, emevdService,
+                playerHitBehaviorService, gameTickService);
             var itemViewModel = new ItemViewModel(itemService, _stateService);
             var settingsViewModel = new SettingsViewModel(settingsService, hotkeyManager, _stateService);
 

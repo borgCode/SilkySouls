@@ -44,7 +44,15 @@ namespace SilkySouls.memory
 
             public const int PlayerIns = 0x68;
 
-            public static readonly int[] CurrentBlockId = [0x370, 0x10, 0x288];
+            public const int BlockCount = 0x28;
+            public const int Blocks = 0x30;
+            public const int BlockSize = 0xE8;
+            public const int BlockChrCount = 0x48;
+            public const int BlockChrEntries = 0x50;
+            public const int ChrEntrySize = 0x38;
+
+            // From the player's ChrIns; the first offset is part of ChrIns's per-version layout (see ChrIns.SetLayout).
+            public static int[] CurrentBlockId = [0x370, 0x10, 0x288];
 
             public enum BaseOffsets
             {
@@ -70,42 +78,95 @@ namespace SilkySouls.memory
         {
             public const int Handle = 0x8;
 
-            public const int ChrCtrl = 0x68;
+            // The offsets below differ between game versions: on 1.0.1.x the lower part of the struct sits 0x20
+            // lower than on 1.0.3.x, and the part from about 0x380 up sits 0x10 lower. SetLayout fills them in
+            // for the running version; they default to the 1.0.3.x layout, like the rest of the code does for a
+            // version it does not recognise.
+            public static int ChrCtrl;
+            public static int ChrId;
 
-            public const int CurrentPoise = 0x250;
-            public const int MaxPoise = 0x254;
-            public const int PoiseTimer = 0x25C;
-            public const int ReadOnlyCoords = 0x2C0;
-            public const int Health = 0x3E8;
-            public const int MaxHealth = 0x3EC;
-            public const int Stamina = 0x3F8;
-            public const int PoisonCurrent = 0x418;
-            public const int ToxicCurrent = 0x41C;
-            public const int BleedCurrent = 0x420;
-            public const int PoisonMax = 0x428;
-            public const int ToxicMax = 0x42C;
-            public const int BleedMax = 0x430;
+            public static int CurrentPoise;
+            public static int MaxPoise;
+            public static int PoiseTimer;
+            public static int ReadOnlyCoords;
+            public static int Health;
+            public static int MaxHealth;
+            public static int Stamina;
+            public static int PoisonCurrent;
+            public static int ToxicCurrent;
+            public static int BleedCurrent;
+            public static int PoisonMax;
+            public static int ToxicMax;
+            public static int BleedMax;
 
-            
-            public static readonly BitFlag NoGravity = new(0x2A5, 1 << 5);
-            public static readonly BitFlag InfinitePoise = new(0x2A6, 1 << 0);
-            public static readonly BitFlag NoDamage = new(0x524, 1 << 6);
-            public static readonly BitFlag InfiniteStam = new(0x525, 1 << 2);
-            public static readonly BitFlag NoUpdate = new(0x525, 1 << 7);
-            public static readonly BitFlag NoGoodsConsume = new(0x527, 1 << 0);
+            public static BitFlag NoGravity;
+            public static BitFlag InfinitePoise;
+            public static BitFlag NoDamage;
+            public static BitFlag InfiniteStam;
+            public static BitFlag NoUpdate;
+            public static BitFlag NoGoodsConsume;
 
-            public static readonly int[] AnimSpeed = [ChrCtrl, 0x18, 0xA8];
-            public static readonly int[] NpcParam = [0x580, 0x8];
+            public static int[] AnimSpeed;
+            public static int[] NpcParam;
 
-            public static readonly int[] PhysicsModule = [ChrCtrl, 0x28];
+            // The pointer to the enemy's AI object, and the path from the ChrIns to its battle goal's row.
+            public static int AiPtr;
+            public static int[] NpcThinkParam;
+
+            public static int[] PhysicsModule;
             public const int Angle = 0x4;
             public const int Coords = 0x10;
             public static readonly int[] HavokCoords = [0x38, 0x80, 0x30, 0x30];
-            
 
             public enum NpcParamOffsets
             {
                 AuxImmunitySpEffect = 0x50,
+            }
+
+            static ChrIns() => SetLayout(false);
+
+            // Measured in game on 1.0.1.2: the values of all 36 characters in the starting area match at these
+            // positions, the pointer chains through ChrCtrl and NpcParam lead to the right data, and the tests of
+            // these flag bytes in the game's code line up with 1.0.3.1's instruction for instruction.
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var low = isOlderLayout ? 0x20 : 0;
+                var high = isOlderLayout ? 0x10 : 0;
+
+                ChrCtrl = 0x68 - low;
+                ChrId = 0xC8 - low;
+
+                CurrentPoise = 0x250 - low;
+                MaxPoise = 0x254 - low;
+                PoiseTimer = 0x25C - low;
+                ReadOnlyCoords = 0x2C0 - low;
+                Health = 0x3E8 - high;
+                MaxHealth = 0x3EC - high;
+                Stamina = 0x3F8 - high;
+                PoisonCurrent = 0x418 - high;
+                ToxicCurrent = 0x41C - high;
+                BleedCurrent = 0x420 - high;
+                PoisonMax = 0x428 - high;
+                ToxicMax = 0x42C - high;
+                BleedMax = 0x430 - high;
+
+                NoGravity = new(0x2A5 - low, 1 << 5);
+                InfinitePoise = new(0x2A6 - low, 1 << 0);
+                NoDamage = new(0x524 - high, 1 << 6);
+                InfiniteStam = new(0x525 - high, 1 << 2);
+                NoUpdate = new(0x525 - high, 1 << 7);
+                NoGoodsConsume = new(0x527 - high, 1 << 0);
+
+                AnimSpeed = [ChrCtrl, 0x18, 0xA8];
+                NpcParam = [0x580 - high, 0x8];
+
+                // Measured in game on 1.0.1.2: the AI object (it holds a pointer back to its ChrIns at +0x28)
+                // moved by 0x70, while its contents, including the row pointer at +0xC0, did not.
+                WorldChrMan.CurrentBlockId = [0x370 - low, 0x10, 0x288];
+
+                AiPtr = isOlderLayout ? 0xA60 : 0xAD0;
+                NpcThinkParam = [AiPtr, 0xC0];
+                PhysicsModule = [ChrCtrl, 0x28];
             }
         }
 
@@ -182,10 +243,39 @@ namespace SilkySouls.memory
             public const int ChrExFollowCam = 0x60;
         }
 
+        // The fields the game's level-up function reads from the block it is handed (SoulsPtr in the code cave).
+        public static class LevelUpData
+        {
+            public static int NewLevel = 0x294;
+            public static int RequiredSouls = 0x29C;
+            public static int CurrentSouls = 0x2A0;
+
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var shift = isOlderLayout ? 8 : 0;
+                NewLevel = 0x294 - shift;
+                RequiredSouls = 0x29C - shift;
+                CurrentSouls = 0x2A0 - shift;
+            }
+        }
+
         public static class GameMan
         {
             public static nint Base;
-            public const int LastBonfire = 0xB34;
+            public static int LastBonfire = 0xB34;
+
+            // The fields the warp writes its destination into; the game stores them at 0xA80 / 0xA90 (the hooked
+            // setters write them), and they sit 0x10 lower on the first two versions.
+            public static int WarpCoords = 0xA80;
+            public static int WarpAngle = 0xA90;
+
+            public static void SetLayout(bool isOlderLayout)
+            {
+                var shift = isOlderLayout ? 0x10 : 0;
+                LastBonfire = 0xB34 - shift;
+                WarpCoords = 0xA80 - shift;
+                WarpAngle = 0xA90 - shift;
+            }
         }
 
         public static class PadMan
@@ -220,14 +310,7 @@ namespace SilkySouls.memory
         }
         
 
-        public enum LockedTarget
-        {
-            ForceActPtr = 0xAD0,
-        }
-
         public const int BattleGoalId = 0x4;
-
-        public static readonly int[] NpcThinkParam = [0xAD0, 0xC0];
 
         public const int ForceActOffset = 0x360;
 
@@ -314,6 +397,7 @@ namespace SilkySouls.memory
         {
             public static nint LastLockedTarget;
             public static nint AllNoDamage;
+            public static nint Hit;
             public static nint Draw;
             public static nint InAirTimer;
             public static nint Keyboard;
@@ -365,6 +449,11 @@ namespace SilkySouls.memory
         
         private static void InitializeBaseAddresses(nint moduleBase)
         {
+            // 1.0.1.x lays ChrIns out differently from 1.0.3.x (measured in game on every version).
+            ChrIns.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
+            GameMan.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1);
+            LevelUpData.SetLayout(Version is Version1_0_1_0 or Version1_0_1_1 or Version1_0_1_2);
+
             WorldChrMan.Base = moduleBase + Version switch
             {
                 Version1_0_1_0 => 0x1CEE830,
@@ -429,7 +518,8 @@ namespace SilkySouls.memory
             
             GameMan.Base = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1
+                Version1_0_1_0 => 0x1CEA4B8,
+                Version1_0_1_1 => 0x1C7A4A8,
                 Version1_0_1_2 => 0x1CFDC48,
                 Version1_0_3_0 => 0x1D10E18,
                 Version1_0_3_1 => 0x1C74E08,
@@ -438,7 +528,9 @@ namespace SilkySouls.memory
             
             EventMan.Base = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x1CF1BB0,
+                Version1_0_1_1 => 0x1C81B80,
+                Version1_0_1_2 => 0x1D05320,
                 Version1_0_3_0 => 0x1D18530,
                 Version1_0_3_1 => 0x1C7B1B0,
                 _ => 0
@@ -553,6 +645,19 @@ namespace SilkySouls.memory
                 _ => 0
             };
 
+            // Player-hit function: victim in rcx, attacker in rdx, damage struct in r8. On 1.0.3.x this is
+            // PlayerIns's vtable slot 140; the 1.0.1.x entries were found by logging the damage call stack.
+            // Where the first instruction is a relative jmp, the hook re-aims it from the code cave.
+            Hooks.Hit = moduleBase + Version switch
+            {
+                Version1_0_1_0 => 0x31D640,
+                Version1_0_1_1 => 0x31D340,
+                Version1_0_1_2 => 0x320860,
+                Version1_0_3_0 => 0x35B0C0,
+                Version1_0_3_1 => 0x395221,
+                _ => 0
+            };
+
             Hooks.Draw = moduleBase + Version switch
             {
                 Version1_0_1_0 => 0x2C4C14,
@@ -615,8 +720,8 @@ namespace SilkySouls.memory
 
             Hooks.WarpCoords = moduleBase + Version switch
             {
-                Version1_0_1_0 => 0x2BF58A,
-                Version1_0_1_1 => 0x2BF28A,
+                Version1_0_1_0 => 0x2BF54A,
+                Version1_0_1_1 => 0x2BF24A,
                 Version1_0_1_2 => 0x2C273A,
                 Version1_0_3_0 => 0x2C731A,
                 Version1_0_3_1 => 0x2C8E1A,
@@ -625,7 +730,8 @@ namespace SilkySouls.memory
 
             Hooks.WarpAngle = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1
+                Version1_0_1_0 => 0x2BF58A,
+                Version1_0_1_1 => 0x2BF28A,
                 Version1_0_1_2 => 0x2C277A,
                 Version1_0_3_0 => 0x2C735A,
                 Version1_0_3_1 => 0x2C8E5A,
@@ -693,17 +799,22 @@ namespace SilkySouls.memory
             };
 
             
+            // The immediate of the `mov BYTE PTR [rax+0x49],0` that starts the bytes C6 40 49 00 80 79 19 00 75 48.
             Patches.DrawEvent = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x491707,
+                Version1_0_1_1 => 0x4914B7,
+                Version1_0_1_2 => 0x4949E7,
                 Version1_0_3_0 => 0x49B6B7,
-                Version1_0_3_1 => 0x49c1b4,
+                Version1_0_3_1 => 0x49C1B7,
                 _ => 0
             };
 
             Patches.DrawSoundView = moduleBase + Version switch
             {
-                // WARNING: No match found for: Version1_0_1_0, Version1_0_1_1, Version1_0_1_2
+                Version1_0_1_0 => 0x618309,
+                Version1_0_1_1 => 0x618069,
+                Version1_0_1_2 => 0x61B559,
                 Version1_0_3_0 => 0x622289,
                 Version1_0_3_1 => 0x624b89,
                 _ => 0
@@ -1016,6 +1127,7 @@ namespace SilkySouls.memory
             Console.WriteLine("\n--- Hooks ---");
             PrintOffset("LastLockedTarget", Hooks.LastLockedTarget);
             PrintOffset("AllNoDamage", Hooks.AllNoDamage);
+            PrintOffset("Hit", Hooks.Hit);
             PrintOffset("Draw", Hooks.Draw);
             PrintOffset("InAirTimer", Hooks.InAirTimer);
             PrintOffset("Keyboard", Hooks.Keyboard);
