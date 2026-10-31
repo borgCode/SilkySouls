@@ -44,17 +44,15 @@ namespace SilkySouls.memory
 
             public const int PlayerIns = 0x68;
 
-            // 17 character sets, ChrSetSize apart. The game fills a different slot depending on the area,
-            // e.g. Undead Burg uses slot 0 and Oolacile slot 4. Each set holds a count and an array of ChrIns.
-            public const int ChrSets = 0x680;
-            public const int ChrSetSize = 0xE8;
-            public const int ChrSetSlots = 17;
-            public const int ChrSetCount = 0x130;
-            public const int ChrSetEntries = 0x138;
-            public const int ChrSetEntrySize = 0x38;
+            public const int BlockCount = 0x28;
+            public const int Blocks = 0x30;
+            public const int BlockSize = 0xE8;
+            public const int BlockChrCount = 0x48;
+            public const int BlockChrEntries = 0x50;
+            public const int ChrEntrySize = 0x38;
 
             // From the player's ChrIns; the first offset is part of ChrIns's per-version layout (see ChrIns.SetLayout).
-            public static int[] CurrentBlockId;
+            public static int[] CurrentBlockId = [0x370, 0x10, 0x288];
 
             public enum BaseOffsets
             {
@@ -647,17 +645,15 @@ namespace SilkySouls.memory
                 _ => 0
             };
 
-            // Entry of the player-hit function: victim in rcx, attacker in rdx, damage struct in r8. The game
-            // splits its code into scattered chunks, so the address differs wildly between versions, and
-            // where the first instruction is a relative jmp the hook has to re-aim it. Found by logging the
-            // arguments of every function on the damage call stack in a running game (1.0.1.0 by the same
-            // layout as 1.0.1.1 and 1.0.1.2), and confirmed by using the options on each version.
+            // Player-hit function: victim in rcx, attacker in rdx, damage struct in r8. On 1.0.3.x this is
+            // PlayerIns's vtable slot 140; the 1.0.1.x entries were found by logging the damage call stack.
+            // Where the first instruction is a relative jmp, the hook re-aims it from the code cave.
             Hooks.Hit = moduleBase + Version switch
             {
                 Version1_0_1_0 => 0x31D640,
                 Version1_0_1_1 => 0x31D340,
                 Version1_0_1_2 => 0x320860,
-                Version1_0_3_0 => 0x3267A0,
+                Version1_0_3_0 => 0x35B0C0,
                 Version1_0_3_1 => 0x395221,
                 _ => 0
             };

@@ -529,6 +529,25 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 50                      push   rax
+        ///48 8b 05 00 00 00 00    mov    rax,QWORD PTR [rip+0x0]        # 8 &lt;_main+0x8&gt;
+        ///48 85 c0                test   rax,rax
+        ///0f 84 b5 00 00 00       je     c6 &lt;exit&gt;
+        ///48 8b 40 68             mov    rax,QWORD PTR [rax+0x68]
+        ///48 85 c0                test   rax,rax
+        ///0f 84 a8 00 00 00       je     c6 &lt;exit&gt;
+        ///83 b8 e8 03 00 00 00    cmp    DWORD PTR [rax+0x3e8],0x0
+        ///0f 84 9b 00 00 00       je     c6 &lt;exit&gt;
+        ///48 39 c1                cmp    rcx,rax
+        ///0f 85 92 00 00 00       jne    c6 &lt;e [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PlayerHit {
+            get {
+                return ResourceManager.GetString("PlayerHit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 80 3d 00 00 00 00 01    cmp    BYTE PTR [rip+0x0],0x1        # 7 &lt;_main+0x7&gt;
         ///75 6c                   jne    75 &lt;original&gt;
         ///50                      push   rax

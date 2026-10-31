@@ -68,11 +68,13 @@
                             <CheckBox Content="Stop 4 kings spawn timer"
                                       IsChecked="{Binding Is4KingsTimerStopped}"
                                       Margin="0,2" />
+                        </UniformGrid>
 
-                            <TextBlock Text="Hitless Practice"
-                                       FontWeight="Bold"
-                                       Margin="0,8,0,4" />
+                        <TextBlock Text="Hitless Practice"
+                                   FontWeight="Bold"
+                                   Margin="0,8,0,4" />
 
+                        <UniformGrid Columns="1">
                             <CheckBox Content="Negate enemy hits on player"
                                       ToolTip="Damage from enemy attacks is zeroed. Fall, environmental and death plane damage is unaffected."
                                       IsChecked="{Binding IsNegateEnemyHitsEnabled}"
