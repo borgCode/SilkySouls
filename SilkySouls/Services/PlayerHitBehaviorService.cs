@@ -10,8 +10,6 @@ namespace SilkySouls.Services;
 public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager hookManager)
     : IPlayerHitBehaviorService
 {
-    private const int MaxChrCount = 1024;
-
     // The second Bell Gargoyle is the only enemy that spawns below its max health.
     private const int SecondBellGargoyleChrId = 535001;
     private const int SecondBellGargoyleSpawnHp = 480;
@@ -47,19 +45,17 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
     {
         var worldChrMan = memoryService.Read<nint>(WorldChrMan.Base);
         var player = memoryService.Read<nint>(worldChrMan + WorldChrMan.PlayerIns);
+        var blockCount = memoryService.Read<int>(worldChrMan + WorldChrMan.BlockCount);
+        var blocks = memoryService.Read<nint>(worldChrMan + WorldChrMan.Blocks);
 
-        for (int slot = 0; slot < WorldChrMan.ChrSetSlots; slot++)
+        for (int b = 0; b < blockCount; b++)
         {
-            var chrSet = worldChrMan + WorldChrMan.ChrSets + slot * WorldChrMan.ChrSetSize;
-            var count = memoryService.Read<int>(chrSet + WorldChrMan.ChrSetCount);
-            var entries = memoryService.Read<nint>(chrSet + WorldChrMan.ChrSetEntries);
-            if (count <= 0 || count > MaxChrCount)
-                continue;
-
-            var raw = memoryService.ReadBytes(entries, count * WorldChrMan.ChrSetEntrySize);
+            var block = blocks + b * WorldChrMan.BlockSize;
+            var count = memoryService.Read<int>(block + WorldChrMan.BlockChrCount);
+            var entries = memoryService.Read<nint>(block + WorldChrMan.BlockChrEntries);
             for (int i = 0; i < count; i++)
             {
-                var chr = (nint)BitConverter.ToInt64(raw, i * WorldChrMan.ChrSetEntrySize);
+                var chr = memoryService.Read<nint>(entries + i * WorldChrMan.ChrEntrySize);
                 if (chr != IntPtr.Zero && chr != player)
                     HealEnemy(chr);
             }
@@ -68,15 +64,9 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
 
     private void HealEnemy(nint chr)
     {
-        // Only touch real game objects: their vtable pointer lies inside the game module.
-        var vtable = (long)memoryService.Read<nint>(chr);
-        var moduleStart = (long)memoryService.BaseAddress;
-        if (vtable < moduleStart || vtable >= moduleStart + memoryService.ModuleMemorySize)
-            return;
-
         var hp = memoryService.Read<int>(chr + ChrIns.Health);
         var maxHp = memoryService.Read<int>(chr + ChrIns.MaxHealth);
-        if (hp <= 0 || maxHp <= 1)
+        if (hp <= 0)
             return;
 
         var chrId = memoryService.Read<int>(chr + ChrIns.ChrId);
@@ -97,7 +87,7 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
         var code = CodeCaveOffsets.Base + CodeCaveOffsets.HitCode;
         if (_isNegateEnemyHitsEnabled || _isHealEnemiesOnHitEnabled)
         {
-            var bytes = AsmLoader.GetAsmBytes(AsmScript.DSRHit);
+            var bytes = AsmLoader.GetAsmBytes(AsmScript.PlayerHit);
             var lastAttacker = CodeCaveOffsets.Base + CodeCaveOffsets.LastAttackerPtr;
             var negateFlag = CodeCaveOffsets.Base + CodeCaveOffsets.NegateEnemyHitsFlag;
             var originalBytes = GetHitOriginalBytes();
@@ -131,7 +121,7 @@ public class PlayerHitBehaviorService(IMemoryService memoryService, HookManager 
             GameVersion.Version1_0_1_0 => [0xE9, 0xD7, 0xB7, 0xEC, 0x03],
             GameVersion.Version1_0_1_1 => [0xE9, 0x4D, 0xF8, 0x81, 0x02],
             GameVersion.Version1_0_1_2 => [0xE9, 0x76, 0x1E, 0xDF, 0x02],
-            GameVersion.Version1_0_3_0 => [0xE9, 0xE9, 0x6D, 0xE6, 0x02],
+            GameVersion.Version1_0_3_0 => [0xE9, 0x7E, 0xE2, 0x15, 0x03],
             _ => [0x48, 0x89, 0x5C, 0x24, 0x08],
         };
     }
