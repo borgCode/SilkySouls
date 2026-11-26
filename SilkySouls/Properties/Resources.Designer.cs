@@ -764,6 +764,26 @@ namespace SilkySouls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 45 84 f6                test   r14b,r14b
+        ///74 3d                   je     42 &lt;original&gt;
+        ///49 ba 00 00 00 00 00    movabs r10,0x0
+        ///00 00 00
+        ///4c 39 d0                cmp    rax,r10
+        ///75 2e                   jne    42 &lt;original&gt;
+        ///4c 8b 51 18             mov    r10,QWORD PTR [rcx+0x18]
+        ///4d 85 d2                test   r10,r10
+        ///74 25                   je     42 &lt;original&gt;
+        ///41 f6 42 20 01          test   BYTE PTR [r10+0x20],0x1
+        ///74 1e                   je     42 &lt;original&gt;
+        ///f6 81 a5 02 00 00 80    test   BYTE PTR [rc [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WarpHomePose {
+            get {
+                return ResourceManager.GetString("WarpHomePose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 1212961,1023.09|-328.60|807.80|-1.85,Boss,Artorias
         ///1412960,450.79|-361.68|335.68|-2.18,Boss,Bed of Chaos
         ///1012961,17.18|47.79|70.81|2.99,Boss,Bell Gargoyles

@@ -43,7 +43,7 @@
                 CornerRadius="3"
                 Margin="0,0,0,10">
             <StackPanel Margin="10">
-                <UniformGrid Columns="2" Rows="2">
+                <UniformGrid Columns="2" Rows="3">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -85,6 +85,36 @@
                     <CheckBox Content="100% BKH drop"
                               IsChecked="{Binding IsGuaranteedBkhEnabled}"
                               Margin="0,5,0,0" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Content="Fix boss turning after loading save"
+                                  IsChecked="{Binding IsWarpHomePoseEnabled}"
+                                  Margin="0,2"
+                                  Grid.Column="0" />
+
+                        <Border
+                            Background="#3498db"
+                            CornerRadius="10"
+                            Width="12"
+                            Height="12"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Grid.Column="1"
+                            ToolTip="Fixes bosses turning around when loading a save. This is not a permanent fix and it must be toggled on when entering the boss fight."
+                            ToolTipService.InitialShowDelay='100'>
+                            <TextBlock Text="i"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       FontSize="10" />
+                        </Border>
+                    </Grid>
                 </UniformGrid>
             </StackPanel>
         </Border>

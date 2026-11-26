@@ -137,6 +137,24 @@ public class UtilityService(IMemoryService memoryService, HookManager hookManage
     public void ToggleDeathCamera(bool isEnabled) =>
         memoryService.Write(memoryService.Read<nint>(WorldChrMan.Base) + (int)WorldChrMan.BaseOffsets.DeathCam, isEnabled);
 
+    public void ToggleWarpHomePose(bool isEnabled)
+    {
+        var code = CodeCaveOffsets.Base + CodeCaveOffsets.WarpHomePoseCode;
+        if (isEnabled)
+        {
+            var codeBytes = AsmLoader.GetAsmBytes(AsmScript.WarpHomePose);
+            Array.Copy(BitConverter.GetBytes(EnemyInsVtable), 0, codeBytes, 0x7, 8);
+            AsmHelper.WriteRelativeOffset(codeBytes, code + 0x48, Hooks.WarpHomePose + 6, 5, 0x48 + 1);
+
+            memoryService.WriteBytes(code, codeBytes);
+            hookManager.InstallHook(code, Hooks.WarpHomePose, [0xFF, 0x90, 0x28, 0x06, 0x00, 0x00]);
+        }
+        else
+        {
+            hookManager.UninstallHook(code);
+        }
+    }
+
     public bool HasTemporalAntiAliasing()
     {
         var pcOptionData =

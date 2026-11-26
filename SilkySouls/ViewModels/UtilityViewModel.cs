@@ -156,6 +156,18 @@ namespace SilkySouls.ViewModels
             }
         }
 
+        private bool _isWarpHomePoseEnabled;
+
+        public bool IsWarpHomePoseEnabled
+        {
+            get => _isWarpHomePoseEnabled;
+            set
+            {
+                if (!SetProperty(ref _isWarpHomePoseEnabled, value)) return;
+                _utilityService.ToggleWarpHomePose(_isWarpHomePoseEnabled);
+            }
+        }
+
         private bool _isFilterRemoveEnabled;
 
         public bool IsFilterRemoveEnabled
@@ -251,6 +263,8 @@ namespace SilkySouls.ViewModels
                 _utilityService.ToggleFilter(IsFilterRemoveEnabled);
             if (IsDeathCamEnabled)
                 _utilityService.ToggleDeathCamera(IsDeathCamEnabled);
+            if (IsWarpHomePoseEnabled)
+                _utilityService.ToggleWarpHomePose(IsWarpHomePoseEnabled);
             if (IsGuaranteedBkhEnabled)
             {
                 _utilityService.SetGuaranteedBkhDrop(true);

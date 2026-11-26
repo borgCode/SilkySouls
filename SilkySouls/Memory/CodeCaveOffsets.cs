@@ -78,5 +78,7 @@ namespace SilkySouls.Memory
             public const int LastAttackerPtr = 0x2710;
             public const int HitCode = 0x2720;
 
+            public const int WarpHomePoseCode = 0x2800;
+
     }
 }

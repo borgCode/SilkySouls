@@ -8,6 +8,7 @@ public interface IUtilityService
     void ToggleNoClip(bool isEnabled);
     void WriteNoClipSpeed(float speedScale);
     void ToggleDeathCamera(bool isEnabled);
+    void ToggleWarpHomePose(bool isEnabled);
     bool HasTemporalAntiAliasing();
     void SetGuaranteedBkhDrop(bool isEnabled);
     void ToggleFilter(bool isEnabled);

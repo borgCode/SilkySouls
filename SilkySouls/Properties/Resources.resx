@@ -1765,4 +1765,27 @@ ff c8                   dec    eax
 90                      nop
 e9 00 00 00 00          jmp    d1 &lt;exit+0xb&gt;</value>
   </data>
+  <data name="WarpHomePose" xml:space="preserve">
+    <value>45 84 f6                test   r14b,r14b
+74 3d                   je     42 &lt;original&gt;
+49 ba 00 00 00 00 00    movabs r10,0x0
+00 00 00
+4c 39 d0                cmp    rax,r10
+75 2e                   jne    42 &lt;original&gt;
+4c 8b 51 18             mov    r10,QWORD PTR [rcx+0x18]
+4d 85 d2                test   r10,r10
+74 25                   je     42 &lt;original&gt;
+41 f6 42 20 01          test   BYTE PTR [r10+0x20],0x1
+74 1e                   je     42 &lt;original&gt;
+f6 81 a5 02 00 00 80    test   BYTE PTR [rcx+0x2a5],0x80
+74 15                   je     42 &lt;original&gt;
+0f 28 02                movaps xmm0,XMMWORD PTR [rdx]
+0f 29 81 40 01 00 00    movaps XMMWORD PTR [rcx+0x140],xmm0
+41 0f 28 00             movaps xmm0,XMMWORD PTR [r8]
+0f 29 81 50 01 00 00    movaps XMMWORD PTR [rcx+0x150],xmm0
+
+0000000000000042 &lt;original&gt;:
+ff 90 28 06 00 00       call   QWORD PTR [rax+0x628]
+e9 00 00 00 00          jmp    4d &lt;original+0xb&gt;</value>
+  </data>
 </root>

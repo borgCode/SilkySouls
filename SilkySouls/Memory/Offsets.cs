@@ -392,6 +392,7 @@ namespace SilkySouls.memory
         public static nint BeginTargetSceneVtable;
         public static nint EndTargetSceneVtable;
         public static nint HGDrawPlanEntityVtable;
+        public static nint EnemyInsVtable;
         
         public static class Hooks
         {
@@ -412,6 +413,7 @@ namespace SilkySouls.memory
             public static nint Emevd;
             public static nint FourKingsGenerator;
             public static nint HgDrawCommandExecutor;
+            public static nint WarpHomePose;
         }
 
         public static class Patches
@@ -798,6 +800,13 @@ namespace SilkySouls.memory
                 _ => 0
             };
 
+            Hooks.WarpHomePose = moduleBase + Version switch
+            {
+                Version1_0_3_0 => 0x47F708,
+                Version1_0_3_1 => 0x480208,
+                _ => 0
+            };
+
             
             // The immediate of the `mov BYTE PTR [rax+0x49],0` that starts the bytes C6 40 49 00 80 79 19 00 75 48.
             Patches.DrawEvent = moduleBase + Version switch
@@ -1097,6 +1106,13 @@ namespace SilkySouls.memory
                 _ => 0
             };
 
+            EnemyInsVtable = moduleBase + Version switch
+            {
+                Version1_0_3_0 => 0x131F3B8,
+                Version1_0_3_1 => 0x1322E68,
+                _ => 0
+            };
+
 
 
 #if DEBUG
@@ -1123,6 +1139,7 @@ namespace SilkySouls.memory
             PrintOffset("BeginTargetSceneVtable", BeginTargetSceneVtable);
             PrintOffset("EndTargetSceneVtable", EndTargetSceneVtable);
             PrintOffset("HGDrawPlanEntityVtable", HGDrawPlanEntityVtable);
+            PrintOffset("EnemyInsVtable", EnemyInsVtable);
 
             Console.WriteLine("\n--- Hooks ---");
             PrintOffset("LastLockedTarget", Hooks.LastLockedTarget);
@@ -1142,6 +1159,7 @@ namespace SilkySouls.memory
             PrintOffset("Emevd", Hooks.Emevd);
             PrintOffset("FourKingsGenerator", Hooks.FourKingsGenerator);
             PrintOffset("HgDrawCommandExecutor", Hooks.HgDrawCommandExecutor);
+            PrintOffset("WarpHomePose", Hooks.WarpHomePose);
 
             Console.WriteLine("\n--- Patches ---");
             PrintOffset("DrawEvent", Patches.DrawEvent);
